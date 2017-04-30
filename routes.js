@@ -5,15 +5,24 @@ import { TabNavigator, StackNavigator } from 'react-navigation';
 //CONFIG
 import { colorConfig } from './modules/config';
 import { userId } from 'meteor-apollo-accounts'
+//
+//
+import { graphql, withApollo } from 'react-apollo';
+import gql from 'graphql-tag';
 //SCREENS
 import WelcomeScreen from './screens/WelcomeScreen';
 import LoginScreen from './screens/LoginScreen';
+import SignupScreen from './screens/SignupScreen';
 
 const LocationScreen = () => <View><Text>LocationScreen</Text></View>
 const ResourcesScreen = () => <View><Text>ResourcesScreen</Text></View>
 const FavoritesScreen = () => <View><Text>FavoritesScreen</Text></View>
 const ResourceDetail = () => <View><Text>ResourceDetail</Text></View>
 const OrganizationDetail = () => <View><Text>OrganizationDetail</Text></View>
+
+
+const DocumentsScreen = () => <View><Text>DocumentsScreen</Text></View>
+const HomeScreen = () => <View><Text>HomeScreen</Text></View>
 const SettingsScreen = () => <View><Text>SettingsScreen</Text></View>
 const TermsScreen = () => <View><Text>TermsScreen</Text></View>
 const PrivacyPolicyScreen = () => <View><Text>PrivacyPolicyScreen</Text></View>
@@ -22,32 +31,6 @@ const HelpScreen = () => <View><Text>HelpScreen</Text></View>
 
 
 
-
-// ResourcesNavigator
-// =================================
-const ResourcesNavigator = StackNavigator({
-  resources: {  screen: ResourcesScreen },
-  resourcesDetail: { screen: ResourceDetail },
-  orgDetail: { screen: OrganizationDetail },
-},{
-  //mode: 'modal',
-  tabBarLabel: 'Resources',
-});
-
-
-// FavoritesNavigator
-// =================================
-
-const FAVORITES_NAVIGATOR_ROUTES = {
-  favorites: { screen: FavoritesScreen },
-  resourcesDetail: { 
-    screen: ResourceDetail, 
-    path: 'resources/:resourceId' 
-  },
-  orgDetail: { screen: OrganizationDetail },
-};
-
-const FavoritesNavigator = StackNavigator(FAVORITES_NAVIGATOR_ROUTES);
 
 
 // FavoritesNavigator
@@ -77,13 +60,33 @@ const APP_NAVIGATOR_OPTIONS = {
 };
 
 const APP_NAVIGATOR_ROUTES = {
-  resources: { screen: ResourcesNavigator },
-  favorites: { screen: FavoritesNavigator },
+  home: { screen: HomeScreen },
+  documents: { screen: DocumentsScreen },
   settings: { screen: SettingsNavigator },
 };
 
 const AppNavigator = TabNavigator(APP_NAVIGATOR_ROUTES, APP_NAVIGATOR_OPTIONS);
 
+
+// AutScreen
+// =================================
+
+const AUTH_NAVIGATOR_OPTIONS = {
+  lazyLoad: true,
+  swipeEnabled: false,
+  navigationOptions: {
+    headerStyle: {
+      marginTop: 24,
+    }
+  },
+};
+
+const AUTH_NAVIGATOR_ROUTES = {
+  login: { screen: LoginScreen },
+  signup: { screen: SignupScreen },
+};
+
+const AuthScreen = TabNavigator(AUTH_NAVIGATOR_ROUTES, AUTH_NAVIGATOR_OPTIONS);
 
 // MainNavigator
 // =================================
@@ -102,7 +105,7 @@ const MAIN_NAVIGATOR_OPTIONS = {
 
 
 const MAIN_NAVIGATOR_ROUTES = {
-  login: { screen: LoginScreen },
+  auth: { screen: AuthScreen },
   welcome: { screen: WelcomeScreen },
   main: { screen: AppNavigator },
 };
@@ -118,29 +121,27 @@ class AppRoutes extends React.Component {
   state = { loadingFont: true }
   async componentWillMount(){
       //initialize Amplitude analytics
-      /*Amplitude.initialize(AMPLITUDE_API_KEY);
+      //Amplitude.initialize(AMPLITUDE_API_KEY);
       
       await Font.loadAsync({
         'proximanovasoft-regular': require('./assets/fonts/proximanovasoft-regular.ttf'),
         'proximanovasoft-bold': require('./assets/fonts/proximanovasoft-bold.ttf'),
-        'proximanovasoft-semibold': require('./assets/fonts/proximanovasoft-semibold.ttf'),
-        'Roboto': require('native-base/Fonts/Roboto.ttf'),
-        'Roboto_medium': require('native-base/Fonts/Roboto_medium.ttf'),
+        'proximanovasoft-semibold': require('./assets/fonts/proximanovasoft-semibold.ttf')
       });
-      this.setState({loadingFont: false});*/
-  }
-  componentDidMount(){
-    
-    
-    //analyticsHelpers.registerUser()
-    // register a user
-
+      this.setState({loadingFont: false});
   }
   render() {
+    //if not connected to DPP, wait for connection
+    if (this.state.loadingFont || this.props.data.loading) {
+      return (
+        <View style={styles.container}>
+          <AppLoading />
+        </View>
+      );
+    }
 
-    //once connected, show normal app wrapped in REDUX <Provider />
     return (
-      <MainNavigator />
+      <MainNavigator screenProps={this.props} />
     );
 
   }
@@ -155,4 +156,14 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AppRoutes;
+const GET_USER_DATA = gql`
+  query getCurrentUser {
+    user {
+      emails { address, verified },
+      roles,
+      _id
+    }
+  }
+`;
+
+export default graphql(GET_USER_DATA)(AppRoutes);
