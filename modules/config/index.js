@@ -1,4 +1,32 @@
+import { Platform } from 'react-native';
+import { Constants } from 'expo';
 
+// setup fonts to be used in styles config
+let regularFont = Platform.OS === 'android' ? 'proximanovasoft-regular' : 'proximanovasoft-regular';
+let semiboldFont = Platform.OS === 'android' ? 'proximanovasoft-semibold' : 'proximanovasoft-semibold';
+let boldFont = Platform.OS === 'android' ? 'proximanovasoft-bold' : 'proximanovasoft-bold';
+
+//setup stylesConfig to be used throughout app
+export const stylesConfig =  {
+    titleStyle:{
+        fontFamily: boldFont,
+        fontSize: 20
+    },
+    basicHeaderStyle: {
+        
+        backgroundColor: '#fff',
+    },
+    regularFont,
+    semiboldFont,
+    boldFont,
+}
+
+
+
+export const appConfig =  {
+    appName:'GrowLab',
+    supportEmail: 'support@growlab.io'
+}
 
 export const colorConfig =  {
     primary: '#34495e',

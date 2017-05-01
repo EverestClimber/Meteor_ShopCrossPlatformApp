@@ -14,19 +14,16 @@ import WelcomeScreen from './screens/WelcomeScreen';
 import LoginScreen from './screens/LoginScreen';
 import SignupScreen from './screens/SignupScreen';
 
-const LocationScreen = () => <View><Text>LocationScreen</Text></View>
-const ResourcesScreen = () => <View><Text>ResourcesScreen</Text></View>
-const FavoritesScreen = () => <View><Text>FavoritesScreen</Text></View>
-const ResourceDetail = () => <View><Text>ResourceDetail</Text></View>
-const OrganizationDetail = () => <View><Text>OrganizationDetail</Text></View>
+import PrivacyPolicyScreen from './screens/PrivacyPolicyScreen';
+import TermsScreen from './screens/TermsScreen';
+import SettingsScreen from './screens/SettingsScreen';
+import HelpScreen from './screens/HelpScreen';
+import HomeScreen from './screens/HomeScreen';
+
+
 
 
 const DocumentsScreen = () => <View><Text>DocumentsScreen</Text></View>
-const HomeScreen = () => <View><Text>HomeScreen</Text></View>
-const SettingsScreen = () => <View><Text>SettingsScreen</Text></View>
-const TermsScreen = () => <View><Text>TermsScreen</Text></View>
-const PrivacyPolicyScreen = () => <View><Text>PrivacyPolicyScreen</Text></View>
-const HelpScreen = () => <View><Text>HelpScreen</Text></View>
 
 
 
