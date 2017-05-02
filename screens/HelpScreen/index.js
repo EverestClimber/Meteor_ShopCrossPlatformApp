@@ -1,12 +1,12 @@
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform } from 'react-native';
+import { View, Text, Dimensions, TextInput, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
 import { reduxForm } from 'redux-form'
 //MODULES
-import { stylesConfig, appConfig, colorConfig } from '../modules/config';
+import { stylesConfig, appConfig, colorConfig } from '../../modules/config';
 //COMPONENTS
-import ContactUsForm from '../components/ContactUsForm';
-import BackButton from '../components/BackButton'
+import ContactUsForm from '../../components/ContactUsForm';
+import BackButton from '../../components/BackButton'
 
 
 const { appName, supportEmail } = appConfig;
@@ -34,6 +34,7 @@ class HelpScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: Dimensions.get('window').width,
     backgroundColor: screenBackgroundColor,
     alignItems: 'center',
     justifyContent: 'center',

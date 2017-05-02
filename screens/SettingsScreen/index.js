@@ -1,14 +1,11 @@
 import React from 'react';
 import { View, Text, AsyncStorage, ScrollView, StyleSheet, Platform } from 'react-native';
-import { Icon } from 'react-native-elements';
+import { Icon, Button, Card } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { AppLoading } from 'expo';
-import * as actions from '../actions';
-
-import ResourceCard from '../components/ResourceCard';
-import { Button, Card, Toast, Container, H2, H3 } from 'native-base';
+import * as actions from '../../actions';
 //MODULES
-import { stylesConfig, colorConfig } from '../modules/config';
+import { stylesConfig, colorConfig } from '../../modules/config';
 
 //
 // ========================================
@@ -36,12 +33,12 @@ const LegalSettings = ({navigation}) => {
 			<View style={{marginBottom: 15, flex: 1}}>
 				<Text style={styles.headerStyle}>Legal</Text>
 				<Card>
-					<Button onPress={()=>navigation.navigate('terms')} transparent>
+					{/*<Button onPress={()=>navigation.navigate('terms')} transparent>*/}
 						<Text style={styles.linkText}>TERMS & CONDITIONS</Text>
-					</Button>
-					<Button onPress={()=>navigation.navigate('privacy')} transparent>
+					{/*</Button>*/}
+					{/*<Button onPress={()=>navigation.navigate('privacy')} transparent>*/}
 						<Text style={styles.linkText}>PRIVACY POLICY</Text>
-					</Button>
+					{/*</Button>*/}
 				</Card>
 			</View>
 	);
@@ -51,9 +48,17 @@ const ContactUs = ({ navigation }) => {
 	return (
 		<View style={{marginBottom: 15, flex: 1}}>
 			<Text style={styles.headerStyle}>Contact Us</Text>
-			<Button onPress={()=>navigation.navigate('help')} block style={{backgroundColor: '#fff',}}>
+			<View>
+				<Button 
+		          title='HELP & SUPPORT'
+		          backgroundColor={colorConfig.business} 
+		          onPress={() => navigation.navigate('help')}
+		          style={{marginTop: 10}} 
+		        />
+			</View>
+			{/*<Button onPress={()=>navigation.navigate('help')} block style={{backgroundColor: '#fff',}}>
 				<Text style={{fontFamily: boldFont}}>HELP & SUPPORT</Text>
-			</Button>
+			</Button>*/}
 		</View>
 	);
 }
@@ -69,15 +74,22 @@ class SettingsScreen extends React.Component {
 	}
 	render(){
 		return (
-			<Container style={{padding: 10, backgroundColor: '#f5f5f5',}}>
-				<AppSettings {...this.props} />
+			<ScrollView style={{padding: 10, backgroundColor: '#f5f5f5'}}>
+				{/*<AppSettings {...this.props} />*/}
 				<ContactUs {...this.props} />
 				<LegalSettings {...this.props}  />
-			</Container>
+				<View>
+					<Button 
+			          title='LOG OUT'
+			          backgroundColor={colorConfig.business} 
+			          onPress={()=>this.props.handleLogout( () => this.props.navigation.navigate('login'))}
+			          style={{marginTop: 10}} 
+			        />
+				</View>
+			</ScrollView>
 		);
 	}
 }
-
 
 
 const styles = StyleSheet.create({

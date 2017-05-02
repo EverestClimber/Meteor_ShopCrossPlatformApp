@@ -1,9 +1,10 @@
 import React from 'react';
 import { View, Text, AsyncStorage, ScrollView, StyleSheet, Platform } from 'react-native';
 //COMPONENTS
-import BackButton from '../components/BackButton'
+import { Icon, Button, Card } from 'react-native-elements';
+import BackButton from '../../components/BackButton'
 //MODULES
-import { stylesConfig, colorConfig, appConfig } from '../modules/config';
+import { stylesConfig, colorConfig, appConfig } from '../../modules/config';
 
 const { appName, supportEmail } = appConfig;
 const { screenBackgroundColor } = colorConfig;

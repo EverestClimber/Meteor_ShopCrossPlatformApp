@@ -1,29 +1,25 @@
 import Expo, { AppLoading, Font, Amplitude, Constants } from 'expo';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Platform } from 'react-native';
 import { TabNavigator, StackNavigator } from 'react-navigation';
 //CONFIG
 import { colorConfig } from './modules/config';
-import { userId } from 'meteor-apollo-accounts'
 //
-//
-import { graphql, withApollo } from 'react-apollo';
+import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 //SCREENS
 import WelcomeScreen from './screens/WelcomeScreen';
 import LoginScreen from './screens/LoginScreen';
 import SignupScreen from './screens/SignupScreen';
-
 import PrivacyPolicyScreen from './screens/PrivacyPolicyScreen';
 import TermsScreen from './screens/TermsScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import HelpScreen from './screens/HelpScreen';
 import HomeScreen from './screens/HomeScreen';
+import DocumentsScreen from './screens/DocumentsScreen';
+import DetailScreen from './screens/DetailScreen';
+import AddDocument from './screens/AddDocument';
 
-
-
-
-const DocumentsScreen = () => <View><Text>DocumentsScreen</Text></View>
 
 
 
@@ -40,15 +36,36 @@ const SettingsNavigator = StackNavigator({
 });
 
 
+// HomeNavigator
+// =================================
+const HomeNavigator = StackNavigator({
+  home: {  screen: HomeScreen },
+},{
+  tabBarLabel: 'Home',
+});
+
+// DocumentsNavigator
+// =================================
+const DocumentsNavigator = StackNavigator({
+  documents: {  screen: DocumentsScreen },
+  document: {  screen: DetailScreen },
+  addDoc: {  screen: AddDocument },
+},{
+  tabBarLabel: 'Home',
+});
+
+
 // AppNavigator
 // =================================
 const APP_NAVIGATOR_OPTIONS = {
   swipeEnabled: false,
   tabBarOptions: {
     activeTintColor: colorConfig.business,
+    inactiveTintColor: colorConfig.lightGrey,
     style: {
       backgroundColor: '#fff',
-      height: 60
+      height: 60,
+      marginTop: Platform.OS === 'android' ? 24 : 0,
     },
     labelStyle: {
       fontSize: 13,
@@ -57,8 +74,8 @@ const APP_NAVIGATOR_OPTIONS = {
 };
 
 const APP_NAVIGATOR_ROUTES = {
-  home: { screen: HomeScreen },
-  documents: { screen: DocumentsScreen },
+  home: { screen: HomeNavigator },
+  documents: { screen: DocumentsNavigator },
   settings: { screen: SettingsNavigator },
 };
 
@@ -71,11 +88,18 @@ const AppNavigator = TabNavigator(APP_NAVIGATOR_ROUTES, APP_NAVIGATOR_OPTIONS);
 const AUTH_NAVIGATOR_OPTIONS = {
   lazyLoad: true,
   swipeEnabled: false,
-  navigationOptions: {
-    headerStyle: {
-      marginTop: 24,
+  tabBarOptions: {
+    activeTintColor: colorConfig.business,
+    inactiveTintColor: colorConfig.lightGrey,
+    style: {
+      backgroundColor: '#fff',
+      height: 60,
+      marginTop: Platform.OS === 'android' ? 24 : 0,
+    },
+    labelStyle: {
+      fontSize: 13,
     }
-  },
+  }
 };
 
 const AUTH_NAVIGATOR_ROUTES = {
@@ -83,7 +107,7 @@ const AUTH_NAVIGATOR_ROUTES = {
   signup: { screen: SignupScreen },
 };
 
-const AuthScreen = TabNavigator(AUTH_NAVIGATOR_ROUTES, AUTH_NAVIGATOR_OPTIONS);
+const AuthScreen = TabNavigator(AUTH_NAVIGATOR_ROUTES, APP_NAVIGATOR_OPTIONS);
 
 // MainNavigator
 // =================================

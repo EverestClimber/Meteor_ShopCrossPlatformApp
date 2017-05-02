@@ -2,42 +2,33 @@
 import React from 'react';
 import { View, Text, AsyncStorage, Image } from 'react-native';
 import { AppLoading, Amplitude } from 'expo';
-//COMPONENTS
-import Slides from '../components/Slides'
-//MODULES
-import { colorConfig, stylesConfig } from '../modules/config';
-//
 import _ from 'lodash';
+//COMPONENTS
+import Slides from '../../components/Slides'
+//MODULES
+import { colorConfig, stylesConfig } from '../../modules/config';
+//REDUX
 import { connect } from 'react-redux';
-
-import * as actions from '../actions';
+import * as actions from '../../actions';
 
 
 
 
 const SLIDE_DATA = [
 	{
-		text: 'Welcome to GrowLab!',
+		text: 'Welcome to the App!',
 		color: colorConfig.business
 	},
 	{
-		text: 'Use GrowLab to find local resources and opportunities for your business.',
+		text: 'This is what our app does.',
 		color: colorConfig.ecosystem,
 	},
 	{
-		text: 'Support resources like mentoring and free advising are marked yellow.',
-		color: colorConfig.support
-	},
-	{
-		text: 'Finance resources like loans and grants are marked green.',
-		color: colorConfig.finance
-	},
-	{
-		text: 'Set your location, then swipe right to favorite a resource. Swipe left to view the next resource.',
+		text: 'This is a quick sentence about getting started.',
 		color: '#34495e',
 	},
 	{
-		text: 'Ready to start?',
+		text: 'Ready to move on?',
 		color: '#8e44ad',
 	},
 ];
@@ -51,7 +42,7 @@ class WelcomeScreen extends React.Component {
 		this.props.navigation.navigate('main');
 	}
 
-	async componentWillMount(){
+	/*async componentWillMount(){
 		//AsyncStorage.removeItem('onboardingComplete');
 		let onboardingComplete = await AsyncStorage.getItem('onboardingComplete');
 		if (onboardingComplete === 'true') {
@@ -61,19 +52,16 @@ class WelcomeScreen extends React.Component {
 			this.setState({ onboardingComplete: false });
 		}
 		
-	}
+	}*/
 	componentDidMount(){
 		//analyticsHelpers.logPageView('user hit welcome page');
 	  }
 	render(){
 
-		if (_.isNull(this.state.onboardingComplete)) return <AppLoading />
+		if (_.isNull(this.state.onboardingComplete)) { return <AppLoading /> }
 
 		return (
-			<Slides 
-				data={SLIDE_DATA}
-				onSlidesComplete={this.onSlidesComplete}
-			/>
+			<Slides data={SLIDE_DATA} onSlidesComplete={this.onSlidesComplete} />
 		);
 	}
 }

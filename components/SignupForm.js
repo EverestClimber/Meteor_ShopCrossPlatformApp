@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, Button, TextInput, TouchableOpacity, StyleSheet, Platform, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform, ActivityIndicator } from 'react-native';
+import { Button, Icon } from 'react-native-elements'
 //REDUX
 import { connect } from 'react-redux';
 import * as actions from '../actions';
@@ -7,8 +8,9 @@ import { reduxForm, Field } from 'redux-form'
 //COMPONENTS
 import LoadingScreen from './LoadingScreen'
 //MODULES
-import { colorConfig } from '../modules/config';
+import { colorConfig, stylesConfig } from '../modules/config';
 
+const { basicHeaderStyle, titleStyle } = stylesConfig;
 
 const renderTextInput = ({ input, ...inputProps }) => {
   return (
@@ -20,24 +22,24 @@ const renderTextInput = ({ input, ...inputProps }) => {
   );
 }
 
-const renderTextArea = ({ input, ...inputProps }) => {
-  return (
-    <TextInput
-      multiline={true}
-      numberOfLines={4}
-      style={styles.textArea} 
-      onChangeText={input.onChange}
-      {...inputProps}
-    />
-  );
-}
 
-class ContactUs extends React.Component {
+class Login extends React.Component {
   state = { loading: false }
+  static navigationOptions = {
+    title: 'Home',
+    tabBarIcon: ({ tintColor }) => <Icon name="home" size={30} color={tintColor} />,
+      headerTitleStyle: titleStyle, 
+      tabBarLabel: 'Home',
+      headerVisible: true, //Platform.OS !== 'android',
+      headerStyle: basicHeaderStyle
+  };
+
   onSubmit = (values) => {
-    this.setState({loading: true});
-    this.props.submitContactUsForm(values, () => {
-      this.setState({loading: false});
+    let _this = this
+    _this.setState({loading: true});
+    _this.props.submitLoginForm(values, () => {
+      _this.setState({loading: false});
+      _this.props.navigation.navigate('main');
     });
   }
   render(){
@@ -45,17 +47,26 @@ class ContactUs extends React.Component {
 
     if(this.state.loading) {
        return (
-          <LoadingScreen loadingMessage={'Submitting your message...'} />
+          <LoadingScreen loadingMessage={'Logging in...'} />
       );
     }
 
     return (
       <View>
+        <Text style={styles.labelStyle}>Name:</Text>
+        <Field name="name" component={renderTextInput} />
         <Text style={styles.labelStyle}>Email:</Text>
         <Field name="email" component={renderTextInput} />
-        <Text style={styles.labelStyle}>Message:</Text>
-        <Field name="message" component={renderTextArea} />
-        <Button title='SEND MESSAGE' onPress={handleSubmit(this.onSubmit)} style={{backgroundColor: colorConfig.business, marginTop: 10,}} />
+        <Text style={styles.labelStyle}>Password:</Text>
+        <Field name="password" component={renderTextInput} />
+        <Text style={styles.labelStyle}>Check Password:</Text>
+        <Field name="password" component={renderTextInput} secureTextEntry />
+        <Button 
+          title='SIGN UP'
+          backgroundColor={colorConfig.business} 
+          onPress={handleSubmit(this.onSubmit)} 
+          style={{marginTop: 10}} 
+        />
       </View>
     )
   }
@@ -74,12 +85,12 @@ const styles = StyleSheet.create({
     color: '#fff', 
     fontSize: 18,
   },
-/*  container: {
+  container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
     alignItems: 'center',
     justifyContent: 'center',
-  },*/
+  },
   textArea: {
     borderColor: colorConfig.lightGrey,
     backgroundColor: '#fff',
@@ -102,12 +113,13 @@ const styles = StyleSheet.create({
     height: 37,
     width: 250,
     fontSize: 15,
+    margin: 'auto',
     fontFamily: 'proximanovasoft-regular',
   }
 })
 
-let ContactUsForm = reduxForm({
-  form: 'ContactUsForm'
-})(ContactUs);
+let SignupForm = reduxForm({
+  form: 'SignupForm'
+})(Login);
 
-export default signInForm = connect(null, actions)(ContactUsForm);
+export default signupForm = connect(null, actions)(SignupForm);
