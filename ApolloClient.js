@@ -23,6 +23,7 @@ setTokenStore({
 
 
 
+
 const LIVE_URL = 'https://pvsafe-apollo.meteorapp.com/graphql';
 const DEV_URL = 'http://localhost:3000/graphql';
 //set network options
@@ -58,5 +59,5 @@ const client = new ApolloClient({
 });
 
 //logout(client).then(res => console.log('logged out'))
-
+//logout(client).then(res => console.log('logged out').catch(e => console.log(e)))
 export default client;

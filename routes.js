@@ -1,6 +1,6 @@
 import Expo, { AppLoading, Font, Amplitude, Constants } from 'expo';
 import React from 'react';
-import { StyleSheet, Text, View, Platform } from 'react-native';
+import { StyleSheet, Text, View, Platform, AsyncStorage } from 'react-native';
 import { TabNavigator, StackNavigator } from 'react-navigation';
 //CONFIG
 import { colorConfig } from './modules/config';
@@ -98,7 +98,7 @@ const APP_NAVIGATOR_ROUTES = {
   home: { screen: ReportsNavigator },
   groups: { screen: WatchgroupsNavigator },
   households: { screen: HouseholdsNavigator },
-  account: { screen: AccountNavigator },
+  account: { screen: AccountNavigator }
 };
 
 
@@ -173,7 +173,9 @@ class AppRoutes extends React.Component {
         'proximanovasoft-bold': require('./assets/fonts/proximanovasoft-bold.ttf'),
         'proximanovasoft-semibold': require('./assets/fonts/proximanovasoft-semibold.ttf')
       });
-      this.setState({loadingFont: false});
+
+
+      this.setState({loadingFont: false})
   }
   render() {
     //if not connected to DPP, wait for connection

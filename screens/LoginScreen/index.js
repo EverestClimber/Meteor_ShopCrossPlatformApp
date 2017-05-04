@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, AsyncStorage, Platform } from 'react-native';
+import { Text, InteractionManager, View, AsyncStorage, Platform } from 'react-native';
 import LoginForm from '../../components/LoginForm'
 import LoadingScreen from '../../components/LoadingScreen'
 import { withApollo } from 'react-apollo';
@@ -21,15 +21,17 @@ class LoginScreen extends React.Component {
 
 	state = { stillLoading: true }
 
-	 async componentWillMount(){
+	 async componentDidMount(){
 		if (this.props.screenProps.data && this.props.screenProps.data.user) {
 			let onboardingComplete = await AsyncStorage.getItem('onboardingComplete');
 			if (onboardingComplete === 'true') {
+				console.log('onboarding true')
 				this.setState({ stillLoading: false  });
-				return this.props.navigation.navigate('main');
+				setTimeout(() => this.props.navigation.navigate('main')) 
 			} else {
+				console.log('onboarding false')
 				this.setState({ stillLoading: false  });
-				return this.props.navigation.navigate('welcome')
+				setTimeout(() => this.props.navigation.navigate('welcome')) 
 			}
 		}
 

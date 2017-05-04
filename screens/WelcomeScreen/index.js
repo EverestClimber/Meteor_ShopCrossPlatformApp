@@ -33,6 +33,9 @@ const SLIDE_DATA = [
 	},
 ];
 
+
+
+
 class WelcomeScreen extends React.Component {
 
 	state = { onboardingComplete: null }
@@ -42,23 +45,17 @@ class WelcomeScreen extends React.Component {
 		this.props.navigation.navigate('main');
 	}
 
-	/*async componentWillMount(){
-		//AsyncStorage.removeItem('onboardingComplete');
-		let onboardingComplete = await AsyncStorage.getItem('onboardingComplete');
-		if (onboardingComplete === 'true') {
-			this.props.navigation.navigate('main');
-			this.setState({ onboardingComplete: true });
-		} else {
-			this.setState({ onboardingComplete: false });
-		}
-		
-	}*/
 	componentDidMount(){
 		//analyticsHelpers.logPageView('user hit welcome page');
 	  }
 	render(){
 
-		if (_.isNull(this.state.onboardingComplete)) { return <AppLoading /> }
+		//if (_.isNull(this.state.onboardingComplete)) { return <AppLoading /> }
+
+		/*return (
+			<View style={{backgroundColor: 'blue', flex: 1}}>
+			</View>
+		);*/
 
 		return (
 			<Slides data={SLIDE_DATA} onSlidesComplete={this.onSlidesComplete} />
@@ -69,5 +66,7 @@ class WelcomeScreen extends React.Component {
 let mapStateToProps = (state) => {
 	return { onboardingComplete: state.auth.onboardingComplete }
 }
+
+//export default WelcomeScreen
 
 export default connect(mapStateToProps, actions)(WelcomeScreen);

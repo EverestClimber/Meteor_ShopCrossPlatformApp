@@ -21,7 +21,7 @@ class SignupScreen extends React.Component {
 
 	state = { stillLoading: true }
 
-	 async componentWillMount(){
+	 /*async componentWillMount(){
 		if (this.props.screenProps.data && this.props.screenProps.data.user) {
 			let onboardingComplete = await AsyncStorage.getItem('onboardingComplete');
 			if (onboardingComplete === 'true') {
@@ -34,11 +34,11 @@ class SignupScreen extends React.Component {
 		}
 
 		this.setState({ stillLoading: false  });
-	}
+	}*/
 	render(){
-		if (this.state.stillLoading) {
+		/*if (this.state.stillLoading) {
 			return <LoadingScreen loadingMessage={''} />;
-		}
+		}*/
 		return (
 			<View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
 				<SignupForm {...this.props} />
