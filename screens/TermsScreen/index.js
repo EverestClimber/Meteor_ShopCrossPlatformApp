@@ -7,7 +7,7 @@ import BackButton from '../../components/BackButton'
 import { stylesConfig, colorConfig, appConfig } from '../../modules/config';
 
 const { appName } = appConfig;
-const { screenBackgroundColor } = colorConfig;
+const { screenBackground } = colorConfig;
 const { boldFont, semiboldFont, regularFont, titleStyle, basicHeaderStyle } = stylesConfig;
 
 
@@ -222,7 +222,7 @@ class TermsScreen extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: screenBackgroundColor,
+    backgroundColor: screenBackground,
   },
   header: {
   	fontSize: 17,

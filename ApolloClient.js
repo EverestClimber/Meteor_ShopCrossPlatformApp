@@ -23,7 +23,7 @@ setTokenStore({
 
 
 
-const LIVE_URL = 'https://spacebug.meteorapp.com/graphql';
+const LIVE_URL = 'https://pvsafe-apollo.meteorapp.com/graphql';
 const DEV_URL = 'http://localhost:3000/graphql';
 //set network options
 //create networkInterface

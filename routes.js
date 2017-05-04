@@ -6,7 +6,6 @@ import { TabNavigator, StackNavigator } from 'react-navigation';
 import { colorConfig } from './modules/config';
 //
 import { graphql } from 'react-apollo';
-import gql from 'graphql-tag';
 //SCREENS
 import WelcomeScreen from './screens/WelcomeScreen';
 import LoginScreen from './screens/LoginScreen';
@@ -15,10 +14,19 @@ import PrivacyPolicyScreen from './screens/PrivacyPolicyScreen';
 import TermsScreen from './screens/TermsScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import HelpScreen from './screens/HelpScreen';
-import HomeScreen from './screens/HomeScreen';
-import DocumentsScreen from './screens/DocumentsScreen';
+import ReportsScreen from './screens/ReportsScreen';
+//import DocumentsScreen from './screens/DocumentsScreen';
 import DetailScreen from './screens/DetailScreen';
-import AddDocument from './screens/AddDocument';
+//import AddDocument from './screens/AddDocument';
+import AddReport from './screens/AddReport';
+import ReportDetail from './screens/ReportDetail';
+import AccountScreen from './screens/AccountScreen';
+import WatchgroupsScreen from './screens/WatchgroupsScreen';
+import HouseholdsScreen from './screens/HouseholdsScreen';
+import AddHousehold from './screens/AddHousehold';
+
+//
+import { GET_USER_DATA } from './apollo/queries'
 
 
 
@@ -26,9 +34,39 @@ import AddDocument from './screens/AddDocument';
 
 
 
-// FavoritesNavigator
+// HomeNavigator
 // =================================
-const SettingsNavigator = StackNavigator({
+const ReportsNavigator = StackNavigator({
+  home: {  screen: ReportsScreen },
+  addReport: {  screen: AddReport },
+  reportDetail: {  screen: ReportDetail },
+  
+},{
+  tabBarLabel: 'Home',
+});
+
+
+// HouseholdsNavigator
+// =================================
+const HouseholdsNavigator = StackNavigator({
+  households: {  screen: HouseholdsScreen },
+  addHousehold: {  screen: AddHousehold },
+},{
+  tabBarLabel: 'Households',
+});
+
+// DocumentsNavigator
+// =================================
+const WatchgroupsNavigator = StackNavigator({
+  watchgroups: {  screen: WatchgroupsScreen },
+  watchgroupDetail: {  screen: DetailScreen },
+  //addDoc: {  screen: AddDocument },
+},{
+  tabBarLabel: 'Home',
+});
+
+const AccountNavigator = StackNavigator({
+  account: {  screen: AccountScreen },
   settings: { screen: SettingsScreen },
   terms: { screen: TermsScreen },
   privacy: { screen: PrivacyPolicyScreen },
@@ -36,23 +74,6 @@ const SettingsNavigator = StackNavigator({
 });
 
 
-// HomeNavigator
-// =================================
-const HomeNavigator = StackNavigator({
-  home: {  screen: HomeScreen },
-},{
-  tabBarLabel: 'Home',
-});
-
-// DocumentsNavigator
-// =================================
-const DocumentsNavigator = StackNavigator({
-  documents: {  screen: DocumentsScreen },
-  document: {  screen: DetailScreen },
-  addDoc: {  screen: AddDocument },
-},{
-  tabBarLabel: 'Home',
-});
 
 
 // AppNavigator
@@ -74,10 +95,13 @@ const APP_NAVIGATOR_OPTIONS = {
 };
 
 const APP_NAVIGATOR_ROUTES = {
-  home: { screen: HomeNavigator },
-  documents: { screen: DocumentsNavigator },
-  settings: { screen: SettingsNavigator },
+  home: { screen: ReportsNavigator },
+  groups: { screen: WatchgroupsNavigator },
+  households: { screen: HouseholdsNavigator },
+  account: { screen: AccountNavigator },
 };
+
+
 
 const AppNavigator = TabNavigator(APP_NAVIGATOR_ROUTES, APP_NAVIGATOR_OPTIONS);
 
@@ -177,14 +201,5 @@ const styles = StyleSheet.create({
   },
 });
 
-const GET_USER_DATA = gql`
-  query getCurrentUser {
-    user {
-      emails { address, verified },
-      roles,
-      _id
-    }
-  }
-`;
 
 export default graphql(GET_USER_DATA)(AppRoutes);

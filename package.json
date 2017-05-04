@@ -1,11 +1,12 @@
 {
-  "name": "reactjs-jobs",
+  "name": "pvsafe-apollo",
   "version": "0.0.0",
-  "description": "Hello Expo!",
+  "description": "Apollo/GraphQL version of PV-SAFE",
   "author": null,
   "private": true,
   "main": "main.js",
   "dependencies": {
+    "antd-mobile": "^1.1.1",
     "apollo-client": "^1.1.1",
     "expo": "16.0.0",
     "graphql-tag": "^2.0.0",
@@ -22,5 +23,8 @@
     "redux-form": "^6.6.3",
     "redux-persist": "^4.6.0",
     "redux-thunk": "^2.2.0"
+  },
+  "devDependencies": {
+    "babel-plugin-import": "^1.1.1"
   }
 }

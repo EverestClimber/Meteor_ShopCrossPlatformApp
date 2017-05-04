@@ -7,7 +7,6 @@ import BackButton from '../../components/BackButton'
 import { stylesConfig, colorConfig, appConfig } from '../../modules/config';
 
 const { appName, supportEmail } = appConfig;
-const { screenBackgroundColor } = colorConfig;
 const { boldFont, semiboldFont, regularFont, titleStyle, basicHeaderStyle } = stylesConfig;
 
 const CollectionOfYourInformation = () => {
@@ -205,7 +204,7 @@ class PrivacyPolicyScreen extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: screenBackgroundColor,
+    backgroundColor: colorConfig.screenBackground,
   },
   header: {
   	fontSize: 17,

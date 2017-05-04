@@ -10,7 +10,6 @@ import BackButton from '../../components/BackButton'
 
 
 const { appName, supportEmail } = appConfig;
-const { screenBackgroundColor } = colorConfig;
 const { boldFont, semiboldFont, regularFont, titleStyle, basicHeaderStyle } = stylesConfig;
 
 class HelpScreen extends React.Component {
@@ -35,7 +34,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: Dimensions.get('window').width,
-    backgroundColor: screenBackgroundColor,
+    backgroundColor: colorConfig.screenBackground,
     alignItems: 'center',
     justifyContent: 'center',
   },

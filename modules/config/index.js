@@ -6,29 +6,11 @@ let regularFont = Platform.OS === 'android' ? 'proximanovasoft-regular' : 'proxi
 let semiboldFont = Platform.OS === 'android' ? 'proximanovasoft-semibold' : 'proximanovasoft-semibold';
 let boldFont = Platform.OS === 'android' ? 'proximanovasoft-bold' : 'proximanovasoft-bold';
 
-//setup stylesConfig to be used throughout app
-export const stylesConfig =  {
-    titleStyle:{
-        fontFamily: boldFont,
-        fontSize: 20
-    },
-    basicHeaderStyle: {
-        
-        backgroundColor: '#fff',
-    },
-    regularFont,
-    semiboldFont,
-    boldFont,
-}
 
 
-
-export const appConfig =  {
-    appName:'GrowLab',
-    supportEmail: 'support@growlab.io'
-}
 
 export const colorConfig =  {
+    screenBackground: '#f5f5f5',
     primary: '#34495e',
     accent: '#5fcf80',
     'finance':'#2c9676',
@@ -42,4 +24,26 @@ export const colorConfig =  {
     //basic theme colors
     'lightGrey': '#d3d3d3',
     'darkGrey': '#666'
+}
+
+//setup stylesConfig to be used throughout app
+export const stylesConfig =  {
+    titleStyle:{
+        fontFamily: boldFont,
+        fontSize: 20,
+        color: '#fff'
+    },
+    basicHeaderStyle: {
+        backgroundColor: colorConfig.business, //'#fff',
+    },
+    regularFont,
+    semiboldFont,
+    boldFont,
+}
+
+
+
+export const appConfig =  {
+    appName:'GrowLab',
+    supportEmail: 'support@growlab.io'
 }

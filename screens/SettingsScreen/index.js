@@ -1,11 +1,12 @@
 import React from 'react';
-import { View, Text, AsyncStorage, ScrollView, StyleSheet, Platform } from 'react-native';
+import { View, Text, AsyncStorage, ScrollView, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { Icon, Button, Card } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { AppLoading } from 'expo';
 import * as actions from '../../actions';
 //MODULES
 import { stylesConfig, colorConfig } from '../../modules/config';
+import BackButton from '../../components/BackButton';
 
 //
 // ========================================
@@ -33,12 +34,12 @@ const LegalSettings = ({navigation}) => {
 			<View style={{marginBottom: 15, flex: 1}}>
 				<Text style={styles.headerStyle}>Legal</Text>
 				<Card>
-					{/*<Button onPress={()=>navigation.navigate('terms')} transparent>*/}
-						<Text style={styles.linkText}>TERMS & CONDITIONS</Text>
-					{/*</Button>*/}
-					{/*<Button onPress={()=>navigation.navigate('privacy')} transparent>*/}
-						<Text style={styles.linkText}>PRIVACY POLICY</Text>
-					{/*</Button>*/}
+					<TouchableOpacity onPress={()=>navigation.navigate('terms')}>
+		            	<Text style={styles.linkText}>TERMS & CONDITIONS</Text>
+		            </TouchableOpacity>
+					<TouchableOpacity onPress={()=>navigation.navigate('privacy')}>
+		            	<Text style={styles.linkText}>PRIVACY POLICY</Text>
+		            </TouchableOpacity>
 				</Card>
 			</View>
 	);
@@ -64,14 +65,15 @@ const ContactUs = ({ navigation }) => {
 }
 
 class SettingsScreen extends React.Component {
-	static navigationOptions = {
+	static navigationOptions = ({ navigation, screenProps }) => ({
 		title: 'Settings',
 		tabBarIcon: ({ tintColor }) => <Icon name="settings" size={30} color={tintColor} />,
 	  	headerTitleStyle: titleStyle,
 	  	headerVisible: Platform.OS !== 'android',
 	  	tabBarLabel: 'Settings',
-	  	headerStyle: basicHeaderStyle
-	}
+	  	headerStyle: basicHeaderStyle,
+	  	headerLeft: <BackButton goBack={navigation.goBack} label='' />,
+	});
 	render(){
 		return (
 			<ScrollView style={{padding: 10, backgroundColor: '#f5f5f5'}}>
