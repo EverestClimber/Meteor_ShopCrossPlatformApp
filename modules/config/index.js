@@ -7,6 +7,11 @@ let semiboldFont = Platform.OS === 'android' ? 'proximanovasoft-semibold' : 'pro
 let boldFont = Platform.OS === 'android' ? 'proximanovasoft-bold' : 'proximanovasoft-bold';
 
 
+export const DEFAULT_HOUSEHOLD_IMAGE = 'http://icons.iconarchive.com/icons/paomedia/small-n-flat/1024/house-icon.png'
+
+export const DEFAULT_AVATAR = 'https://www.mautic.org/media/images/default_avatar.png'
+
+export const DEFAULT_MAP_IMAGE = 'https://upload.wikimedia.org/wikipedia/en/thumb/5/56/Google_maps_screenshot.png/300px-Google_maps_screenshot.png'
 
 
 export const colorConfig =  {

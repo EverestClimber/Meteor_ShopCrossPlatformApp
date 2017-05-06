@@ -7,7 +7,11 @@ import { userId } from 'meteor-apollo-accounts'
 import { Button, Icon } from 'react-native-elements'
 import { colorConfig, stylesConfig } from '../../modules/config';
 
+
 const { basicHeaderStyle, titleStyle } = stylesConfig;
+
+
+
 
 class SignupScreen extends React.Component {
 	 static navigationOptions = {

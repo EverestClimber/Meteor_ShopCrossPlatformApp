@@ -10,7 +10,7 @@ import LoadingScreen from './LoadingScreen'
 //MODULES
 import { colorConfig } from '../modules/config';
 import { graphql, withApollo } from 'react-apollo';
-import { ADD_REPORT } from '../apollo/mutations'
+import { CREATE_REPORT } from '../apollo/mutations'
 import { List, Radio, InputItem, SegmentedControl, TextareaItem, WhiteSpace, Button } from 'antd-mobile';
 const RadioItem = Radio.RadioItem;
 
@@ -197,6 +197,6 @@ const styles = StyleSheet.create({
 
 
 
-export default graphql(ADD_REPORT)(
+export default graphql(CREATE_REPORT)(
   reduxForm({form: 'AddReportForm'})(AddReportForm)
 );

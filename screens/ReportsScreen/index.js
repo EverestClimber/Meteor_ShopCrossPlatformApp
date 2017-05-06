@@ -6,11 +6,12 @@ import { userId } from 'meteor-apollo-accounts'
 import { FETCH_MESSAGES } from '../../apollo/queries';
 import { graphql } from 'react-apollo';
 //import { ListView } from 'antd-mobile'
-
+import LoadingScreen from '../../components/LoadingScreen';
 const { basicHeaderStyle, titleStyle, regularFont } = stylesConfig;
 
+import ReportCard from '../../components/ReportCard';
 
-const MessageItem = ({ item, navigation }) => {
+/*const MessageItem = ({ item, navigation }) => {
 	return (
 		<Card title={item.messageValue} >
 			<TouchableOpacity onPress={()=>navigation.navigate('reportDetail', { _id: item._id})}>
@@ -18,7 +19,7 @@ const MessageItem = ({ item, navigation }) => {
             </TouchableOpacity>
 		</Card>
 	);
-}
+}*/
 
 
 class ReportsList extends React.Component {
@@ -40,7 +41,7 @@ class ReportsList extends React.Component {
 		return (
 			<ListView
 		        dataSource={this.state.dataSource}
-		        renderRow={(rowData) => <MessageItem item={rowData} navigation={this.props.navigation} />}
+		        renderRow={(rowData) => <ReportCard item={rowData} navigation={this.props.navigation} />}
 		        refreshControl={
 		          <RefreshControl
 		            refreshing={this.state.refreshing}
@@ -66,13 +67,7 @@ class ReportsScreen extends React.Component {
 	
 	render(){
 		if (this.props.data.loading) {
-			return (
-				<View style={{flex: 1, padding: 10, backgroundColor: '#f5f5f5',}}>
-					<Text>
-						Loading...
-					</Text>
-				</View>
-			);
+			return <LoadingScreen loadingMessage='loading reports...' />
 		}
 		return (
 			<ReportsList

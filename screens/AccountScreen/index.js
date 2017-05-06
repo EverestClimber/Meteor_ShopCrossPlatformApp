@@ -4,6 +4,8 @@ import { Icon, Card } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { AppLoading } from 'expo';
 import * as actions from '../../actions';
+import ProfileAvatar from '../../components/ProfileAvatar';
+
 //MODULES
 import { stylesConfig, colorConfig } from '../../modules/config';
 //
@@ -27,8 +29,7 @@ class AccountScreen extends React.Component {
 	render(){
 		return (
 			<ScrollView style={{padding: 10, backgroundColor: '#f5f5f5'}}>
-				<View>
-				</View>
+				<ProfileAvatar {...this.props} />
 			</ScrollView>
 		);
 	}

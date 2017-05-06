@@ -15,15 +15,15 @@ import TermsScreen from './screens/TermsScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import HelpScreen from './screens/HelpScreen';
 import ReportsScreen from './screens/ReportsScreen';
-//import DocumentsScreen from './screens/DocumentsScreen';
-import DetailScreen from './screens/DetailScreen';
-//import AddDocument from './screens/AddDocument';
 import AddReport from './screens/AddReport';
 import ReportDetail from './screens/ReportDetail';
 import AccountScreen from './screens/AccountScreen';
 import WatchgroupsScreen from './screens/WatchgroupsScreen';
 import HouseholdsScreen from './screens/HouseholdsScreen';
 import AddHousehold from './screens/AddHousehold';
+import WatchgroupDetail from './screens/WatchgroupDetail';
+import NeighborsScreen from './screens/Neighbors';
+import NeighborDetail from './screens/NeighborDetail';
 
 //
 import { GET_USER_DATA } from './apollo/queries'
@@ -32,6 +32,14 @@ import { GET_USER_DATA } from './apollo/queries'
 
 
 
+// NeighborsNavigator
+// =================================
+const NeighborsNavigator = StackNavigator({
+  neighbors: {  screen: NeighborsScreen },
+  neighborDetail: { screen: NeighborDetail }
+},{
+  tabBarLabel: 'Neighbors',
+});
 
 
 // HomeNavigator
@@ -40,7 +48,8 @@ const ReportsNavigator = StackNavigator({
   home: {  screen: ReportsScreen },
   addReport: {  screen: AddReport },
   reportDetail: {  screen: ReportDetail },
-  
+  neighborDetail: { screen: NeighborDetail },
+  watchgroupDetail: {  screen: WatchgroupDetail },
 },{
   tabBarLabel: 'Home',
 });
@@ -55,12 +64,13 @@ const HouseholdsNavigator = StackNavigator({
   tabBarLabel: 'Households',
 });
 
-// DocumentsNavigator
+// WatchgroupsNavigator
 // =================================
 const WatchgroupsNavigator = StackNavigator({
   watchgroups: {  screen: WatchgroupsScreen },
-  watchgroupDetail: {  screen: DetailScreen },
-  //addDoc: {  screen: AddDocument },
+  watchgroupDetail: {  screen: WatchgroupDetail },
+  reportDetail: {  screen: ReportDetail },
+  neighborDetail: { screen: NeighborDetail },
 },{
   tabBarLabel: 'Home',
 });
@@ -80,6 +90,7 @@ const AccountNavigator = StackNavigator({
 // =================================
 const APP_NAVIGATOR_OPTIONS = {
   swipeEnabled: false,
+  lazyLoad: true,
   tabBarOptions: {
     activeTintColor: colorConfig.business,
     inactiveTintColor: colorConfig.lightGrey,
@@ -98,6 +109,7 @@ const APP_NAVIGATOR_ROUTES = {
   home: { screen: ReportsNavigator },
   groups: { screen: WatchgroupsNavigator },
   households: { screen: HouseholdsNavigator },
+  neighbors: { screen: NeighborsNavigator },
   account: { screen: AccountNavigator }
 };
 

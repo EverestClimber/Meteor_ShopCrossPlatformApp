@@ -6,9 +6,10 @@ import { graphql } from 'react-apollo'
 import { AppLoading } from 'expo';
 import * as actions from '../../actions';
 //MODULES
-import { FETCH_WATCHGROUPS } from '../../apollo/queries';
+import { FETCH_NEIGHBORS } from '../../apollo/queries';
 import { stylesConfig, colorConfig } from '../../modules/config';
 import LoadingScreen from '../../components/LoadingScreen';
+import NeighborCard from '../../components/NeighborCard';
 
 //
 // ========================================
@@ -79,24 +80,23 @@ const WatchgroupCard = ({item, navigation}) => {
 	);
 }
 
-class WatchgroupsScreen extends React.Component {
+class NeighborsScreen extends React.Component {
 	static navigationOptions = {
-		title: 'Groups',
+		title: 'Neighbors',
 		tabBarIcon: ({ tintColor }) => <Icon name="group" size={30} color={tintColor} />,
 	  	headerTitleStyle: titleStyle,
 	  	headerVisible: Platform.OS !== 'android',
-	  	tabBarLabel: 'Groups',
+	  	tabBarLabel: 'Neighbors',
 	  	headerStyle: basicHeaderStyle
 	}
 	render(){
 		if (this.props.data.loading) {
-			return <LoadingScreen loadingMessage='loading watchgroups...' />
+			return <LoadingScreen loadingMessage='loading neighbors...' />
 		}
-		console.log(this.props.data.watchgroups)
 		return (
 			<ScrollView style={{padding: 10, backgroundColor: colorConfig.screenBackground}}>
-				{this.props.data.watchgroups.map(item => {
-					return <WatchgroupCard navigation={this.props.navigation} key={item._id} item={item} />;
+				{this.props.data.neighbors.map(item => {
+					return <NeighborCard navigation={this.props.navigation} key={item._id} item={item} />;
 				})}
 			</ScrollView>
 		);
@@ -106,6 +106,6 @@ class WatchgroupsScreen extends React.Component {
 
 
 
-export default graphql(FETCH_WATCHGROUPS)(
-	connect(null, actions)(WatchgroupsScreen)
+export default graphql(FETCH_NEIGHBORS)(
+	connect(null, actions)(NeighborsScreen)
 );

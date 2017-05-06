@@ -9,6 +9,18 @@ import { reduxForm, Field } from 'redux-form'
 import LoadingScreen from './LoadingScreen'
 //MODULES
 import { colorConfig, stylesConfig } from '../modules/config';
+import { createUser } from 'meteor-apollo-accounts'
+import apollo from '../ApolloClient.js';
+
+
+const handleSignup = (email, password, profile) => {
+
+  createUser({email, password, profile}, apollo)
+    .then(userId => apollo.resetStore() )
+    .catch( res => console.log(res) );
+
+};
+
 
 const { basicHeaderStyle, titleStyle } = stylesConfig;
 
@@ -34,33 +46,40 @@ class Login extends React.Component {
       headerStyle: basicHeaderStyle
   };
 
-  onSubmit = (values) => {
-    let _this = this
-    _this.setState({loading: true});
-    _this.props.submitLoginForm(values, () => {
-      _this.setState({loading: false});
-      _this.props.navigation.navigate('main');
-    });
+  onSubmit = ({ firstName, lastName, cell, email, password, }) => {
+    
+    this.setState({loading: true});
+    
+    let profile = { firstName, lastName, cell }
+    
+    createUser({ email, password, profile }, apollo)
+      .then(userId => {
+        apollo.resetStore();
+        this.setState({loading: false});
+        this.props.navigation.navigate('main');
+      })
+      .catch( res => console.log(res) );
   }
   render(){
     const { handleSubmit } = this.props;
 
-    if(this.state.loading) {
-       return (
-          <LoadingScreen loadingMessage={'Logging in...'} />
-      );
+    if (this.state.loading) {
+       return <LoadingScreen loadingMessage={'Logging in...'} />;
     }
+
 
     return (
       <View>
-        <Text style={styles.labelStyle}>Name:</Text>
-        <Field name="name" component={renderTextInput} />
+        <Text style={styles.labelStyle}>First Name:</Text>
+        <Field name="firstName" component={renderTextInput} />
+        <Text style={styles.labelStyle}>Last Name:</Text>
+        <Field name="lastName" component={renderTextInput} />
+        <Text style={styles.labelStyle}>Cellphone:</Text>
+        <Field name="cell" component={renderTextInput} />
         <Text style={styles.labelStyle}>Email:</Text>
         <Field name="email" component={renderTextInput} />
         <Text style={styles.labelStyle}>Password:</Text>
         <Field name="password" component={renderTextInput} />
-        <Text style={styles.labelStyle}>Check Password:</Text>
-        <Field name="password" component={renderTextInput} secureTextEntry />
         <Button 
           title='SIGN UP'
           backgroundColor={colorConfig.business} 

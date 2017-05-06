@@ -1,16 +1,98 @@
 import gql from 'graphql-tag';
 
 
-// MESSAGE QUERIES
-// ============================
-export const FETCH_MESSAGES = gql`
+
+export const FETCH_WATCHGROUPS = gql`
   query fetchWatchgroups {
-    messages {
+    watchgroups {
       _id
-      messageValue
+      title
+      color_id
     }
   }
 `;
+
+
+
+// MESSAGE QUERIES
+// ============================
+export const FETCH_MESSAGES = gql`
+  query fetchMessages {
+    messages {
+      _id
+      messageValue
+      reportType
+      priorityLevel
+      image
+      watchgroup {
+        _id
+        title
+        color_id
+      }
+      owner {
+        _id
+        profile {
+          firstName
+          lastName
+          image
+        }
+      }
+    }
+  }
+`;
+
+export const FETCH_WATCHGROUP = gql`
+  query fetchWatchgroup($_id: ID!) {
+    watchgroupById(_id:$_id) {
+      _id
+      title
+      color_id
+      members {
+        _id
+        profile {
+          firstName
+          lastName
+          image
+        }
+      }
+      messages {
+        _id
+        messageValue
+        reportType
+        priorityLevel
+        image
+        watchgroup {
+          _id
+          title
+          color_id
+        }
+        owner {
+          _id
+          profile {
+            firstName
+            lastName
+            image
+          }
+        }
+      }
+    }
+  }
+`;
+
+
+export const FETCH_USER_BY_ID = gql`
+  query FetchUserById ($_id:ID!){
+      getUserById(_id:$_id) {
+        _id
+        profile {
+          firstName
+          lastName
+          image
+        }
+      }
+    }
+`;
+
 
 export const FETCH_MESSAGE = gql`
   query getMessageById ($_id: ID!){
@@ -18,6 +100,19 @@ export const FETCH_MESSAGE = gql`
         messageValue,
         _id
       }
+  }
+`;
+
+export const FETCH_NEIGHBORS = gql`
+  query FetchNeighbors {
+    neighbors {
+      _id
+      profile {
+        firstName
+        lastName
+        image
+      }
+    }
   }
 `;
 
@@ -31,6 +126,12 @@ export const GET_USER_DATA = gql`
       _id,
       profile {
         watchgroupIds
+        firstName
+        lastName
+        cell
+        cellVisibility
+        gender
+        image
       }
     }
   }
