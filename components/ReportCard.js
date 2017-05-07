@@ -39,13 +39,17 @@ const styles = StyleSheet.create({
 const ReportCardTop = ({ item, navigation }) => {
 	return (
 		<Flex align='start' style={{marginBottom: 20}}>
+			
 			<Flex.Item style={{flex: 3}}>
-				<Text style={styles.cardHeader}>{item.reportType}</Text>
-				<Text style={styles.cardSubHeader}>{getPriorityLevel(item.priorityLevel)}</Text>
-				<View style={{marginTop: 20}}>
-					<Text style={styles.messageValue}>{item.messageValue}</Text>
-				</View>
+					<TouchableOpacity onPress={()=>navigation.navigate('reportDetail', { _id: item._id })}>
+					<Text style={styles.cardHeader}>{item.reportType}</Text>
+					<Text style={styles.cardSubHeader}>{getPriorityLevel(item.priorityLevel)}</Text>
+					<View style={{marginTop: 20}}>
+						<Text style={styles.messageValue}>{item.messageValue}</Text>
+					</View>
+				</TouchableOpacity> 
 			</Flex.Item>
+			
 			<Flex.Item>
 				<TouchableOpacity 
 					onPress={()=>navigation.navigate('neighborDetail', { _id: item.owner._id, firstName: item.owner.profile.firstName})}

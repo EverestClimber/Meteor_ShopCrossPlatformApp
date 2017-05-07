@@ -13,6 +13,30 @@ export const FETCH_WATCHGROUPS = gql`
 `;
 
 
+// FETCH_HOUSEHOLDS
+// ============================
+export const FETCH_HOUSEHOLDS = gql`
+  query FetchHouseholds {
+    households {
+      _id
+      title
+      image
+      location {
+        street
+      }
+    }
+  }
+`;
+
+
+export const FETCH_HOUSEHOLD = gql`
+  query GetHouseholdById ($_id:ID!){
+    getHouseholdById(_id:$_id) {
+      _id
+      title
+    }
+  }
+`;
 
 // MESSAGE QUERIES
 // ============================
@@ -97,8 +121,22 @@ export const FETCH_USER_BY_ID = gql`
 export const FETCH_MESSAGE = gql`
   query getMessageById ($_id: ID!){
     getMessageById(_id: $_id) {
-        messageValue,
-        _id
+        messageValue
+        reportType
+        priorityLevel
+        image
+        owner {
+          _id
+          profile {
+            firstName
+            lastName
+            image
+          }
+        }
+        location {
+          lat
+          lng
+        }
       }
   }
 `;

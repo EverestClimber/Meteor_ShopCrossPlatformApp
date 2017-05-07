@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Button, TextInput, TouchableOpacity, StyleSheet, Platform, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform, ActivityIndicator } from 'react-native';
 //REDUX
 import { connect } from 'react-redux';
 import * as actions from '../actions';
@@ -7,8 +7,8 @@ import { reduxForm, Field } from 'redux-form'
 //COMPONENTS
 import LoadingScreen from './LoadingScreen'
 //MODULES
-import { colorConfig } from '../modules/config';
-
+import { colorConfig, stylesConfig } from '../modules/config';
+import { Icon, Button, Card } from 'react-native-elements';
 
 const renderTextInput = ({ input, ...inputProps }) => {
   return (
@@ -55,7 +55,16 @@ class ContactUs extends React.Component {
         <Field name="email" component={renderTextInput} />
         <Text style={styles.labelStyle}>Message:</Text>
         <Field name="message" component={renderTextArea} />
-        <Button title='SEND MESSAGE' onPress={handleSubmit(this.onSubmit)} style={{backgroundColor: colorConfig.business, marginTop: 10,}} />
+        <Button 
+              title='SEND MESSAGE'
+              backgroundColor={colorConfig.business} 
+              onPress={handleSubmit(this.onSubmit)}
+              style={{marginTop: 10}} 
+            />
+        {/*<Button onPress={handleSubmit(this.onSubmit)} transparent>
+          <Text style={styles.linkText}>SEND MESSAGE</Text>
+        </Button>*/}
+        {/*<Button title='SEND MESSAGE' onPress={handleSubmit(this.onSubmit)} style={{backgroundColor: colorConfig.business, marginTop: 10,}} />*/}
       </View>
     )
   }
@@ -68,6 +77,11 @@ const styles = StyleSheet.create({
     color: '#666',
     textAlign: 'left',
     fontSize: 15,
+  },
+  linkText: {
+    color: colorConfig.business,
+  fontSize: 15,
+  fontFamily: stylesConfig.boldFont,
   },
   buttonText: {
     fontFamily: 'proximanovasoft-bold',

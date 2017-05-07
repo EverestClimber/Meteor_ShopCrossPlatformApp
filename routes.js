@@ -90,7 +90,7 @@ const AccountNavigator = StackNavigator({
 // =================================
 const APP_NAVIGATOR_OPTIONS = {
   swipeEnabled: false,
-  lazyLoad: true,
+  lazy: true,
   tabBarOptions: {
     activeTintColor: colorConfig.business,
     inactiveTintColor: colorConfig.lightGrey,
@@ -122,7 +122,7 @@ const AppNavigator = TabNavigator(APP_NAVIGATOR_ROUTES, APP_NAVIGATOR_OPTIONS);
 // =================================
 
 const AUTH_NAVIGATOR_OPTIONS = {
-  lazyLoad: true,
+  lazy: true,
   swipeEnabled: false,
   tabBarOptions: {
     activeTintColor: colorConfig.business,
@@ -149,7 +149,7 @@ const AuthScreen = TabNavigator(AUTH_NAVIGATOR_ROUTES, APP_NAVIGATOR_OPTIONS);
 // =================================
 
 const MAIN_NAVIGATOR_OPTIONS = {
-  lazyLoad: true,
+  lazy: true,
   swipeEnabled: false,
   navigationOptions: {
     tabBarVisible: false,

@@ -1,20 +1,23 @@
 import React from 'react';
-import { View, ScrollView, Text, Platform, Button, TouchableOpacity } from 'react-native';
+import { View, ScrollView, Text, Platform, Image, Button, TouchableOpacity } from 'react-native';
 import { Icon, Card } from 'react-native-elements';
-import { stylesConfig, colorConfig } from '../../modules/config';
+import { stylesConfig, colorConfig, DEFAULT_HOUSEHOLD_IMAGE } from '../../modules/config';
 import { userId } from 'meteor-apollo-accounts'
-import { FETCH_MESSAGES } from '../../apollo/queries';
+import { FETCH_HOUSEHOLDS } from '../../apollo/queries';
 import { graphql } from 'react-apollo';
-
+import LoadingScreen from '../../components/LoadingScreen';
 
 const { basicHeaderStyle, titleStyle, regularFont } = stylesConfig;
 
 
-const MessageItem = ({ item, navigation }) => {
+const HouseholdCard = ({ item, navigation }) => {
 	return (
-		<Card title={item.messageValue} >
-			<TouchableOpacity onPress={()=>navigation.navigate('reportDetail', { _id: item._id})}>
-            	<Text style={{color: '#888', fontSize: 10}}>{item.messageValue}</Text>
+		<Card title={item.title} >
+			<TouchableOpacity onPress={()=>navigation.navigate('householdDetail', { _id: item._id})}>
+				<Image 
+					source={{ uri: item.image || DEFAULT_HOUSEHOLD_IMAGE }} 
+					style={{height: 65, width: 60}}
+				/>
             </TouchableOpacity>
 		</Card>
 	);
@@ -33,20 +36,18 @@ class HouseholdsScreen extends React.Component {
 	render(){
 		if (this.props.data.loading) {
 			return (
-				<View style={{flex: 1, padding: 10, backgroundColor: '#f5f5f5',}}>
-					<Text>
-						Loading...
-					</Text>
-				</View>
+				<LoadingScreen />
 			);
 		}
+
 		return (
 			<ScrollView style={{flex: 1, padding: 10, backgroundColor: colorConfig.screenBackground}}>
-				{/*this.props.data.messages.map( item => <MessageItem key={item._id} item={item} navigation={this.props.navigation} />)*/}
+				{this.props.data.households.map( item => <HouseholdCard key={item._id} item={item} navigation={this.props.navigation} />)}
 			</ScrollView>
 		);
 	}
 }
 
 
-export default graphql(FETCH_MESSAGES)(HouseholdsScreen)
+export default graphql(FETCH_HOUSEHOLDS)(HouseholdsScreen);
+

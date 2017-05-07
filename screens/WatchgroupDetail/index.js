@@ -50,7 +50,7 @@ class WatchgroupDetail extends React.Component {
 		}
 
 		return (
-			<ScrollView>
+			<ScrollView style={{padding: 10, backgroundColor: colorConfig.screenBackground}}>
 				<Tabs defaultActiveKey="1"
 					textColor={colorConfig.darkGrey}
 					activeTextColor={colorConfig.business}

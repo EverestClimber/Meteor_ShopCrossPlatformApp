@@ -75,7 +75,7 @@ class ProfileAvatar extends React.Component {
       <View>
         <TouchableOpacity onPress={this.onImageClick}>
           <View style={{borderColor: '#d6d7da', borderRadius: 4, borderWidth: 0.5}}>
-            {!this.state.image && !user.profile.image && <Text style={{textAlign: 'center'}}>Upload</Text>}
+            {!this.state.image && !user && !user.profile && !user.profile.image && <Text style={{textAlign: 'center'}}>Upload</Text>}
             {this.renderProfileImage()}
           </View>
         </TouchableOpacity>

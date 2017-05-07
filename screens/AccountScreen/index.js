@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { AppLoading } from 'expo';
 import * as actions from '../../actions';
 import ProfileAvatar from '../../components/ProfileAvatar';
+import LoadingScreen from '../../components/LoadingScreen';
 
 //MODULES
 import { stylesConfig, colorConfig } from '../../modules/config';
@@ -27,6 +28,18 @@ class AccountScreen extends React.Component {
 	  	headerRight: <Button style={{fontFamily: regularFont, fontSize: 10}} title={'Settings'} color={'#fff'} onPress={()=>navigation.navigate('settings')} />,
 	});
 	render(){
+
+		if (this.props.screenProps.data.loading) {
+			return (
+				<LoadingScreen />
+			);
+		}
+		if (!this.props.screenProps.data|| !this.props.screenProps.data.user) {
+			return (
+				<ScrollView style={{padding: 10, backgroundColor: '#f5f5f5'}}>
+				</ScrollView>
+			);
+		}
 		return (
 			<ScrollView style={{padding: 10, backgroundColor: '#f5f5f5'}}>
 				<ProfileAvatar {...this.props} />

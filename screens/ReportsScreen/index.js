@@ -40,6 +40,7 @@ class ReportsList extends React.Component {
 	render(){
 		return (
 			<ListView
+				style={{padding: 10, backgroundColor: colorConfig.screenBackground}}
 		        dataSource={this.state.dataSource}
 		        renderRow={(rowData) => <ReportCard item={rowData} navigation={this.props.navigation} />}
 		        refreshControl={

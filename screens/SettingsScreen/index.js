@@ -7,7 +7,8 @@ import * as actions from '../../actions';
 //MODULES
 import { stylesConfig, colorConfig } from '../../modules/config';
 import BackButton from '../../components/BackButton';
-
+import ApolloClient from '../../ApolloClient';
+import { logout } from 'meteor-apollo-accounts'
 //
 // ========================================
 const { boldFont, semiboldFont, regularFont, titleStyle, basicHeaderStyle } = stylesConfig;
@@ -74,6 +75,12 @@ class SettingsScreen extends React.Component {
 	  	headerStyle: basicHeaderStyle,
 	  	headerLeft: <BackButton goBack={navigation.goBack} label='' />,
 	});
+	handleLogout = () => {
+		logout(ApolloClient).then( res => {
+			this.props.navigation.navigate('login')
+			ApolloClient.resetStore();
+		});
+	}
 	render(){
 		return (
 			<ScrollView style={{padding: 10, backgroundColor: '#f5f5f5'}}>
@@ -84,7 +91,7 @@ class SettingsScreen extends React.Component {
 					<Button 
 			          title='LOG OUT'
 			          backgroundColor={colorConfig.business} 
-			          onPress={()=>this.props.handleLogout( () => this.props.navigation.navigate('login'))}
+			          onPress={this.handleLogout}
 			          style={{marginTop: 10}} 
 			        />
 				</View>
@@ -97,7 +104,7 @@ class SettingsScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colorConfig.screenBackground,
     alignItems: 'center',
     justifyContent: 'flex-start',
   },
