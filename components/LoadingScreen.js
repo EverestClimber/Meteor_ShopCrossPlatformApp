@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 //MODULES
-import { colorConfig } from '../modules/config';
+import { colorConfig, stylesConfig } from '../modules/config';
 
 
 
@@ -21,8 +21,14 @@ class LoadingScreen extends React.Component {
 
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colorConfig.screenBackground,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   header: {
-    fontFamily: 'proximanovasoft-regular',
+    fontFamily: stylesConfig.semiboldFont,
     fontSize: 16,
     color: '#888',
     textAlign: 'center',

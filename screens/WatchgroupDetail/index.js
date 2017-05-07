@@ -46,7 +46,7 @@ class WatchgroupDetail extends React.Component {
 	});
 	render(){
 		if (this.props.data.loading) {
-			return <LoadingScreen loadingMessage='loading reports...' />
+			return <LoadingScreen loadingMessage='Loading Watchgroup...' />
 		}
 
 		return (

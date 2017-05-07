@@ -4,7 +4,7 @@ import { Icon, Card, Button } from 'react-native-elements';
 import { stylesConfig, colorConfig } from '../../modules/config';
 import BackButton from '../../components/BackButton';
 import LoadingScreen from '../../components/LoadingScreen';
-
+import ReportCard from '../../components/ReportCard';
 import { FETCH_MESSAGE } from '../../apollo/queries';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag'
@@ -110,8 +110,8 @@ class MapScreen extends React.Component {
 	      			latitude: this.state.originalReport.latitude,
 	        	}}
         	>
-	        	<MapView.Callout>
-	        		<CalloutContent message={this.props.data.getMessageById} />
+	        	<MapView.Callout tooltip>
+	        		<ReportCard item={this.props.data.getMessageById} navigation={this.props.navigation} />
 	        	</MapView.Callout>
         	</MapView.Marker>
         </MapView>
@@ -148,13 +148,12 @@ class ReportDetail extends React.Component {
 	render(){
 		if (this.props.data.loading) {
 			return (
-				<View style={{flex: 1, padding: 10, backgroundColor: colorConfig.screenBackground}}>
-					<Text>Loading...</Text>
-				</View>
+				<LoadingScreen loadingMessage='Loading Map...' />
 			);
 		}
 
 		return <MapScreen {...this.props} />
+
 		return (
 			<View style={{flex: 1, padding: 10, backgroundColor: colorConfig.screenBackground}}>
 				<Card>

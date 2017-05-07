@@ -26,7 +26,7 @@ class NeighborDetail extends React.Component {
 
 		if (data.loading) {
 			return (
-				<LoadingScreen loadingMessage='loading watchgroups...' />
+				<LoadingScreen loadingMessage='Loading Profile...' />
 			);
 		}
 

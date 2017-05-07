@@ -57,7 +57,7 @@ class ProfileAvatar extends React.Component {
       return (
         <Image 
           source={{ uri: this.state.image || user.profile.image }} 
-          style={{ width: 200, height: 200 }} 
+          style={{ width: 150, height: 150 }} 
         />
       );
     }
@@ -72,7 +72,7 @@ class ProfileAvatar extends React.Component {
     }
 
     return (
-      <View>
+      <View style={{marginBottom: 15}}>
         <TouchableOpacity onPress={this.onImageClick}>
           <View style={{borderColor: '#d6d7da', borderRadius: 4, borderWidth: 0.5}}>
             {!this.state.image && !user && !user.profile && !user.profile.image && <Text style={{textAlign: 'center'}}>Upload</Text>}

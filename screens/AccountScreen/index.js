@@ -6,8 +6,11 @@ import { AppLoading } from 'expo';
 import * as actions from '../../actions';
 import ProfileAvatar from '../../components/ProfileAvatar';
 import LoadingScreen from '../../components/LoadingScreen';
-
+import AccountForm from '../../components/AccountForm';
+//APOLLO
+import { graphql } from 'react-apollo'
 //MODULES
+import { FETCH_WATCHGROUPS } from '../../apollo/queries';
 import { stylesConfig, colorConfig } from '../../modules/config';
 //
 
@@ -40,9 +43,19 @@ class AccountScreen extends React.Component {
 				</ScrollView>
 			);
 		}
+		console.log(this.props.screenProps.data.user.profile.firstName)
 		return (
-			<ScrollView style={{padding: 10, backgroundColor: '#f5f5f5'}}>
+			<ScrollView
+				style={styles.container}
+				contentContainerStyle={styles.contentContainerStyle}
+			>
 				<ProfileAvatar {...this.props} />
+				<AccountForm 
+					{...this.props}
+					initialValues={{
+					    firstName: this.props.screenProps.data.user.profile.firstName
+					}}  
+				/>
 			</ScrollView>
 		);
 	}
@@ -50,12 +63,17 @@ class AccountScreen extends React.Component {
 
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-  },
+	contentContainerStyle: {
+		backgroundColor: colorConfig.screenBackground,
+		alignItems: 'center',
+		justifyContent: 'flex-start',
+		paddingBottom: 50
+	},
+	container: {
+		flex: 1,
+		backgroundColor: colorConfig.screenBackground,
+		padding: 15,
+	},
   linkText: {
   	color: colorConfig.business,
 	fontSize: 15,
@@ -77,5 +95,8 @@ const styles = StyleSheet.create({
 	}
 });
 
+export default graphql(FETCH_WATCHGROUPS)(
+	connect(null, actions)(AccountScreen)
+);
 
-export default connect(null, actions)(AccountScreen);
+

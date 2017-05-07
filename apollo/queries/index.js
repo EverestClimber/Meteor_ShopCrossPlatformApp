@@ -121,23 +121,29 @@ export const FETCH_USER_BY_ID = gql`
 export const FETCH_MESSAGE = gql`
   query getMessageById ($_id: ID!){
     getMessageById(_id: $_id) {
-        messageValue
-        reportType
-        priorityLevel
-        image
-        owner {
-          _id
-          profile {
-            firstName
-            lastName
-            image
-          }
-        }
-        location {
-          lat
-          lng
+      _id
+      messageValue
+      reportType
+      priorityLevel
+      image
+      location {
+        lat
+        lng
+      }
+      watchgroup {
+        _id
+        title
+        color_id
+      }
+      owner {
+        _id
+        profile {
+          firstName
+          lastName
+          image
         }
       }
+    }
   }
 `;
 
