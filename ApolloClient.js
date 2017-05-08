@@ -56,7 +56,7 @@ const dataIdFromObject = (result) => {
 //create new apollo client instance
 const client = new ApolloClient({ 
   networkInterface,
-  dataIdFromObject
+  dataIdFromObject: o => o.id
 });
 
 //logout(client).then(res => console.log('logged out'))

@@ -5,10 +5,14 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
 import { reduxForm, Field } from 'redux-form'
+import { graphql } from 'react-apollo'
 //COMPONENTS
 import LoadingScreen from './LoadingScreen'
 //MODULES
 import { colorConfig, stylesConfig } from '../modules/config';
+import { SAVE_USERPROFILE } from '../apollo/mutations';
+import { GET_USER_DATA } from '../apollo/queries';
+import client from '../ApolloClient';
 import { Icon, Button, Card } from 'react-native-elements';
 import { List, Picker, Checkbox, Radio, InputItem, SegmentedControl, TextareaItem, WhiteSpace } from 'antd-mobile';
 
@@ -28,38 +32,50 @@ const GENDER_OPTIONS = [
 
 class AccountForm extends React.Component {
   constructor(props){
-    super(props)
+    super(props);
+    const { user } = this.props.screenProps.data;
     this.state = { 
       loading: false,
-      gender: this.props.screenProps.data.user.profile.gender || null,
-      cellVisibility: this.props.screenProps.data.user.profile.cellVisibility || null,
-      selectedGroups: this.props.screenProps.data.user.profile.watchgroupIds || [] 
+      firstName: user.profile.firstName || null,
+      lastName: user.profile.lastName || null,
+      email: user.emails[0].address || null,
+      gender: user.profile.gender || null,
+      cell: user.profile.cell || null,
+      cellVisibility: user.profile.cellVisibility || null,
+      watchgroupIds: user.profile.watchgroupIds || [] 
     }
   }
   
-  onSubmit = (values) => {
+  onSubmit = () => {
     this.setState({loading: true});
-    this.props.submitContactUsForm(values, () => {
-      this.setState({loading: false});
-    });
+    console.log(this.state);
+    const { firstName, lastName, email, gender, cell, cellVisibility, watchgroupIds } = this.state;
+    const variables = { firstName, lastName, email, gender, cell, cellVisibility, watchgroupIds };
+
+    //refetchQueries: [{ query: GET_USER_DATA }]
+    this.props.mutate({ variables })
+        .then(() => {
+          this.setState({ loading: false });
+        })
+        .catch( e => console.log(e)  );
   }
   onGroupChange(value){
 
-    let oldState = this.state.selectedGroups;
+    let oldState = this.state.watchgroupIds;
     let newState;
-    if (!this.state.selectedGroups.includes(value)) {
+    if (!this.state.watchgroupIds.includes(value)) {
       newState = _.uniqBy([ value, ...oldState]);
     } else {
       newState = oldState.filter((item)=>item!=value);
     }
-    this.setState({selectedGroups: newState })
+    this.setState({watchgroupIds: newState })
   }
   render(){
     const { handleSubmit } = this.props;
 
     if(this.state.loading) {
        return (
-          <LoadingScreen loadingMessage={'Submitting your message...'} />
+          <LoadingScreen loadingMessage={'Saving...'} />
       );
     }
 
@@ -119,7 +135,7 @@ class AccountForm extends React.Component {
         {mappedGroups.map(i => (
           <CheckboxItem 
             key={i.value}
-            checked={this.state.selectedGroups.includes(i.value)}
+            checked={this.state.watchgroupIds.includes(i.value)}
             onChange={() => this.onGroupChange(i.value)}
           >
             {i.label}
@@ -182,8 +198,10 @@ const styles = StyleSheet.create({
 })
 
 
-
-export default AccountForm
+/*{ 
+  options: { refetchQueries: [ GET_USER_DATA ] }
+}*/
+export default graphql(SAVE_USERPROFILE)(AccountForm)
 
 /*const renderTextInput = ({ input, ...inputProps }) => {
   return (

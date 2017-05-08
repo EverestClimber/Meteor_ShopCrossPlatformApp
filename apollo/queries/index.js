@@ -2,6 +2,32 @@ import gql from 'graphql-tag';
 
 
 
+//FRAGMENTS
+// ====================================
+const messageFragment = gql`
+  fragment messageFragment on Message {
+        _id
+        messageValue
+        reportType
+        priorityLevel
+        image
+        createdAt
+        watchgroup {
+          _id
+          title
+          color_id
+        }
+        owner {
+          _id
+          profile {
+            firstName
+            lastName
+            image
+          }
+        }
+    }
+`;
+
 export const FETCH_WATCHGROUPS = gql`
   query fetchWatchgroups {
     watchgroups {
@@ -38,31 +64,17 @@ export const FETCH_HOUSEHOLD = gql`
   }
 `;
 
+
+
 // MESSAGE QUERIES
 // ============================
 export const FETCH_MESSAGES = gql`
   query fetchMessages {
     messages {
-      _id
-      messageValue
-      reportType
-      priorityLevel
-      image
-      watchgroup {
-        _id
-        title
-        color_id
-      }
-      owner {
-        _id
-        profile {
-          firstName
-          lastName
-          image
-        }
-      }
+      ...messageFragment
     }
   }
+  ${messageFragment}
 `;
 
 export const FETCH_WATCHGROUP = gql`
@@ -80,27 +92,11 @@ export const FETCH_WATCHGROUP = gql`
         }
       }
       messages {
-        _id
-        messageValue
-        reportType
-        priorityLevel
-        image
-        watchgroup {
-          _id
-          title
-          color_id
-        }
-        owner {
-          _id
-          profile {
-            firstName
-            lastName
-            image
-          }
-        }
+        ...messageFragment
       }
     }
   }
+  ${messageFragment}
 `;
 
 
@@ -121,30 +117,14 @@ export const FETCH_USER_BY_ID = gql`
 export const FETCH_MESSAGE = gql`
   query getMessageById ($_id: ID!){
     getMessageById(_id: $_id) {
-      _id
-      messageValue
-      reportType
-      priorityLevel
-      image
+      ...messageFragment
       location {
         lat
         lng
       }
-      watchgroup {
-        _id
-        title
-        color_id
-      }
-      owner {
-        _id
-        profile {
-          firstName
-          lastName
-          image
-        }
-      }
     }
   }
+  ${messageFragment}
 `;
 
 export const FETCH_NEIGHBORS = gql`

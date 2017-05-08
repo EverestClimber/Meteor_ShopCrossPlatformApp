@@ -3,6 +3,9 @@ import { View, Text, Image, ActivityIndicator, TouchableOpacity } from 'react-na
 import { ImagePicker } from 'expo';
 import { Card, Button, Icon } from 'react-native-elements';
 import { handleFileUpload } from '../modules/helpers';
+import { SAVE_USER_IMAGE } from '../apollo/mutations';
+import { graphql } from 'react-apollo'
+
 
 // More info on all the options is below in the README...just some common use cases shown here
 const options = {
@@ -26,26 +29,26 @@ class ProfileAvatar extends React.Component {
   async onImageClick(){
     let result;
     let _this = this;
-    _this.setState({ loading: true }); 
-    try {
+    _this.setState({ loading: true });
 
-      result = await ImagePicker.launchImageLibraryAsync({
-        allowsEditing: true,
-        aspect: [4, 3],
-      });
-      
+    try {
+      result = await ImagePicker.launchImageLibraryAsync({ allowsEditing: true, aspect: [4, 3] }); 
     }
+
     catch(e) {
       _this.setState({ loading: false }); 
       return console.log(e);
     }
 
     if (!result.cancelled) {
-      handleFileUpload(result, function(error, response){
-        if (error) { console.log(error); return; }
-        return _this.setState({ image: response, loading: false }); 
+      handleFileUpload(result, (error, response) => {
+        if (error) { return console.log(error); }
+        _this.props.mutate({ variables: { image: response } })
+        .then(() => _this.setState({ image: response, loading: false }) )
+        .catch( e => console.log(e) );
       });
     }
+    
     _this.setState({ loading: false }); 
 
   }
@@ -84,5 +87,5 @@ class ProfileAvatar extends React.Component {
   }
 }
 
-export default ProfileAvatar;
+export default graphql(SAVE_USER_IMAGE)(ProfileAvatar);
 
