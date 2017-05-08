@@ -20,6 +20,7 @@ import ReportDetail from './screens/ReportDetail';
 import AccountScreen from './screens/AccountScreen';
 import WatchgroupsScreen from './screens/WatchgroupsScreen';
 import HouseholdsScreen from './screens/HouseholdsScreen';
+import HouseholdDetail from './screens/HouseholdDetail';
 import AddHousehold from './screens/AddHousehold';
 import WatchgroupDetail from './screens/WatchgroupDetail';
 import NeighborsScreen from './screens/Neighbors';
@@ -60,6 +61,7 @@ const ReportsNavigator = StackNavigator({
 const HouseholdsNavigator = StackNavigator({
   households: {  screen: HouseholdsScreen },
   addHousehold: {  screen: AddHousehold },
+  householdDetail: {  screen: HouseholdDetail },
 },{
   tabBarLabel: 'Households',
 });

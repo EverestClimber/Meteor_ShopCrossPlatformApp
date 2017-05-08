@@ -1,14 +1,13 @@
 import React from 'react';
 import { Permissions, Location } from 'expo';
-import { View, ScrollView, Text, Platform } from 'react-native';
+import { View, ScrollView, Text, Platform, StyleSheet } from 'react-native';
 import { Icon } from 'react-native-elements';
-import { stylesConfig } from '../../modules/config';
+import { stylesConfig, colorConfig } from '../../modules/config';
 import BackButton from '../../components/BackButton';
 import AddReportForm from '../../components/AddReportForm';
 
 
-
-const { basicHeaderStyle, titleStyle } = stylesConfig;
+const { boldFont, semiboldFont, regularFont, titleStyle, basicHeaderStyle } = stylesConfig;
 
 class AddReport extends React.Component {
 	static navigationOptions = ({ navigation, screenProps }) => ({
@@ -35,16 +34,50 @@ class AddReport extends React.Component {
 	}
 	render(){
 		return (
-			<ScrollView style={{flex: 1, padding: 10, backgroundColor: '#f5f5f5',}}>
-				<AddReportForm 
-					onSubmitForm={this.onSubmitForm}
+			<ScrollView
+				style={styles.container}
+				contentContainerStyle={styles.contentContainerStyle}
+			>
+				<AddReportForm
 					location={this.state.location}
+					navigation={this.props.navigation}
 				/>
 			</ScrollView>
 		);
 	}
 }
 
-
+const styles = StyleSheet.create({
+	contentContainerStyle: {
+		backgroundColor: colorConfig.screenBackground,
+		alignItems: 'center',
+		justifyContent: 'flex-start',
+		paddingBottom: 50
+	},
+	container: {
+		flex: 1,
+		backgroundColor: colorConfig.screenBackground,
+		padding: 15,
+	},
+  linkText: {
+  	color: colorConfig.business,
+	fontSize: 15,
+	fontFamily: boldFont,
+  },
+	headerStyle: {
+		marginBottom: 6, 
+		color: '#000',
+		fontSize: 20,
+		fontFamily: semiboldFont
+	},
+	subHeaderStyle: {
+		fontFamily: regularFont,
+		textAlign: 'center', 
+		color: '#888'
+	},
+	contactButton: {
+		backgroundColor: '#fff',
+	}
+});
 
 export default AddReport;

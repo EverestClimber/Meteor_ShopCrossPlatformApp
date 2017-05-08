@@ -41,6 +41,11 @@ export const stylesConfig =  {
     basicHeaderStyle: {
         backgroundColor: colorConfig.business, //'#fff',
     },
+    emptyStateIcon: {
+        marginBottom: 18, 
+        width: 75, 
+        height: 75
+    },
     regularFont,
     semiboldFont,
     boldFont,

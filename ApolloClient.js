@@ -24,12 +24,12 @@ setTokenStore({
 
 
 
-const NOW_URL = 'https://pvsafe-apollo-hyhqnizhse.now.sh/graphql'
+const NOW_URL = 'https://pvsafe-apollo-friwbklszc.now.sh/graphql'
 const LIVE_URL = 'https://pvsafe-apollo.meteorapp.com/graphql';
 const DEV_URL = 'http://localhost:3000/graphql';
 //set network options
 //create networkInterface
-const networkInterface = createNetworkInterface({ uri: NOW_URL });
+const networkInterface = createNetworkInterface({ uri: LIVE_URL });
 
 networkInterface.use([{
   async applyMiddleware(req, next) {

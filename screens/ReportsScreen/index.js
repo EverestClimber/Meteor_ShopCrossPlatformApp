@@ -1,25 +1,21 @@
 import React from 'react';
-import { View, ScrollView, Text, Platform, Button, TouchableOpacity, ListView, RefreshControl } from 'react-native';
+import { View, ScrollView, Text, Platform, Button, TouchableOpacity, ListView, Image, RefreshControl } from 'react-native';
 import { Icon, Card } from 'react-native-elements';
 import { stylesConfig, colorConfig } from '../../modules/config';
 import { userId } from 'meteor-apollo-accounts'
 import { FETCH_MESSAGES } from '../../apollo/queries';
 import { graphql } from 'react-apollo';
-//import { ListView } from 'antd-mobile'
+//COMMON COMPONENTS
 import LoadingScreen from '../../components/LoadingScreen';
-const { basicHeaderStyle, titleStyle, regularFont } = stylesConfig;
-
+import EmptyState from '../../components/EmptyState';
 import ReportCard from '../../components/ReportCard';
 
-/*const MessageItem = ({ item, navigation }) => {
-	return (
-		<Card title={item.messageValue} >
-			<TouchableOpacity onPress={()=>navigation.navigate('reportDetail', { _id: item._id})}>
-            	<Text style={{color: '#888', fontSize: 10}}>{item.messageValue}</Text>
-            </TouchableOpacity>
-		</Card>
-	);
-}*/
+
+// CONSTANTS & DESTRUCTURING
+// ====================================
+const { basicHeaderStyle, titleStyle, regularFont, emptyStateIcon } = stylesConfig;
+
+
 
 
 class ReportsList extends React.Component {
@@ -67,9 +63,22 @@ class ReportsScreen extends React.Component {
 	});
 	
 	render(){
+
 		if (this.props.data.loading) {
 			return <LoadingScreen loadingMessage='loading reports...' />
 		}
+
+		if (!this.props.data.messages || this.props.data.messages.length === 0) {
+			return (
+				<EmptyState 
+					imageComponent={
+						<Image source={require('../../assets/marketing.png')} style={emptyStateIcon}/>
+					}
+					pageText='NO REPORTS YET...' 
+				/>
+			);
+		}
+
 		return (
 			<ReportsList
 		        messages={this.props.data.messages}

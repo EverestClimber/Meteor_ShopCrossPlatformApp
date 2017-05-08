@@ -15,6 +15,7 @@ import { GET_USER_DATA } from '../apollo/queries';
 import client from '../ApolloClient';
 import { Icon, Button, Card } from 'react-native-elements';
 import { List, Picker, Checkbox, Radio, InputItem, SegmentedControl, TextareaItem, WhiteSpace } from 'antd-mobile';
+import WatchgroupInput from './WatchgroupInput'
 
 const CheckboxItem = Checkbox.CheckboxItem;
 const RadioItem = Radio.RadioItem;
@@ -132,7 +133,12 @@ class AccountForm extends React.Component {
         
 
         <List renderHeader={() => 'Groups to Follow'}>
-        {mappedGroups.map(i => (
+          <WatchgroupInput 
+            watchgroups={this.props.data.watchgroups}
+            selectedWatchgroupIds={this.state.watchgroupIds}
+            onGroupChange={(value) => this.onGroupChange(value)}
+          />
+        {/*mappedGroups.map(i => (
           <CheckboxItem 
             key={i.value}
             checked={this.state.watchgroupIds.includes(i.value)}
@@ -140,7 +146,7 @@ class AccountForm extends React.Component {
           >
             {i.label}
           </CheckboxItem>
-        ))}
+        ))*/}
       </List>
         <Button 
           title='SAVE PROFILE'

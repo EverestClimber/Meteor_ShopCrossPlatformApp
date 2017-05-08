@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ScrollView, Text, Platform} from 'react-native';
+import { View, ScrollView, Text, Platform, Image } from 'react-native';
 //MODULES
 import { FETCH_WATCHGROUP } from '../../apollo/queries';
 import { stylesConfig, colorConfig } from '../../modules/config';
@@ -10,24 +10,39 @@ import { Icon, Button, Card } from 'react-native-elements';
 import { graphql } from 'react-apollo';
 import BackButton from '../../components/BackButton';
 import { Tabs, WhiteSpace,  } from 'antd-mobile';
+import EmptyState from '../../components/EmptyState';
 
 const TabPane = Tabs.TabPane;
 //
 // ========================================
-const { boldFont, semiboldFont, regularFont, titleStyle, basicHeaderStyle } = stylesConfig;
+const { boldFont, semiboldFont, regularFont, titleStyle, basicHeaderStyle, emptyStateIcon } = stylesConfig;
 
 
 
 const ReportList = ({messages, navigation}) => {
 	if (!messages || messages.length === 0) {
-		return null
+		return (
+			<EmptyState 
+				imageComponent={
+					<Image source={require('../../assets/marketing.png')} style={emptyStateIcon}/>
+				}
+				pageText='NO MESSAGES YET...' 
+			/>
+		);
 	}
 	return <View>{messages.map(item => <ReportCard key={item._id} item={item} navigation={navigation} />)}</View>;
 }
    
 const MembersList = ({members, navigation}) => {
 	if (!members || members.length === 0) {
-		return null
+		return (
+			<EmptyState 
+				imageComponent={
+					<Image source={require('../../assets/audience.png')} style={emptyStateIcon}/>
+				}
+				pageText='NO MEMBERS YET...' 
+			/>
+		);
 	}
 	return <View>{members.map(item => <NeighborCard key={item._id} item={item} navigation={navigation} />)}</View>;
 }
@@ -58,12 +73,24 @@ class WatchgroupDetail extends React.Component {
 					underlineColor={colorConfig.lightGrey}
 				>
 			      <TabPane tab="General" key="1">
+			      	<View style={{minHeight: 300}}>
+			      	</View>
 			      </TabPane>
 			      <TabPane tab="Members" key="2">
-			      	<MembersList members={this.props.data.watchgroupById.members} navigation={this.props.navigation} />
+			      	<View style={{minHeight: 300}}>
+				      	<MembersList 
+				      		members={this.props.data.watchgroupById.members} 
+				      		navigation={this.props.navigation} 
+				      	/>
+			      	</View>
 			      </TabPane>
 			      <TabPane tab="Reports" key="3">
-			      	<ReportList messages={this.props.data.watchgroupById.messages} navigation={this.props.navigation} />
+			      	<View style={{minHeight: 300}}>
+				      	<ReportList 
+				      		messages={this.props.data.watchgroupById.messages} 
+				      		navigation={this.props.navigation} 
+				      	/>
+			      	</View>
 			      </TabPane>
 			    </Tabs>
 			</ScrollView>
