@@ -25,6 +25,7 @@ import AddHousehold from './screens/AddHousehold';
 import WatchgroupDetail from './screens/WatchgroupDetail';
 import NeighborsScreen from './screens/Neighbors';
 import NeighborDetail from './screens/NeighborDetail';
+import SearchScreen from './screens/SearchScreen';
 
 //
 import { GET_USER_DATA } from './apollo/queries'
@@ -48,9 +49,11 @@ const NeighborsNavigator = StackNavigator({
 const ReportsNavigator = StackNavigator({
   home: {  screen: ReportsScreen },
   addReport: {  screen: AddReport },
+  search: {  screen: SearchScreen },
   reportDetail: {  screen: ReportDetail },
   neighborDetail: { screen: NeighborDetail },
   watchgroupDetail: {  screen: WatchgroupDetail },
+  
 },{
   tabBarLabel: 'Home',
 });

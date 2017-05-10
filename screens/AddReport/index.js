@@ -7,6 +7,8 @@ import BackButton from '../../components/BackButton';
 import AddReportForm from '../../components/AddReportForm';
 
 
+
+
 const { boldFont, semiboldFont, regularFont, titleStyle, basicHeaderStyle } = stylesConfig;
 
 class AddReport extends React.Component {

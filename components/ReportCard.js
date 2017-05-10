@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, ScrollView, Image, Text, Platform, Button, StyleSheet, TouchableOpacity, ListView, RefreshControl } from 'react-native';
 import { Icon, Card } from 'react-native-elements';
-import { stylesConfig, colorConfig } from '../modules/config';
-import { getPriorityLevel } from '../modules/helpers';
+import { stylesConfig, colorConfig, DEFAULT_AVATAR } from '../modules/config';
+import { getPriorityLevel, timeAgo } from '../modules/helpers';
 import { Flex } from 'antd-mobile';
 
 const { basicHeaderStyle, boldFont, titleStyle, regularFont } = stylesConfig;
@@ -44,8 +44,14 @@ const ReportCardTop = ({ item, navigation }) => {
 					<TouchableOpacity onPress={()=>navigation.navigate('reportDetail', { _id: item._id })}>
 					<Text style={styles.cardHeader}>{item.reportType}</Text>
 					<Text style={styles.cardSubHeader}>{getPriorityLevel(item.priorityLevel)}</Text>
-					<View style={{marginTop: 20}}>
-						<Text style={styles.messageValue}>{item.messageValue}</Text>
+					<View style={{marginTop: 20, paddingLeft: 10}}>
+						<Text
+							ellipsizeMode='tail'
+							numberOfLines={5}
+							style={styles.messageValue}
+						>
+							{item.messageValue}
+						</Text>
 					</View>
 				</TouchableOpacity> 
 			</Flex.Item>
@@ -55,7 +61,7 @@ const ReportCardTop = ({ item, navigation }) => {
 					onPress={()=>navigation.navigate('neighborDetail', { _id: item.owner._id, firstName: item.owner.profile.firstName})}
 				>
 					<Image 
-						source={{ uri: item.owner.profile.image }} 
+						source={{ uri: item.owner.profile.image || DEFAULT_AVATAR }} 
 						style={{height: 65, width: 60}}
 					/>
 				</TouchableOpacity>
@@ -70,10 +76,16 @@ const ReportCardTop = ({ item, navigation }) => {
 
 const ReportCard = ({ item, navigation }) => {
 	return (
-		<Card >
+		<Card containerStyle={{minWidth: 250}}>
 			<ReportCardTop item={item}  navigation={navigation} />
 			<Flex>
 				<Flex.Item>
+					<View style={{flexDirection:'row', flexWrap:'wrap', alignItems: 'flex-end', justifyContent: 'flex-start'}}>
+						<Icon name='access-time' iconStyle={{ fontSize: 13, marginRight: 5, color: '#bdc3c7' }} />
+						<Text style={{ fontSize: 13, color: '#bdc3c7' }}>
+							{timeAgo(item.createdAt)}
+						</Text>
+					</View>
 				</Flex.Item>
 				<Flex.Item>
 					<TouchableOpacity 

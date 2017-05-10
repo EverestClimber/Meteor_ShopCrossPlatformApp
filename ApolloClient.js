@@ -45,6 +45,30 @@ networkInterface.use([{
 }]);
 
 
+// middleware for responses
+networkInterface.useAfter([{
+  applyAfterware({ response }, next) {
+    if (!response.ok) {
+      response.clone().text().then((bodyText) => {
+        console.log(`Network Error: ${response.status} (${response.statusText}) - ${bodyText}`);
+        next();
+      });
+    } else {
+      response.clone().json().then(({ errors }) => {
+        if (errors) {
+          errors.map((e) => {
+            return console.log('GraphQL Error:', e.message);
+          });
+        }
+        next();
+      });
+    }
+  },
+}]);
+
+
+
+
 const dataIdFromObject = (result) => {
     if (result._id && result.__typename) {
       const dataId = result.__typename + result._id;

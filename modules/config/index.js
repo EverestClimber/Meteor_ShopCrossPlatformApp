@@ -39,6 +39,7 @@ export const stylesConfig =  {
         color: '#fff'
     },
     basicHeaderStyle: {
+        borderColor: colorConfig.business,
         backgroundColor: colorConfig.business, //'#fff',
     },
     emptyStateIcon: {
@@ -54,6 +55,6 @@ export const stylesConfig =  {
 
 
 export const appConfig =  {
-    appName:'GrowLab',
-    supportEmail: 'support@growlab.io'
+    appName:'PV-Safe',
+    supportEmail: 'support@pvsafe.com'
 }

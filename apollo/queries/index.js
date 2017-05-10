@@ -68,14 +68,26 @@ export const FETCH_HOUSEHOLD = gql`
 
 // MESSAGE QUERIES
 // ============================
-export const FETCH_MESSAGES = gql`
-  query fetchMessages {
-    messages {
+
+export const SEARCH_MESSAGES = gql`
+  query searchMessages($string: String) {
+    messages (string: $string) {
       ...messageFragment
     }
   }
   ${messageFragment}
 `;
+
+
+export const FETCH_MESSAGES = gql`
+  query fetchMessages($offset: Int) {
+    messages(offset: $offset) {
+      ...messageFragment
+    }
+  }
+  ${messageFragment}
+`;
+
 
 export const FETCH_WATCHGROUP = gql`
   query fetchWatchgroup($_id: ID!) {

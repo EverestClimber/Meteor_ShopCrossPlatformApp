@@ -12,6 +12,7 @@
     "graphql-tag": "^2.0.0",
     "lodash": "^4.17.4",
     "meteor-apollo-accounts": "^2.0.1",
+    "moment": "^2.18.1",
     "react": "16.0.0-alpha.6",
     "react-apollo": "^1.1.2",
     "react-native": "https://github.com/expo/react-native/archive/sdk-16.0.0.tar.gz",
