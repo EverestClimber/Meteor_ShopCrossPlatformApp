@@ -4,6 +4,21 @@ import gql from 'graphql-tag';
 
 //FRAGMENTS
 // ====================================
+
+const userFragment = gql`
+  fragment userFragment on User {
+      _id
+      emails {
+        address
+      }
+      profile {
+        firstName
+        lastName
+        image
+      }
+    }
+`;
+
 const messageFragment = gql`
   fragment messageFragment on Message {
         _id
@@ -28,6 +43,24 @@ const messageFragment = gql`
     }
 `;
 
+
+
+const householdFragment = gql`
+  fragment householdFragment on Household {
+      _id
+      title
+      description
+      image
+      owner {
+        ...userFragment
+      }
+      location {
+        street
+      }
+    }
+    ${userFragment}
+`;
+
 export const FETCH_WATCHGROUPS = gql`
   query fetchWatchgroups {
     watchgroups {
@@ -44,24 +77,20 @@ export const FETCH_WATCHGROUPS = gql`
 export const FETCH_HOUSEHOLDS = gql`
   query FetchHouseholds {
     households {
-      _id
-      title
-      image
-      location {
-        street
-      }
+      ...householdFragment
     }
   }
+  ${householdFragment}
 `;
 
 
-export const FETCH_HOUSEHOLD = gql`
+export const FETCH_HOUSEHOLD_BY_ID = gql`
   query GetHouseholdById ($_id:ID!){
     getHouseholdById(_id:$_id) {
-      _id
-      title
+      ...householdFragment
     }
   }
+  ${householdFragment}
 `;
 
 
@@ -95,13 +124,9 @@ export const FETCH_WATCHGROUP = gql`
       _id
       title
       color_id
+      
       members {
-        _id
-        profile {
-          firstName
-          lastName
-          image
-        }
+        ...userFragment
       }
       messages {
         ...messageFragment
@@ -109,6 +134,7 @@ export const FETCH_WATCHGROUP = gql`
     }
   }
   ${messageFragment}
+  ${userFragment}
 `;
 
 

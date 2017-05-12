@@ -1,15 +1,33 @@
+// TOP LEVEL IMPORTS
 import React from 'react';
-import { View, Text, Platform } from 'react-native';
+import { View, Text, Platform, Image } from 'react-native';
 import { Icon, Card } from 'react-native-elements';
-import { stylesConfig, colorConfig } from '../../modules/config';
+// MODULES
+import { stylesConfig, colorConfig, DEFAULT_AVATAR } from '../../modules/config';
+// COMPONENTS
 import BackButton from '../../components/BackButton';
 import LoadingScreen from '../../components/LoadingScreen';
+// APOLLO
 import { FETCH_USER_BY_ID } from '../../apollo/queries';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag'
 
-const { basicHeaderStyle, titleStyle } = stylesConfig;
 
+// CONSTANTS & DESTRUCTURING
+// ====================================
+const { 
+	basicHeaderStyle, 
+	titleStyle,
+	regularFont, 
+	textHeader, 
+	textSubHeader, 
+	textBody 
+} = stylesConfig;
+
+
+
+// EXPORTED COMPONENT
+// ====================================
 class NeighborDetail extends React.Component {
 	static navigationOptions = ({ navigation, screenProps }) => ({
 		title: `${navigation.state.params.firstName}`,
@@ -33,7 +51,15 @@ class NeighborDetail extends React.Component {
 		return (
 			<View style={{flex: 1, padding: 10, backgroundColor: colorConfig.screenBackground}}>
 				<Card>
-					<Text>{data.getUserById.profile.firstName} {data.getUserById.profile.lastName}</Text>
+					<View style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+						<Image 
+							source={{ uri: data.getUserById.profile.image || DEFAULT_AVATAR }} 
+							style={{ height: 105, width: 105 }}
+						/>
+						<Text style={[textHeader, { textAlign: 'center', marginTop: 15}]}>
+							{data.getUserById.profile.firstName} {data.getUserById.profile.lastName}
+						</Text>
+					</View>
 				</Card>
 			</View>
 		);
@@ -41,7 +67,8 @@ class NeighborDetail extends React.Component {
 }
 
 
-
+// EXPORT
+// ====================================
 export default graphql(FETCH_USER_BY_ID, {
   options: (props) => { 
   	let variables = { _id: props.navigation.state.params._id };

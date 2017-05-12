@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 //MODULES
-import { colorConfig, stylesConfig } from '../modules/config';
+import { colorConfig, stylesConfig, SCREEN_WIDTH } from '../modules/config';
 
 
 
@@ -26,6 +26,7 @@ const styles = StyleSheet.create({
     backgroundColor: colorConfig.screenBackground,
     alignItems: 'center',
     justifyContent: 'center',
+    width: SCREEN_WIDTH
   },
   header: {
     fontFamily: stylesConfig.semiboldFont,

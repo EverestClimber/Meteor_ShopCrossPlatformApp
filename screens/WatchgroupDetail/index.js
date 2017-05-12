@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ScrollView, Text, Platform, Image } from 'react-native';
+import { View, ScrollView, Text, Platform, Image, FlatList } from 'react-native';
 //MODULES
 import { FETCH_WATCHGROUP } from '../../apollo/queries';
 import { stylesConfig, colorConfig } from '../../modules/config';
@@ -12,40 +12,55 @@ import BackButton from '../../components/BackButton';
 import { Tabs, WhiteSpace,  } from 'antd-mobile';
 import EmptyState from '../../components/EmptyState';
 
-const TabPane = Tabs.TabPane;
+
 //
 // ========================================
-const { boldFont, semiboldFont, regularFont, titleStyle, basicHeaderStyle, emptyStateIcon } = stylesConfig;
+const TabPane = Tabs.TabPane;
+const { 
+	basicHeaderStyle, 
+	titleStyle, 
+	regularFont, 
+	textHeader, 
+	textSubHeader, 
+	textBody 
+} = stylesConfig;
 
 
+const ItemsList = ({ items, navigation, cardType }) => {
 
-const ReportList = ({messages, navigation}) => {
-	if (!messages || messages.length === 0) {
+	if (!items || items.length === 0) {
 		return (
 			<EmptyState 
 				imageComponent={
 					<Image source={require('../../assets/marketing.png')} style={emptyStateIcon}/>
 				}
-				pageText='NO MESSAGES YET...' 
+				pageText={cardType === 'members' ? 'NO MEMBERS YET...' : 'NO MESSAGES YET...' }
 			/>
 		);
 	}
-	return <View>{messages.map(item => <ReportCard key={item._id} item={item} navigation={navigation} />)}</View>;
+
+	return (
+		<FlatList
+		  data={items}
+		  keyExtractor={(item, index) => item._id}
+		  renderItem={({item}) => {
+
+		  	switch(cardType){
+		  		case 'members':
+		  			return <NeighborCard item={item} navigation={navigation} />;
+		  		case 'messages':
+		  			return <ReportCard item={item} navigation={navigation} />;
+		  		default:
+		  			return null
+		  	}
+
+		  }}
+		/>
+	);
+
 }
    
-const MembersList = ({members, navigation}) => {
-	if (!members || members.length === 0) {
-		return (
-			<EmptyState 
-				imageComponent={
-					<Image source={require('../../assets/audience.png')} style={emptyStateIcon}/>
-				}
-				pageText='NO MEMBERS YET...' 
-			/>
-		);
-	}
-	return <View>{members.map(item => <NeighborCard key={item._id} item={item} navigation={navigation} />)}</View>;
-}
+
    
 
 class WatchgroupDetail extends React.Component {
@@ -60,40 +75,49 @@ class WatchgroupDetail extends React.Component {
 	  	headerLeft: <BackButton goBack={navigation.goBack} label='' />,
 	});
 	render(){
-		if (this.props.data.loading) {
+
+		const { data, navigation } = this.props;
+
+		if (data.loading) {
 			return <LoadingScreen loadingMessage='Loading Watchgroup...' />
 		}
 
 		return (
-			<ScrollView style={{padding: 10, backgroundColor: colorConfig.screenBackground}}>
+			<View style={{flex: 1, backgroundColor: colorConfig.screenBackground}}>
+
+				<Card containerStyle={{marginBottom: 25}}>
+					<Text style={[textHeader, {textAlign: 'center'}]}>
+						{data.watchgroupById.title || ''}
+					</Text>
+				</Card>
+
 				<Tabs defaultActiveKey="1"
 					textColor={colorConfig.darkGrey}
 					activeTextColor={colorConfig.business}
 					activeUnderlineColor={colorConfig.business} 
 					underlineColor={colorConfig.lightGrey}
+					barStyle={{backgroundColor: '#fff'}}
 				>
-			      <TabPane tab="General" key="1">
+			      <TabPane tab="Members" key="1">
 			      	<View style={{minHeight: 300}}>
-			      	</View>
-			      </TabPane>
-			      <TabPane tab="Members" key="2">
-			      	<View style={{minHeight: 300}}>
-				      	<MembersList 
-				      		members={this.props.data.watchgroupById.members} 
-				      		navigation={this.props.navigation} 
+				      	<ItemsList 
+				      		items={data.watchgroupById.members} 
+				      		navigation={navigation}
+				      		cardType='members'
 				      	/>
 			      	</View>
 			      </TabPane>
-			      <TabPane tab="Reports" key="3">
+			      <TabPane tab="Reports" key="2">
 			      	<View style={{minHeight: 300}}>
-				      	<ReportList 
-				      		messages={this.props.data.watchgroupById.messages} 
-				      		navigation={this.props.navigation} 
+				      	<ItemsList 
+				      		items={data.watchgroupById.messages} 
+				      		navigation={navigation}
+				      		cardType='messages'
 				      	/>
 			      	</View>
 			      </TabPane>
 			    </Tabs>
-			</ScrollView>
+			</View>
 		);
 	}
 	

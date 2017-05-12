@@ -26,9 +26,11 @@ import WatchgroupDetail from './screens/WatchgroupDetail';
 import NeighborsScreen from './screens/Neighbors';
 import NeighborDetail from './screens/NeighborDetail';
 import SearchScreen from './screens/SearchScreen';
-
 //
-import { GET_USER_DATA } from './apollo/queries'
+import registerForNotifications from './services/push_notifications';
+//
+import { GET_USER_DATA } from './apollo/queries';
+import { SAVE_USER_EXPO_PUSH_ID } from './apollo/mutations'
 
 
 
@@ -65,6 +67,7 @@ const HouseholdsNavigator = StackNavigator({
   households: {  screen: HouseholdsScreen },
   addHousehold: {  screen: AddHousehold },
   householdDetail: {  screen: HouseholdDetail },
+  neighborDetail: { screen: NeighborDetail },
 },{
   tabBarLabel: 'Households',
 });
@@ -194,6 +197,10 @@ class AppRoutes extends React.Component {
 
       this.setState({loadingFont: false})
   }
+  componentDidMount() {
+    registerForNotifications(this.props);
+
+  }
   render() {
     //if not connected to DPP, wait for connection
     if (this.state.loadingFont || this.props.data.loading) {
@@ -220,5 +227,6 @@ const styles = StyleSheet.create({
   },
 });
 
-
-export default graphql(GET_USER_DATA)(AppRoutes);
+export default graphql(SAVE_USER_EXPO_PUSH_ID)(
+  graphql(GET_USER_DATA)(AppRoutes)
+);

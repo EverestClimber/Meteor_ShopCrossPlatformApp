@@ -12,53 +12,28 @@ import LoadingScreen from '../../components/LoadingScreen';
 
 //
 // ========================================
-const { boldFont, semiboldFont, regularFont, titleStyle, basicHeaderStyle } = stylesConfig;
+const { 
+	basicHeaderStyle, 
+	titleStyle, 
+	regularFont, 
+	textHeader, 
+	textSubHeader, 
+	textBody 
+} = stylesConfig;
 
 
 const styles = StyleSheet.create({
 	groupBadge: {
-		height: 9, 
-		width: 9,
+		height: 15, 
+		width: 15,
 		marginRight: 5, 
 		borderRadius: 50,
 	},
-	cardHeader: {
-		margin: 0, 
-		color: '#4b5658', 
-		fontSize: 20,
-		fontFamily: boldFont
-	},
-	cardSubHeader: {
-		margin: 0, 
-		color: '#888', 
-		fontSize: 17,
-		fontFamily: regularFont
-	},
-	messageValue: {
-		color: '#7b8b8e', 
-		fontSize: 13
-	},
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-  },
-  linkText: {
-  	color: colorConfig.business,
-	fontSize: 15,
-	fontFamily: boldFont,
-  },
-	headerStyle: {
-		marginBottom: 6, 
-		color: '#000',
-		fontSize: 20,
-		fontFamily: semiboldFont
-	},
-	subHeaderStyle: {
-		fontFamily: regularFont,
-		textAlign: 'center', 
-		color: '#888'
+	container: {
+		flex: 1,
+		backgroundColor: '#f5f5f5',
+		alignItems: 'center',
+		justifyContent: 'flex-start',
 	},
 	contactButton: {
 		backgroundColor: '#fff',
@@ -70,9 +45,13 @@ const WatchgroupCard = ({item, navigation}) => {
 	return (
 		<Card key={item._id}>
 			<TouchableOpacity onPress={()=>navigation.navigate('watchgroupDetail', { _id: item._id, group: item.title})}>
-				<View style={{flex: 1, alignItems: 'center', justifyContent: 'flex-end'}}>
-					<View style={[{backgroundColor: item.color_id }, styles.groupBadge]} />
-					<Text>{item.title}</Text>
+				<View style={{display: 'flex', flexDirection: 'row'}}>
+					<View style={{flex: 1}}>
+						<View style={[{backgroundColor: item.color_id }, styles.groupBadge]} />
+					</View>
+					<View style={{flex: 5}}>
+						<Text style={textHeader}>{item.title}</Text>
+					</View>
 				</View>
 			</TouchableOpacity>
 		</Card>
@@ -82,7 +61,7 @@ const WatchgroupCard = ({item, navigation}) => {
 class WatchgroupsScreen extends React.Component {
 	static navigationOptions = {
 		title: 'Groups',
-		tabBarIcon: ({ tintColor }) => <Icon name="group" size={30} color={tintColor} />,
+		tabBarIcon: ({ tintColor }) => <Icon name="group-work" size={30} color={tintColor} />,
 	  	headerTitleStyle: titleStyle,
 	  	headerVisible: Platform.OS !== 'android',
 	  	tabBarLabel: 'Groups',
@@ -92,7 +71,7 @@ class WatchgroupsScreen extends React.Component {
 		if (this.props.data.loading) {
 			return <LoadingScreen loadingMessage='loading watchgroups...' />
 		}
-		console.log(this.props.data.watchgroups)
+
 		return (
 			<ScrollView style={{padding: 10, backgroundColor: colorConfig.screenBackground}}>
 				{this.props.data.watchgroups.map(item => {

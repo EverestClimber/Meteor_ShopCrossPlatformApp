@@ -43,7 +43,7 @@ const NeighborCard = ({ item, navigation }) => {
 				<Flex align='start' style={{marginBottom: 20}}>
 					<Flex.Item>
 						<Image 
-							source={{ uri: item.profile.image || DEFAULT_AVATAR}} 
+							source={{ uri: item.profile && item.profile.image || DEFAULT_AVATAR}} 
 							style={{height: 65, width: 60}}
 						/>
 						<Text style={{color: '#888', fontSize: 10}}>

@@ -11,8 +11,8 @@ import { stylesConfig, colorConfig } from '../../modules/config';
 import LoadingScreen from '../../components/LoadingScreen';
 import NeighborCard from '../../components/NeighborCard';
 
-//
-// ========================================
+// CONSTANTS & DESTRUCTURING
+// ====================================
 const { boldFont, semiboldFont, regularFont, titleStyle, basicHeaderStyle } = stylesConfig;
 
 
@@ -67,19 +67,9 @@ const styles = StyleSheet.create({
 });
 
 
-const WatchgroupCard = ({item, navigation}) => {
-	return (
-		<Card key={item._id}>
-			<TouchableOpacity onPress={()=>navigation.navigate('watchgroupDetail', { _id: item._id, group: item.title})}>
-				<View style={{flex: 1, alignItems: 'center', justifyContent: 'flex-end'}}>
-					<View style={[{backgroundColor: item.color_id }, styles.groupBadge]} />
-					<Text>{item.title}</Text>
-				</View>
-			</TouchableOpacity>
-		</Card>
-	);
-}
 
+// EXPORTED COMPONENT
+// ====================================
 class NeighborsScreen extends React.Component {
 	static navigationOptions = {
 		title: 'Neighbors',

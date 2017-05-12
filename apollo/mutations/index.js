@@ -12,6 +12,14 @@ export const SAVE_USER_IMAGE = gql`
     }
 `;
 
+export const SAVE_USER_EXPO_PUSH_ID = gql`
+    mutation SaveUserExpoPushId ( $expoPushId: String! ) {
+      saveUserExpoPushId ( expoPushId: $expoPushId ){
+        _id
+      }
+    }
+`;
+
 
 
 export const SAVE_USERPROFILE = gql`

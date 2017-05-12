@@ -7,6 +7,7 @@ import { userId } from 'meteor-apollo-accounts'
 import { Button, Icon } from 'react-native-elements'
 import { colorConfig, stylesConfig } from '../../modules/config';
 
+
 const { basicHeaderStyle, titleStyle } = stylesConfig;
 
 class LoginScreen extends React.Component {
@@ -22,6 +23,9 @@ class LoginScreen extends React.Component {
 	state = { stillLoading: true }
 
 	 async componentDidMount(){
+	 	
+	 		
+
 		if (this.props.screenProps.data && this.props.screenProps.data.user) {
 			let onboardingComplete = await AsyncStorage.getItem('onboardingComplete');
 			if (onboardingComplete === 'true') {

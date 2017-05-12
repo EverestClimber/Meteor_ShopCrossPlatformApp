@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, FlatList, Text, Platform, Button, Dimensions, TouchableOpacity, ListView, Image, RefreshControl } from 'react-native';
+import { View, FlatList, Text, Platform, Button, Dimensions, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import { Icon, Card, SearchBar } from 'react-native-elements';
-import { stylesConfig, colorConfig } from '../../modules/config';
+import { stylesConfig, colorConfig, SCREEN_WIDTH } from '../../modules/config';
 import { userId } from 'meteor-apollo-accounts'
 import { FETCH_MESSAGES } from '../../apollo/queries';
 import { graphql, withApollo } from 'react-apollo';
@@ -14,42 +14,11 @@ import ReportCard from '../../components/ReportCard';
 // CONSTANTS & DESTRUCTURING
 // ====================================
 const { basicHeaderStyle, titleStyle, regularFont, emptyStateIcon } = stylesConfig;
-const SCREEN_WIDTH = Dimensions.get('window').width;
 
 
 
-class ReportsList extends React.Component {
-	constructor(props) {
-	    super(props);
 
-	    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-	    this.state = {
-	      dataSource: ds.cloneWithRows(props.messages),
-	      refreshing: false
-	    };
-	  }
-	  _onRefresh(){
-	  	this.setState({refreshing: true})
-	  	console.log('refreshing!');
-	  	this.setState({refreshing: false})
-	  }
-	render(){
-		return (
-			<ListView
-				style={{padding: 10, backgroundColor: colorConfig.screenBackground}}
-		        dataSource={this.state.dataSource}
-		        renderRow={(rowData) => <ReportCard item={rowData} navigation={this.props.navigation} />}
-		        refreshControl={
-		          <RefreshControl
-		            refreshing={this.state.refreshing}
-		            onRefresh={this._onRefresh.bind(this)}
-		          />
-		        }
-		      />
-			
-		);
-	}
-}
+
 
 class ReportsScreen extends React.Component {
 	static navigationOptions = ({ navigation, screenProps }) => ({
@@ -93,7 +62,7 @@ class ReportsScreen extends React.Component {
 		console.log(this.props.data.messages.length);
 
 		this.props.data.fetchMore({
-			variables: { offset: this.props.data.messages.length + 1 },
+			variables: { offset: this.props.data.messages.length },
 			updateQuery: (previousResult, { fetchMoreResult }) => {
 					// Don't do anything if there weren't any new items
 					if (!fetchMoreResult || fetchMoreResult.messages.length === 0) {
@@ -148,6 +117,11 @@ class ReportsScreen extends React.Component {
 				  	return <ReportCard item={item} navigation={this.props.navigation} />
 				  }}
 				/>
+				{this.props.data.networkStatus === 4 && (
+					<View style={{height: 30}}>
+						<ActivityIndicator />
+					</View>	
+				)}
 			</View>		
 		);
 	}
@@ -174,7 +148,11 @@ class ReportsScreen extends React.Component {
 //			</ListView>
 
 
-export default graphql(FETCH_MESSAGES)(ReportsScreen);
+export default graphql(FETCH_MESSAGES, {
+	options: {
+		//notifyOnNetworkStatusChange: true,
+	}
+})(ReportsScreen);
 
 
 

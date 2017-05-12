@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, AsyncStorage, Button, ScrollView, StyleSheet, Platform } from 'react-native';
+import { View, Text, AsyncStorage, Switch, Button, ScrollView, StyleSheet, Platform } from 'react-native';
 import { Icon, Card } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { AppLoading } from 'expo';
@@ -7,16 +7,47 @@ import * as actions from '../../actions';
 import ProfileAvatar from '../../components/ProfileAvatar';
 import LoadingScreen from '../../components/LoadingScreen';
 import AccountForm from '../../components/AccountForm';
+import NotificationSettings from '../../components/NotificationSettings';
+
 //APOLLO
 import { graphql } from 'react-apollo'
 //MODULES
 import { FETCH_WATCHGROUPS } from '../../apollo/queries';
 import { stylesConfig, colorConfig } from '../../modules/config';
 //
-
+import { Tabs, WhiteSpace,  } from 'antd-mobile';
 //
 // ========================================
-const { boldFont, semiboldFont, regularFont, titleStyle, basicHeaderStyle } = stylesConfig;
+const { 
+	boldFont, 
+	semiboldFont, regularFont,
+	basicHeaderStyle, 
+	titleStyle, 
+	textHeader, 
+	textSubHeader, 
+	textBody 
+} = stylesConfig;
+
+
+const TabPane = Tabs.TabPane;
+
+const styles = StyleSheet.create({
+	contentContainerStyle: {
+		backgroundColor: colorConfig.screenBackground,
+		alignItems: 'center',
+		justifyContent: 'flex-start',
+		paddingBottom: 50,
+		paddingTop: 20
+	},
+	container: {
+		flex: 1,
+		backgroundColor: colorConfig.screenBackground,
+		padding: 15,
+	},
+	settingFormItem: {
+		flex: 1, justifyContent: 'center', alignItems: 'center'
+	}
+});
 
 
 
@@ -32,7 +63,7 @@ class AccountScreen extends React.Component {
 	});
 	render(){
 
-		if (this.props.screenProps.data.loading) {
+		if (this.props.screenProps.data.loading || this.props.data.loading) {
 			return (
 				<LoadingScreen />
 			);
@@ -43,57 +74,49 @@ class AccountScreen extends React.Component {
 				</ScrollView>
 			);
 		}
-		console.log(this.props.screenProps.data.user.profile.firstName)
+		//style={styles.container}
+		//contentContainerStyle={styles.contentContainerStyle}
+		console.log(this.props.data)
 		return (
-			<ScrollView
-				style={styles.container}
-				contentContainerStyle={styles.contentContainerStyle}
-			>
-				<ProfileAvatar {...this.props} />
-				<AccountForm 
-					{...this.props}
-					initialValues={{
-					    firstName: this.props.screenProps.data.user.profile.firstName
-					}}  
-				/>
-			</ScrollView>
+			<View style={{flex: 1}}>
+			
+				<Tabs defaultActiveKey="1"
+					textColor={colorConfig.darkGrey}
+					activeTextColor={colorConfig.business}
+					activeUnderlineColor={colorConfig.business} 
+					underlineColor={colorConfig.lightGrey}
+					barStyle={{backgroundColor: '#fff'}}
+				>
+			      <TabPane tab="Account" key="1">
+			      		<ScrollView contentContainerStyle={styles.contentContainerStyle}>
+				      		<ProfileAvatar {...this.props} />
+							<AccountForm 
+								{...this.props}
+								initialValues={{
+								    firstName: this.props.screenProps.data.user.profile.firstName
+								}}  
+							/>
+						</ScrollView>
+			      </TabPane>
+			      <TabPane tab="Notifcations" key="2">
+			      	<ScrollView>
+			      		<NotificationSettings
+							watchgroups={this.props.data.watchgroups}
+						/>
+			      	</ScrollView>
+			      </TabPane>
+			    </Tabs>
+				
+				
+				
+			
+			</View>
 		);
 	}
 }
 
 
-const styles = StyleSheet.create({
-	contentContainerStyle: {
-		backgroundColor: colorConfig.screenBackground,
-		alignItems: 'center',
-		justifyContent: 'flex-start',
-		paddingBottom: 50
-	},
-	container: {
-		flex: 1,
-		backgroundColor: colorConfig.screenBackground,
-		padding: 15,
-	},
-  linkText: {
-  	color: colorConfig.business,
-	fontSize: 15,
-	fontFamily: boldFont,
-  },
-	headerStyle: {
-		marginBottom: 6, 
-		color: '#000',
-		fontSize: 20,
-		fontFamily: semiboldFont
-	},
-	subHeaderStyle: {
-		fontFamily: regularFont,
-		textAlign: 'center', 
-		color: '#888'
-	},
-	contactButton: {
-		backgroundColor: '#fff',
-	}
-});
+
 
 export default graphql(FETCH_WATCHGROUPS)(
 	connect(null, actions)(AccountScreen)

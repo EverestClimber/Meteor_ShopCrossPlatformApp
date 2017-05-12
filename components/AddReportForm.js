@@ -5,7 +5,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform, Image, A
 import _ from 'lodash';
 //COMPONENTS
 import LoadingScreen from './LoadingScreen'
-import { Button } from 'react-native-elements'
+import { Button, Icon } from 'react-native-elements'
 //MODULES
 import { colorConfig } from '../modules/config';
 import { graphql, withApollo } from 'react-apollo';
@@ -32,33 +32,54 @@ const data = [
       { value: 4, label: 'Checking Out' },
     ];
 
-const renderTextInput = ({ input, ...inputProps }) => {
+
+
+const ImageArea = ({ image, onImageClick, onImageCameraClick, onRemoveImage, imageLoading }) => {
+
+  if (imageLoading) {
+    return (
+      <View style={{marginBottom: 15, marginTop: 15}}>
+        <ActivityIndicator />
+      </View>
+    );
+  }
+  
+
   return (
-    <TextInput
-      style={styles.input} 
-      onChangeText={input.onChange}
-      {...inputProps}
-    />
+    <View style={{marginBottom: 15, marginTop: 15}}>
+        <View style={{display: 'flex', flexDirection: 'row'}}>
+          <View style={{flex: 1}}>
+            {!image && <Button title='Upload' icon={{ name: 'file-upload' }} onPress={() => onImageClick()} />}
+          </View>
+          <View style={{flex: 1}}>
+            {!image && <Button title='Camera' icon={{ name: 'camera-alt' }} onPress={() => onImageCameraClick()} />}
+          </View>
+        </View>
+        <View style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+          {image && (
+            <View style={{flex: 1}}>
+              <Image source={{ uri: image }} style={{ width: 150, height: 150 }} />
+              <Icon
+                name='cancel'
+                color='#888'
+                onPress={() => onRemoveImage()}
+              />
+            </View>
+          )}
+        </View>
+    </View>
   );
 }
 
-const renderTextArea = ({ input, ...inputProps }) => {
-  return (
-    <TextInput
-      multiline={true}
-      numberOfLines={4}
-      style={styles.textArea} 
-      onChangeText={input.onChange}
-      {...inputProps}
-    />
-  );
-}
+
+
 
 class AddReportForm extends React.Component {
   constructor(props){
     super(props)
     this.state = { 
       loading: false,
+      imageLoading: false,
       watchgroupIds: [],
       messageValue: null,
       image: null, 
@@ -68,6 +89,8 @@ class AddReportForm extends React.Component {
       erorrs: []
   }
     this.onImageClick = this.onImageClick.bind(this);
+    this.onImageCameraClick = this.onImageCameraClick.bind(this);
+    
   }
   
   onSubmit = () => {
@@ -106,48 +129,71 @@ class AddReportForm extends React.Component {
   async onImageClick(){
     let result;
     let _this = this;
-    _this.setState({ loading: true });
+    _this.setState({ imageLoading: true });
 
     try {
       result = await ImagePicker.launchImageLibraryAsync({ allowsEditing: true, aspect: [4, 3] }); 
     }
 
     catch(e) {
-      _this.setState({ loading: false }); 
+      _this.setState({ imageLoading: false }); 
       return console.log(e);
     }
 
     if (!result.cancelled) {
       handleFileUpload(result, (error, response) => {
         if (error) { return console.log(error); }
-        _this.setState({ image: response, loading: false }); 
+        _this.setState({ image: response, imageLoading: false }); 
       });
     }
     
-    _this.setState({ loading: false }); 
+    _this.setState({ imageLoading: false }); 
 
   }
-  render(){
-    let { image } = this.state;
+  async onImageCameraClick(){
+    let result;
+    let _this = this;
+    _this.setState({ imageLoading: true });
 
-    if(this.state.loading) {
-       return (
-          <LoadingScreen loadingMessage={'Adding your report...'} />
-      );
+    try {
+      result = await ImagePicker.launchCameraAsync({ allowsEditing: true, aspect: [4, 3] }); 
+    }
+
+    catch(e) {
+      _this.setState({ imageLoading: false }); 
+      return console.log(e);
+    }
+
+    if (!result.cancelled) {
+      handleFileUpload(result, (error, response) => {
+        if (error) { return console.log(error); }
+        _this.setState({ image: response, imageLoading: false }); 
+      });
     }
     
-    if(this.props.data.loading) {
-       return (
-          <LoadingScreen loadingMessage={'Loading Form...'} />
-      );
+    _this.setState({ imageLoading: false }); 
+  }
+  render(){
+
+
+    if (this.state.loading) {
+       return <LoadingScreen loadingMessage={'Adding your report...'} />;
     }
+    
+    if (this.props.data.loading) {
+       return <LoadingScreen loadingMessage={'Loading Form...'} />;
+    }
+
 
     return (
       <View style={{width: 300}}>
-        <View style={{marginBottom: 15, marginTop: 15}}>
-            {!image && <Button title='Upload Image' onPress={this.onImageClick} />}
-            {image && <Image source={{ uri: image }} style={{ width: 150, height: 150 }} />}
-        </View>
+        <ImageArea 
+          image={this.state.image}  
+          imageLoading={this.state.imageLoading}  
+          onImageClick={this.onImageClick} 
+          onImageCameraClick={this.onImageCameraClick}
+          onRemoveImage={()=>this.setState({image: null})}
+        />
         <List renderHeader={() => 'Description'}>
           <TextareaItem
               clear

@@ -1,4 +1,4 @@
-import { Platform } from 'react-native';
+import { Platform, Dimensions } from 'react-native';
 import { Constants } from 'expo';
 
 // setup fonts to be used in styles config
@@ -6,6 +6,7 @@ let regularFont = Platform.OS === 'android' ? 'proximanovasoft-regular' : 'proxi
 let semiboldFont = Platform.OS === 'android' ? 'proximanovasoft-semibold' : 'proximanovasoft-semibold';
 let boldFont = Platform.OS === 'android' ? 'proximanovasoft-bold' : 'proximanovasoft-bold';
 
+export const SCREEN_WIDTH = Dimensions.get('window').width;
 
 export const DEFAULT_HOUSEHOLD_IMAGE = 'https://icons.iconarchive.com/icons/paomedia/small-n-flat/1024/house-icon.png'
 
@@ -31,12 +32,27 @@ export const colorConfig =  {
     'darkGrey': '#666'
 }
 
-//setup stylesConfig to be used throughout app
+
+
+// setup stylesConfig to be used throughout app
+// ========================================
 export const stylesConfig =  {
     titleStyle:{
         fontFamily: boldFont,
         fontSize: 20,
         color: '#fff'
+    },
+    textHeader: {
+        fontFamily: boldFont,
+        fontSize: 20,
+    },
+    textSubHeader: {
+        fontFamily: semiboldFont,
+        fontSize: 15,
+    },
+    textBody: {
+        color: '#7b8b8e', 
+        fontSize: 13
     },
     basicHeaderStyle: {
         borderColor: colorConfig.business,

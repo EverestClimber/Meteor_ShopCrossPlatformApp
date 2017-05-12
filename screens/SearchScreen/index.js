@@ -1,6 +1,6 @@
 import React from 'react';
 import { Permissions, Location } from 'expo';
-import { View, ScrollView, Text, Platform, StyleSheet, Dimensions } from 'react-native';
+import { View, ScrollView, Text, Platform, StyleSheet, Dimensions, FlatList } from 'react-native';
 import { Icon, SearchBar } from 'react-native-elements';
 import { stylesConfig, colorConfig } from '../../modules/config';
 import BackButton from '../../components/BackButton';
@@ -43,14 +43,20 @@ class SearchScreen extends React.Component {
 	    	this.setState({data: data.messages, searching: false})
 	    });
 	}
+	keyExtractor(item, index){
+		return item._id;
+	}
 	renderSearchResults(){
-		return this.state.data.map( item => {
-					return (
-						<View key={item._id} style={{flex: 1, width: SCREEN_WIDTH-10}}>
-							<ReportCard item={item} navigation={this.props.navigation} />
-						</View>
-					); 
-				})
+
+		return (
+			<FlatList
+			  data={this.state.data}
+			  keyExtractor={this.keyExtractor}
+			  renderItem={({item}) => {
+			  	return <ReportCard item={item} navigation={this.props.navigation} />
+			  }}
+			/>
+		);
 	}
 	renderSearchingText(){
 		return (
@@ -68,29 +74,24 @@ class SearchScreen extends React.Component {
 	}
 	render(){
 
-		
-
 		return (
-			<ScrollView
-				style={styles.container}
-				contentContainerStyle={styles.contentContainerStyle}
+			<View style={{ paddingBottom: 2, flex: 1, backgroundColor: colorConfig.screenBackground }}>
+				<SearchBar
+				  	onChangeText={this.onSearchChange}
+				  	placeholder='Search reports...'
+				  	lightTheme
+				  	inputStyle={{ backgroundColor: '#fff' }}
+					containerStyle={{ width: SCREEN_WIDTH }}
+				/>
 
-			>
-			<SearchBar
-			  	onChangeText={this.onSearchChange}
-			  	placeholder='Search reports...'
-			  	lightTheme
-			  	inputStyle={{ backgroundColor: '#fff' }}
-				containerStyle={{ width: SCREEN_WIDTH }}
-			/>
+				{ this.state.searching && this.renderSearchingText() }
 
-			{ this.state.searching && this.renderSearchingText() }
+				{ !this.state.searching && this.state.data.length === 0 && this.renderNoResults() }
 
-			{ !this.state.searching && this.state.data.length === 0 && this.renderNoResults() }
+				{ this.state.data && this.state.data.length > 0 && this.renderSearchResults() }
 
-			{ this.state.data && this.state.data.length > 0 && this.renderSearchResults() }
-			
-			</ScrollView>
+				
+			</View>
 		);
 	}
 }

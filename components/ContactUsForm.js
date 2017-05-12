@@ -33,15 +33,28 @@ const renderTextArea = ({ input, ...inputProps }) => {
 }
 
 class ContactUs extends React.Component {
-  state = { loading: false }
+  state = { loading: false, messageSent: false }
   onSubmit = (values) => {
     this.setState({loading: true});
-    this.props.submitContactUsForm(values, () => {
+    setTimeout( () => this.setState({loading: false, messageSent: true }), 2000)
+    /*this.props.submitContactUsForm(values, () => {
       this.setState({loading: false});
-    });
+    });*/
   }
   render(){
     const { handleSubmit } = this.props;
+
+
+    if(this.state.messageSent) {
+       return (
+         <View>
+          <Text style={{textAlign: 'center'}}>
+            We received your message!
+          </Text>
+         </View>
+      );
+    }
+
 
     if(this.state.loading) {
        return (
@@ -51,20 +64,14 @@ class ContactUs extends React.Component {
 
     return (
       <View>
-        <Text style={styles.labelStyle}>Email:</Text>
-        <Field name="email" component={renderTextInput} />
         <Text style={styles.labelStyle}>Message:</Text>
         <Field name="message" component={renderTextArea} />
-        <Button 
-              title='SEND MESSAGE'
-              backgroundColor={colorConfig.business} 
-              onPress={handleSubmit(this.onSubmit)}
-              style={{marginTop: 10}} 
-            />
-        {/*<Button onPress={handleSubmit(this.onSubmit)} transparent>
-          <Text style={styles.linkText}>SEND MESSAGE</Text>
-        </Button>*/}
-        {/*<Button title='SEND MESSAGE' onPress={handleSubmit(this.onSubmit)} style={{backgroundColor: colorConfig.business, marginTop: 10,}} />*/}
+        <Button
+          title='SEND MESSAGE'
+          backgroundColor={colorConfig.business} 
+          onPress={handleSubmit(this.onSubmit)}
+          style={{marginTop: 10}} 
+        />
       </View>
     )
   }

@@ -37,11 +37,18 @@ const styles = StyleSheet.create({
 
 
 const ReportCardTop = ({ item, navigation }) => {
+
+	const onCardPress = () => {
+		//if location exists, go to map, if not, do not go to map
+		item.location ? ()=>navigation.navigate('reportDetail', { _id: item._id }) : () => {}
+	}
+
+
 	return (
 		<Flex align='start' style={{marginBottom: 20}}>
 			
 			<Flex.Item style={{flex: 3}}>
-					<TouchableOpacity onPress={()=>navigation.navigate('reportDetail', { _id: item._id })}>
+					<TouchableOpacity onPress={ ()=>onCardPress() }>
 					<Text style={styles.cardHeader}>{item.reportType}</Text>
 					<Text style={styles.cardSubHeader}>{getPriorityLevel(item.priorityLevel)}</Text>
 					<View style={{marginTop: 20, paddingLeft: 10}}>
