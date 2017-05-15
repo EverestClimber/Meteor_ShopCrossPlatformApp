@@ -187,13 +187,8 @@ export const GET_USER_DATA = gql`
       roles,
       _id,
       profile {
-        watchgroupIds
         firstName
         lastName
-        cell
-        cellVisibility
-        gender
-        image
       }
     }
   }

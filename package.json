@@ -1,7 +1,7 @@
 {
-  "name": "pvsafe-apollo",
+  "name": "truelife",
   "version": "0.0.0",
-  "description": "Apollo/GraphQL version of PV-SAFE",
+  "description": "truelife",
   "author": null,
   "private": true,
   "main": "main.js",
