@@ -27,51 +27,38 @@ export const SAVE_USERPROFILE = gql`
     $email: String!
     $firstName: String!
     $lastName: String!
-    $cell: String!
-    $image: String
-    $gender: String
-    $cellVisibility: String
-    $watchgroupIds: [String]
   ){
     saveUserProfile (
       email: $email
-      watchgroupIds: $watchgroupIds
-      cell: $cell
-      image: $image
       firstName: $firstName
       lastName: $lastName
-      gender: $gender
-      cellVisibility: $cellVisibility
     ){
       _id
     }
   }
 `;
 
-export const CREATE_REPORT = gql`
-  mutation CreateReport (
-    $messageValue: String
-    $modelType: String
-    $alertLevel: Int
-    $priorityLevel: Int
-    $reportType: String
-    $watchgroupId: String
-    $longitude: String,
-    $latitude: String
+
+export const CREATE_SHOP = gql`
+  mutation CreateShop(
+    $title: String!
+    $description: String!
+    $category: String!
     $image: String
+    $longitude:String
+    $latitude: String
   ){
-    createReport (
-      messageValue: $messageValue
-      modelType: $modelType
+    createShop(
+      title: $title
+      description: $description
+      category: $category
       image: $image
-      alertLevel: $alertLevel
-      priorityLevel: $priorityLevel
-      reportType: $reportType
-      watchgroupId: $watchgroupId
-      longitude: $longitude,
+      longitude: $longitude
       latitude: $latitude
     ){
       _id
     }
   }
-`;
+`
+
+

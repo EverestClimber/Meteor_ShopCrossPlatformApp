@@ -1,25 +1,33 @@
+// TOP LEVEL IMPORTS
 import React from 'react';
 import { Permissions, Location } from 'expo';
 import { View, ScrollView, Text, Platform, StyleSheet, Dimensions, FlatList } from 'react-native';
 import { Icon, SearchBar } from 'react-native-elements';
+// MODULES
 import { stylesConfig, colorConfig } from '../../modules/config';
+// COMPONENTS
 import BackButton from '../../components/BackButton';
-import { SEARCH_MESSAGES, FETCH_MESSAGES } from '../../apollo/queries';
+import ShopCard from '../../components/ShopCard';
+// APOLLO
+import { SEARCH_SHOPS, FETCH_SHOPS } from '../../apollo/queries';
 import client from '../../ApolloClient';
-import ReportCard from '../../components/ReportCard';
 
 
+// CONSTANTS & DESTRUCTURING
+// ========================================
 const { boldFont, semiboldFont, regularFont, titleStyle, basicHeaderStyle } = stylesConfig;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 
+
+// EXPORTED COMPONENT
+// ========================================
 class SearchScreen extends React.Component {
 	static navigationOptions = ({ navigation, screenProps }) => ({
-		title: 'Search Reports',
+		title: 'Search Shops',
 		tabBarIcon: ({ tintColor }) => <Icon name="list" size={30} color={tintColor} />,
 	  	headerTitleStyle: titleStyle,
 	  	headerVisible: Platform.OS !== 'android',
-	  	tabBarLabel: 'Documents',
 	  	headerStyle: basicHeaderStyle,
 	  	tabBarVisible: false,
 	  	headerLeft: <BackButton goBack={navigation.goBack} label='' />,
@@ -30,17 +38,17 @@ class SearchScreen extends React.Component {
 	onSearchChange = (value) => {
 		//this.setState({searching: true, data: []});
 		client.query({
-	      query: SEARCH_MESSAGES,
+	      query: SEARCH_SHOPS,
 	      variables: { string: value }
 	    }).then(({ data }) => {
-	    	this.setState({data: data.messages, searching: false})
+	    	this.setState({data: data.shops, searching: false})
 	    }); 
 	}
 	componentWillMount(){
 		client.query({
-	      query: FETCH_MESSAGES,
+	      query: FETCH_SHOPS,
 	    }).then(({ data }) => {
-	    	this.setState({data: data.messages, searching: false})
+	    	this.setState({data: data.shops, searching: false})
 	    });
 	}
 	keyExtractor(item, index){
@@ -53,7 +61,7 @@ class SearchScreen extends React.Component {
 			  data={this.state.data}
 			  keyExtractor={this.keyExtractor}
 			  renderItem={({item}) => {
-			  	return <ReportCard item={item} navigation={this.props.navigation} />
+			  	return <ShopCard item={item} navigation={this.props.navigation} />
 			  }}
 			/>
 		);
@@ -78,7 +86,7 @@ class SearchScreen extends React.Component {
 			<View style={{ paddingBottom: 2, flex: 1, backgroundColor: colorConfig.screenBackground }}>
 				<SearchBar
 				  	onChangeText={this.onSearchChange}
-				  	placeholder='Search reports...'
+				  	placeholder='Search shops...'
 				  	lightTheme
 				  	inputStyle={{ backgroundColor: '#fff' }}
 					containerStyle={{ width: SCREEN_WIDTH }}
@@ -90,14 +98,14 @@ class SearchScreen extends React.Component {
 
 				{ this.state.data && this.state.data.length > 0 && this.renderSearchResults() }
 
-				
 			</View>
 		);
 	}
 }
 
 
-
+// STYLES
+// ========================================
 const styles = StyleSheet.create({
 	contentContainerStyle: {
 		backgroundColor: colorConfig.screenBackground,
@@ -133,4 +141,8 @@ const styles = StyleSheet.create({
 	}
 });
 
+
+// EXPORT
+// ========================================
 export default SearchScreen;
+

@@ -15,7 +15,7 @@ import { GET_USER_DATA } from '../apollo/queries';
 import client from '../ApolloClient';
 import { Icon, Button, Card } from 'react-native-elements';
 import { List, Picker, Checkbox, Radio, InputItem, SegmentedControl, TextareaItem, WhiteSpace } from 'antd-mobile';
-import WatchgroupInput from './WatchgroupInput'
+
 
 const CheckboxItem = Checkbox.CheckboxItem;
 const RadioItem = Radio.RadioItem;
@@ -37,19 +37,14 @@ class AccountForm extends React.Component {
     const { user } = this.props.screenProps.data;
     this.state = { 
       loading: false,
-      firstName: user.profile.firstName || null,
-      lastName: user.profile.lastName || null,
-      email: user.emails[0].address || null,
-      gender: user.profile.gender || null,
-      cell: user.profile.cell || null,
-      cellVisibility: user.profile.cellVisibility || null,
-      watchgroupIds: user.profile.watchgroupIds || [] 
+      firstName: user.profile && user.profile.firstName || null,
+      lastName: user.profile && user.profile.lastName || null,
+      email: user.emails && user.emails[0].address || null,
     }
   }
   
   onSubmit = () => {
     this.setState({loading: true});
-    console.log(this.state);
     const { firstName, lastName, email, gender, cell, cellVisibility, watchgroupIds } = this.state;
     const variables = { firstName, lastName, email, gender, cell, cellVisibility, watchgroupIds };
 
@@ -60,19 +55,9 @@ class AccountForm extends React.Component {
         })
         .catch( e => console.log(e)  );
   }
-  onGroupChange(value){
-
-    let oldState = this.state.watchgroupIds;
-    let newState;
-    if (!this.state.watchgroupIds.includes(value)) {
-      newState = _.uniqBy([ value, ...oldState]);
-    } else {
-      newState = oldState.filter((item)=>item!=value);
-    }
-    this.setState({watchgroupIds: newState })
-  }
   render(){
-    const { handleSubmit } = this.props;
+    const { handleSubmit, screenProps } = this.props;
+    const { user } = screenProps.data;
 
     if(this.state.loading) {
        return (
@@ -80,13 +65,13 @@ class AccountForm extends React.Component {
       );
     }
 
-    if(this.props.data.loading) {
+    /*if(this.props.data.loading) {
        return (
           <LoadingScreen loadingMessage={'Loading Profile...'} />
       );
-    }
+    }*/
 
-    const mappedGroups = this.props.data.watchgroups.map(item => { return { value: item._id, label: item.title } })
+    
     return (
       <View style={{width: 300}}>
       <List renderHeader={() => 'Account Information'}>
@@ -94,60 +79,21 @@ class AccountForm extends React.Component {
             clear
             placeholder="First Name..."
             onChange={(val)=>this.setState({firstName: val})}
-            defaultValue={this.props.screenProps.data.user.profile.firstName}
+            defaultValue={user.profile && user.profile.firstName && user.profile.firstName || ''}
         />
         <InputItem
             clear
             placeholder="Last Name..."
             onChange={(val)=>this.setState({lastName: val})}
-            defaultValue={this.props.screenProps.data.user.profile.lastName}
+            defaultValue={user.profile && user.profile.lastName && user.profile.lastName || ''}
         />
         <InputItem
             clear
             placeholder="Email..."
             onChange={(val)=>this.setState({email: val})}
-            defaultValue={this.props.screenProps.data.user.emails[0].address}
+            defaultValue={user.emails && user.emails[0].address}
         />
-        </List>
-        <List renderHeader={() => 'Cellphone Settings'}>
-        <InputItem
-            clear
-            type='phone'
-            placeholder="Cell..."
-            onChange={(val)=>this.setState({cell: val})}
-            defaultValue={this.props.screenProps.data.user.profile.cell}
-        />
-          {CELL_VISIBILITY_OPTIONS.map(i => (
-            <RadioItem key={i.value} checked={this.state.cellVisibility === i.value} onChange={() => this.setState({cellVisibility: i.value})}>
-              {i.label}
-            </RadioItem>
-          ))}
-      </List>
-      <List renderHeader={() => 'Gender'}>
-          {GENDER_OPTIONS.map(i => (
-            <RadioItem key={i.value} checked={this.state.gender === i.value} onChange={() => this.setState({gender: i.value})}>
-              {i.label}
-            </RadioItem>
-          ))}
-      </List>
-        
-
-        <List renderHeader={() => 'Groups to Follow'}>
-          <WatchgroupInput 
-            watchgroups={this.props.data.watchgroups}
-            selectedWatchgroupIds={this.state.watchgroupIds}
-            onGroupChange={(value) => this.onGroupChange(value)}
-          />
-        {/*mappedGroups.map(i => (
-          <CheckboxItem 
-            key={i.value}
-            checked={this.state.watchgroupIds.includes(i.value)}
-            onChange={() => this.onGroupChange(i.value)}
-          >
-            {i.label}
-          </CheckboxItem>
-        ))*/}
-      </List>
+        </List>    
         <Button 
           title='SAVE PROFILE'
           backgroundColor={colorConfig.business} 

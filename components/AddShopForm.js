@@ -9,10 +9,8 @@ import { Button, Icon } from 'react-native-elements'
 //MODULES
 import { colorConfig } from '../modules/config';
 import { graphql, withApollo } from 'react-apollo';
-import { CREATE_REPORT } from '../apollo/mutations'
-import { FETCH_WATCHGROUPS } from '../apollo/queries'
+import { CREATE_SHOP } from '../apollo/mutations'
 import { List, Radio, InputItem, SegmentedControl, TextareaItem, WhiteSpace } from 'antd-mobile';
-import WatchgroupInput from './WatchgroupInput'
 import client from '../ApolloClient';
 import { handleFileUpload } from '../modules/helpers';
 
@@ -24,13 +22,11 @@ const PRIORITY_LEVEL = [
   { key: 3, value: '3', intValue: 3, label: 'Urgent'}
 ];
 
-const data = [
-      { value: 0, label: 'General' },
-      { value: 1, label: 'Suspicious Vehicle' },
-      { value: 2, label: 'Suspicious Person' },
-      { value: 3, label: 'Checking In' },
-      { value: 4, label: 'Checking Out' },
-    ];
+const CATEGORY_OPTIONS = [
+  { label: 'food', value: 'food'},
+  { label: 'clothing', value: 'clothing'},
+  { label: 'electronics', value: 'electronics'}
+];
 
 
 
@@ -74,7 +70,7 @@ const ImageArea = ({ image, onImageClick, onImageCameraClick, onRemoveImage, ima
 
 
 
-class AddReportForm extends React.Component {
+class AddShopForm extends React.Component {
   constructor(props){
     super(props)
     this.state = { 
@@ -94,37 +90,27 @@ class AddReportForm extends React.Component {
   }
   
   onSubmit = () => {
-    const { messageValue, watchgroupIds, priorityLevel, reportType, image } = this.state;
+    const { title, description, category, image } = this.state;
     this.setState({loading: true})
-    /*if (!messageValue || !watchgroupIds || !priorityLevel || !reportType ) {
-      return 
-    }*/
+
     let variables = {
-      messageValue: messageValue,
+      title: title,
+      description: description,
+      category: category,
       image: image,
       longitude: this.props.location.coords.longitude,
       latitude: this.props.location.coords.latitude,
-      watchgroupId: watchgroupIds && watchgroupIds[0],
-      priorityLevel: priorityLevel,
-      reportType: reportType
     }
     this.props.mutate({ variables })
       .then(() => {
         client.resetStore()
         this.props.navigation.goBack()
-        return this.setState({ visible: false });
-    }).catch(e => console.log(e));
-  }
-  onGroupChange(value){
+        return this.setState({ loading: false });
+    }).catch(err => {
+      let errors = err && err.graphQLErrors && err.graphQLErrors.length > 0 && err.graphQLErrors.map( err => err.message );
+      return this.setState({loading: false, errors: errors});
+    });
 
-    let oldState = this.state.watchgroupIds;
-    let newState;
-    if (!this.state.watchgroupIds.includes(value)) {
-      newState = _.uniqBy([ value, ...oldState]);
-    } else {
-      newState = oldState.filter((item)=>item!=value);
-    }
-    this.setState({watchgroupIds: newState })
   }
   async onImageClick(){
     let result;
@@ -177,12 +163,12 @@ class AddReportForm extends React.Component {
 
 
     if (this.state.loading) {
-       return <LoadingScreen loadingMessage={'Adding your report...'} />;
+       return <LoadingScreen loadingMessage={'Adding shop...'} />;
     }
     
-    if (this.props.data.loading) {
+    /*if (this.props.data.loading) {
        return <LoadingScreen loadingMessage={'Loading Form...'} />;
-    }
+    }*/
 
 
     return (
@@ -194,46 +180,35 @@ class AddReportForm extends React.Component {
           onImageCameraClick={this.onImageCameraClick}
           onRemoveImage={()=>this.setState({image: null})}
         />
+        <List renderHeader={() => 'Title'}>
+          <InputItem
+              clear
+              placeholder="Type your message here..."
+              onChange={(val)=>this.setState({title: val})}
+          />
+        </List>
         <List renderHeader={() => 'Description'}>
           <TextareaItem
               clear
               placeholder="Type your message here..."
               rows={4}
-              onChange={(val)=>this.setState({messageValue: val})}
+              onChange={(val)=>this.setState({description: val})}
           />
         </List>
-        <List renderHeader={() => 'Priority Level'}>
-          {PRIORITY_LEVEL.map(i => (
+        <List renderHeader={() => 'Category'}>
+          {CATEGORY_OPTIONS.map(i => (
             <RadioItem 
               key={i.value} 
-              checked={this.state.priorityLevel === i.value} 
-              onChange={() => this.setState({priorityLevel: i.value})}
+              checked={this.state.category === i.value} 
+              onChange={() => this.setState({category: i.value})}
             >
               {i.label}
             </RadioItem>
           ))}
-        </List>
-        <List renderHeader={() => 'Report Type'}>
-          {data.map(i => (
-            <RadioItem 
-              key={i.value} 
-              checked={this.state.reportType === i.label} 
-              onChange={() => this.setState({reportType: i.label})}
-            >
-              {i.label}
-            </RadioItem>
-          ))}
-        </List>
-        <List renderHeader={() => 'Groups to Alert'}>
-            <WatchgroupInput 
-              watchgroups={this.props.data.watchgroups}
-              selectedWatchgroupIds={this.state.watchgroupIds}
-              onGroupChange={(value) => this.onGroupChange(value)}
-            />
         </List>
         <View style={{marginTop: 20}}>
           <Button 
-            title='ADD REPORT'
+            title='ADD SHOP'
             backgroundColor={colorConfig.business} 
             onPress={this.onSubmit}
           />
@@ -291,7 +266,4 @@ const styles = StyleSheet.create({
 })
 
 
-export default 
-graphql(FETCH_WATCHGROUPS)(
-  graphql(CREATE_REPORT)(AddReportForm)
-);
+export default graphql(CREATE_SHOP)(AddShopForm);

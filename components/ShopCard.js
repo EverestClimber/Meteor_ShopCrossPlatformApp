@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, ScrollView, Image, Text, Platform, Button, StyleSheet, TouchableOpacity, ListView, RefreshControl } from 'react-native';
 import { Icon, Card } from 'react-native-elements';
-import { stylesConfig, colorConfig, DEFAULT_AVATAR } from '../modules/config';
+import { stylesConfig, colorConfig, DEFAULT_SHOP_IMAGE } from '../modules/config';
 import { getPriorityLevel, timeAgo } from '../modules/helpers';
 import { Flex } from 'antd-mobile';
 
@@ -40,7 +40,7 @@ const ReportCardTop = ({ item, navigation }) => {
 
 	const onCardPress = () => {
 		//if location exists, go to map, if not, do not go to map
-		item.location ? ()=>navigation.navigate('reportDetail', { _id: item._id }) : () => {}
+		navigation.navigate('shopDetail', { _id: item._id });
 	}
 
 
@@ -49,31 +49,28 @@ const ReportCardTop = ({ item, navigation }) => {
 			
 			<Flex.Item style={{flex: 3}}>
 					<TouchableOpacity onPress={ ()=>onCardPress() }>
-					<Text style={styles.cardHeader}>{item.reportType}</Text>
-					<Text style={styles.cardSubHeader}>{getPriorityLevel(item.priorityLevel)}</Text>
+					<Text style={styles.cardHeader}>{item.title}</Text>
+					{/*<Text style={styles.cardSubHeader}>{getPriorityLevel(item.priorityLevel)}</Text>*/}
 					<View style={{marginTop: 20, paddingLeft: 10}}>
 						<Text
 							ellipsizeMode='tail'
 							numberOfLines={5}
-							style={styles.messageValue}
+							style={styles.description}
 						>
-							{item.messageValue}
+							{item.description}
 						</Text>
 					</View>
 				</TouchableOpacity> 
 			</Flex.Item>
 			
 			<Flex.Item>
-				<TouchableOpacity 
-					onPress={()=>navigation.navigate('neighborDetail', { _id: item.owner._id, firstName: item.owner.profile.firstName})}
-				>
-					<Image 
-						source={{ uri: item.owner.profile.image || DEFAULT_AVATAR }} 
-						style={{height: 65, width: 60}}
-					/>
-				</TouchableOpacity>
+				<Image 
+					source={{ uri: item.image || DEFAULT_SHOP_IMAGE }} 
+					style={{height: 65, width: 60}}
+				/>
 				<Text style={{color: '#888', fontSize: 10}}>
-					{item.owner.profile.firstName} {item.owner.profile.lastName}
+					{item.owner.profile && item.owner.profile.firstName || ''} 
+					{item.owner.profile && item.owner.profile.lastName || ''}
 				</Text>
 			</Flex.Item>
 		</Flex>
@@ -81,20 +78,20 @@ const ReportCardTop = ({ item, navigation }) => {
 }
 
 
-const ReportCard = ({ item, navigation }) => {
+const ShopCard = ({ item, navigation }) => {
 	return (
 		<Card containerStyle={{minWidth: 250}}>
 			<ReportCardTop item={item}  navigation={navigation} />
 			<Flex>
 				<Flex.Item>
 					<View style={{flexDirection:'row', flexWrap:'wrap', alignItems: 'flex-end', justifyContent: 'flex-start'}}>
-						<Icon name='access-time' iconStyle={{ fontSize: 13, marginRight: 5, color: '#bdc3c7' }} />
+						<Icon name='label-outline' iconStyle={{ fontSize: 13, marginRight: 5, color: '#bdc3c7' }} />
 						<Text style={{ fontSize: 13, color: '#bdc3c7' }}>
-							{timeAgo(item.createdAt)}
+							{item.category || ''}
 						</Text>
 					</View>
 				</Flex.Item>
-				<Flex.Item>
+				{/*<Flex.Item>
 					<TouchableOpacity 
 						onPress={()=>navigation.navigate('watchgroupDetail', { _id: item.watchgroup._id, group: item.watchgroup.title})}
 					>
@@ -103,13 +100,10 @@ const ReportCard = ({ item, navigation }) => {
 						<Text>{item.watchgroup.title}</Text>
 					</View>
 					</TouchableOpacity>
-				</Flex.Item>
+				</Flex.Item>*/}
 			</Flex>
-			{/*<TouchableOpacity onPress={()=>navigation.navigate('reportDetail', { _id: item._id})}>
-            	<Text style={{color: '#888', fontSize: 10}}>{item.messageValue}</Text>
-            </TouchableOpacity>*/}
 		</Card>
 	);
 }
 
-export default ReportCard;
+export default ShopCard;

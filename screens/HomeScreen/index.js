@@ -3,12 +3,12 @@ import { View, FlatList, Text, Platform, Button, Dimensions, TouchableOpacity, I
 import { Icon, Card, SearchBar } from 'react-native-elements';
 import { stylesConfig, colorConfig, SCREEN_WIDTH } from '../../modules/config';
 import { userId } from 'meteor-apollo-accounts'
-import { FETCH_MESSAGES } from '../../apollo/queries';
+import { FETCH_SHOPS } from '../../apollo/queries';
 import { graphql, withApollo } from 'react-apollo';
 //COMMON COMPONENTS
 import LoadingScreen from '../../components/LoadingScreen';
 import EmptyState from '../../components/EmptyState';
-import ReportCard from '../../components/ReportCard';
+import ShopCard from '../../components/ShopCard';
 
 
 // CONSTANTS & DESTRUCTURING
@@ -19,14 +19,13 @@ const { basicHeaderStyle, titleStyle, regularFont, emptyStateIcon } = stylesConf
 
 
 
-
-class ReportsScreen extends React.Component {
+class HomeScreen extends React.Component {
 	static navigationOptions = ({ navigation, screenProps }) => ({
-		title: 'Reports',
-		tabBarIcon: ({ tintColor }) => <Icon name="list" size={30} color={tintColor} />,
+		title: 'Home',
+		tabBarIcon: ({ tintColor }) => <Icon name="home" size={30} color={tintColor} />,
 	  	headerTitleStyle: titleStyle,
 	  	headerVisible: Platform.OS !== 'android',
-	  	tabBarLabel: 'Reports',
+	  	tabBarLabel: 'Home',
 	  	headerStyle: basicHeaderStyle,
 	  	headerLeft: (
 	  		<Icon
@@ -39,9 +38,9 @@ class ReportsScreen extends React.Component {
 	  	headerRight: (
 	  		<Button 
 	  			style={{fontFamily: regularFont, fontSize: 10}} 
-	  			title={'+ Create'} 
+	  			title={'+ Add Shop'} 
 	  			color={'#fff'} 
-	  			onPress={()=>navigation.navigate('addReport')} 
+	  			onPress={()=>navigation.navigate('addShop')} 
 	  		/>
 	  	),
 	});
@@ -59,19 +58,19 @@ class ReportsScreen extends React.Component {
 		setTimeout(()=>this.setState({refreshing: false}), 1500)
 	}
 	onEndReached(){
-		console.log(this.props.data.messages.length);
+		console.log(this.props.data.shops.length);
 
 		this.props.data.fetchMore({
-			variables: { offset: this.props.data.messages.length },
+			variables: { offset: this.props.data.shops.length },
 			updateQuery: (previousResult, { fetchMoreResult }) => {
 					// Don't do anything if there weren't any new items
-					if (!fetchMoreResult || fetchMoreResult.messages.length === 0) {
+					if (!fetchMoreResult || fetchMoreResult.shops.length === 0) {
 						return previousResult;
 					}
 
 					return {
 					// Append the new feed results to the old one
-					messages: previousResult.messages.concat(fetchMoreResult.messages),
+					shops: previousResult.shops.concat(fetchMoreResult.shops),
 					};
 			},
 		}).catch(err => {
@@ -84,19 +83,20 @@ class ReportsScreen extends React.Component {
 	render(){
 
 		if (this.props.data.loading) {
-			return <LoadingScreen loadingMessage='loading reports...' />
+			return <LoadingScreen loadingMessage='loading shops...' />
 		}
 
-		if (!this.props.data.messages || this.props.data.messages.length === 0) {
+		if (!this.props.data.shops || this.props.data.shops.length === 0) {
 			return (
 				<EmptyState 
 					imageComponent={
 						<Image source={require('../../assets/marketing.png')} style={emptyStateIcon}/>
 					}
-					pageText='NO REPORTS YET...' 
+					pageText='NO SHOPS YET...' 
 				/>
 			);
 		}
+
 
 		return (
 			<View style={{ paddingBottom: 2, flex: 1, backgroundColor: colorConfig.screenBackground }}>
@@ -108,13 +108,14 @@ class ReportsScreen extends React.Component {
 				  containerStyle={{ width: SCREEN_WIDTH, backgroundColor: colorConfig.business }}
 				/>*/}
 				<FlatList
-				  data={this.props.data.messages}
+				  data={this.props.data.shops}
 				  keyExtractor={this.keyExtractor}
 				  refreshing={this.state.refreshing}
 				  onRefresh={this.onRefresh}
 				  onEndReached={this.onEndReached}
 				  renderItem={({item}) => {
-				  	return <ReportCard item={item} navigation={this.props.navigation} />
+				  	//return <View><Text>{item.title}</Text></View>
+				  	return <ShopCard item={item} navigation={this.props.navigation} />
 				  }}
 				/>
 				{this.props.data.networkStatus === 4 && (
@@ -148,11 +149,11 @@ class ReportsScreen extends React.Component {
 //			</ListView>
 
 
-export default graphql(FETCH_MESSAGES, {
+export default graphql(FETCH_SHOPS, {
 	options: {
 		//notifyOnNetworkStatusChange: true,
 	}
-})(ReportsScreen);
+})(HomeScreen);
 
 
 

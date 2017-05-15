@@ -4,20 +4,18 @@ import { View, ScrollView, Text, Platform, StyleSheet } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { stylesConfig, colorConfig } from '../../modules/config';
 import BackButton from '../../components/BackButton';
-import AddReportForm from '../../components/AddReportForm';
-
+import AddShopForm from '../../components/AddShopForm';
 
 
 
 const { boldFont, semiboldFont, regularFont, titleStyle, basicHeaderStyle } = stylesConfig;
 
-class AddReport extends React.Component {
+class AddShop extends React.Component {
 	static navigationOptions = ({ navigation, screenProps }) => ({
-		title: 'Add Report',
+		title: 'Add Shop',
 		tabBarIcon: ({ tintColor }) => <Icon name="list" size={30} color={tintColor} />,
 	  	headerTitleStyle: titleStyle,
 	  	headerVisible: Platform.OS !== 'android',
-	  	tabBarLabel: 'Documents',
 	  	headerStyle: basicHeaderStyle,
 	  	tabBarVisible: false,
 	  	headerLeft: <BackButton goBack={navigation.goBack} label='' />,
@@ -40,7 +38,7 @@ class AddReport extends React.Component {
 				style={styles.container}
 				contentContainerStyle={styles.contentContainerStyle}
 			>
-				<AddReportForm
+				<AddShopForm
 					location={this.state.location}
 					navigation={this.props.navigation}
 				/>
@@ -82,4 +80,4 @@ const styles = StyleSheet.create({
 	}
 });
 
-export default AddReport;
+export default AddShop;

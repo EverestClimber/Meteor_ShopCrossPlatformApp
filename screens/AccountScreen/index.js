@@ -36,8 +36,6 @@ const styles = StyleSheet.create({
 		backgroundColor: colorConfig.screenBackground,
 		alignItems: 'center',
 		justifyContent: 'flex-start',
-		paddingBottom: 50,
-		paddingTop: 20
 	},
 	container: {
 		flex: 1,
@@ -63,7 +61,7 @@ class AccountScreen extends React.Component {
 	});
 	render(){
 
-		/*if (this.props.screenProps.data.loading || this.props.data.loading) {
+		if (this.props.screenProps.data.loading) {
 			return (
 				<LoadingScreen />
 			);
@@ -73,12 +71,14 @@ class AccountScreen extends React.Component {
 				<ScrollView style={{padding: 10, backgroundColor: '#f5f5f5'}}>
 				</ScrollView>
 			);
-		}*/
+		}
 		//style={styles.container}
 		//contentContainerStyle={styles.contentContainerStyle}
 		return (
-			<View style={{flex: 1}}>
-			
+			<ScrollView style={styles.container} contentContainerStyle={styles.contentContainerStyle}>
+				<AccountForm
+					{...this.props} 
+				/>
 				{/*<Tabs defaultActiveKey="1"
 					textColor={colorConfig.darkGrey}
 					activeTextColor={colorConfig.business}
@@ -89,12 +89,7 @@ class AccountScreen extends React.Component {
 			      <TabPane tab="Account" key="1">
 			      		<ScrollView contentContainerStyle={styles.contentContainerStyle}>
 				      		<ProfileAvatar {...this.props} />
-							<AccountForm 
-								{...this.props}
-								initialValues={{
-								    firstName: this.props.screenProps.data.user.profile.firstName
-								}}  
-							/>
+							
 						</ScrollView>
 			      </TabPane>
 			      <TabPane tab="Notifcations" key="2">
@@ -109,7 +104,7 @@ class AccountScreen extends React.Component {
 				
 				
 			
-			</View>
+			</ScrollView>
 		);
 	}
 }

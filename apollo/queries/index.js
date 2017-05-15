@@ -1,5 +1,64 @@
 import gql from 'graphql-tag';
 
+const shopFragment = gql`
+  fragment shopFragment on Shop {
+        _id
+        title
+        description
+        category
+        image
+        owner {
+          profile {
+            firstName
+            lastName
+            image
+          }
+        }
+        location {
+          lat
+          lng
+        }
+    }
+`;
+
+
+// FETCH_SHOPS
+// ============================
+export const FETCH_SHOPS = gql`
+  query FetchShops($offset: Int) {
+    shops(offset: $offset) {
+      ...shopFragment
+    } 
+  }
+  ${shopFragment}
+`;
+
+// MESSAGE QUERIES
+// ============================
+
+
+
+
+export const SEARCH_SHOPS = gql`
+  query searchShops($string: String) {
+    shops (string: $string) {
+      ...shopFragment
+    }
+  }
+  ${shopFragment}
+`;
+
+// FETCH_SHOP
+// ============================
+export const FETCH_SHOP = gql`
+  query FetchShop($_id: ID!) {
+    shopById(_id: $_id) {
+     ...shopFragment
+    } 
+  }
+  ${shopFragment}
+`;
+
 
 
 //FRAGMENTS
@@ -118,25 +177,6 @@ export const FETCH_MESSAGES = gql`
 `;
 
 
-export const FETCH_WATCHGROUP = gql`
-  query fetchWatchgroup($_id: ID!) {
-    watchgroupById(_id:$_id) {
-      _id
-      title
-      color_id
-      
-      members {
-        ...userFragment
-      }
-      messages {
-        ...messageFragment
-      }
-    }
-  }
-  ${messageFragment}
-  ${userFragment}
-`;
-
 
 export const FETCH_USER_BY_ID = gql`
   query FetchUserById ($_id:ID!){
@@ -165,18 +205,7 @@ export const FETCH_MESSAGE = gql`
   ${messageFragment}
 `;
 
-export const FETCH_NEIGHBORS = gql`
-  query FetchNeighbors {
-    neighbors {
-      _id
-      profile {
-        firstName
-        lastName
-        image
-      }
-    }
-  }
-`;
+
 
 // USER QUERIES
 // ============================

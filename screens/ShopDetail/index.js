@@ -1,11 +1,10 @@
 import React from 'react';
 import { View, ScrollView, Text, Platform, Image, FlatList } from 'react-native';
 //MODULES
-import { FETCH_WATCHGROUP } from '../../apollo/queries';
+import { FETCH_SHOP } from '../../apollo/queries';
 import { stylesConfig, colorConfig } from '../../modules/config';
 import LoadingScreen from '../../components/LoadingScreen';
-import ReportCard from '../../components/ReportCard';
-import NeighborCard from '../../components/NeighborCard';
+import ShopCard from '../../components/ShopCard';
 import { Icon, Button, Card } from 'react-native-elements';
 import { graphql } from 'react-apollo';
 import BackButton from '../../components/BackButton';
@@ -47,9 +46,9 @@ const ItemsList = ({ items, navigation, cardType }) => {
 
 		  	switch(cardType){
 		  		case 'members':
-		  			return <NeighborCard item={item} navigation={navigation} />;
+		  			return <ShopCard item={item} navigation={navigation} />;
 		  		case 'messages':
-		  			return <ReportCard item={item} navigation={navigation} />;
+		  			return <ShopCard item={item} navigation={navigation} />;
 		  		default:
 		  			return null
 		  	}
@@ -63,9 +62,9 @@ const ItemsList = ({ items, navigation, cardType }) => {
 
    
 
-class WatchgroupDetail extends React.Component {
+class ShopDetail extends React.Component {
 	static navigationOptions = ({ navigation, screenProps }) => ({
-		title: `${navigation.state.params.group}`,
+		title: 'Shop Detail', //`${navigation.state.params.group}`,
 		tabBarIcon: ({ tintColor }) => <Icon name="group" size={30} color={tintColor} />,
 	  	headerTitleStyle: titleStyle,
 	  	headerVisible: Platform.OS !== 'android',
@@ -79,7 +78,7 @@ class WatchgroupDetail extends React.Component {
 		const { data, navigation } = this.props;
 
 		if (data.loading) {
-			return <LoadingScreen loadingMessage='Loading Watchgroup...' />
+			return <LoadingScreen loadingMessage='Loading Shop...' />
 		}
 
 		return (
@@ -87,7 +86,7 @@ class WatchgroupDetail extends React.Component {
 
 				<Card containerStyle={{marginBottom: 25}}>
 					<Text style={[textHeader, {textAlign: 'center'}]}>
-						{data.watchgroupById.title || ''}
+						{data.shopById.title}
 					</Text>
 				</Card>
 
@@ -98,22 +97,22 @@ class WatchgroupDetail extends React.Component {
 					underlineColor={colorConfig.lightGrey}
 					barStyle={{backgroundColor: '#fff'}}
 				>
-			      <TabPane tab="Members" key="1">
+			      <TabPane tab="Details" key="1">
 			      	<View style={{minHeight: 300}}>
-				      	<ItemsList 
+				      	{/*<ItemsList 
 				      		items={data.watchgroupById.members} 
 				      		navigation={navigation}
 				      		cardType='members'
-				      	/>
+				      	/>*/}
 			      	</View>
 			      </TabPane>
-			      <TabPane tab="Reports" key="2">
+			      <TabPane tab="Map" key="2">
 			      	<View style={{minHeight: 300}}>
-				      	<ItemsList 
+				      	{/*<ItemsList 
 				      		items={data.watchgroupById.messages} 
 				      		navigation={navigation}
 				      		cardType='messages'
-				      	/>
+				      	/>*/}
 			      	</View>
 			      </TabPane>
 			    </Tabs>
@@ -123,9 +122,9 @@ class WatchgroupDetail extends React.Component {
 	
 }
 
-export default graphql(FETCH_WATCHGROUP, {
+export default graphql(FETCH_SHOP, {
   options: (props) => { 
   	let variables = { _id: props.navigation.state.params._id };
   	return { variables } 
   }
-})(WatchgroupDetail);
+})(ShopDetail);

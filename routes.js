@@ -15,6 +15,11 @@ import TermsScreen from './screens/TermsScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import HelpScreen from './screens/HelpScreen';
 import AccountScreen from './screens/AccountScreen';
+import HomeScreen from './screens/HomeScreen';
+import AddShop from './screens/AddShop';
+import SearchScreen from './screens/SearchScreen';
+import ShopDetail from './screens/ShopDetail';
+import MapScreen from './screens/MapScreen';
 
 //
 import registerForNotifications from './services/push_notifications';
@@ -23,20 +28,13 @@ import { GET_USER_DATA } from './apollo/queries';
 import { SAVE_USER_EXPO_PUSH_ID } from './apollo/mutations'
 
 
-const HomeScreen = () => {
-  return (
-    <View style={{flex: 1}}>
-      <Text>HomeScreen</Text>
-      <Text>HomeScreen</Text>
-      <Text>HomeScreen</Text>
-    </View>
-  );
-}
-
 // HomeNavigator
 // =================================
 const HomeNavigator = StackNavigator({
   home: {  screen: HomeScreen },
+  addShop: {  screen: AddShop },
+  search: {  screen: SearchScreen },
+  shopDetail: {  screen: ShopDetail },
 },{
   tabBarLabel: 'Home',
 });
@@ -77,7 +75,7 @@ const APP_NAVIGATOR_OPTIONS = {
 
 const APP_NAVIGATOR_ROUTES = {
   home: { screen: HomeNavigator },
-  //groups: { screen: WatchgroupsNavigator },
+  map: { screen: MapScreen },
   //households: { screen: HouseholdsNavigator },
   //neighbors: { screen: NeighborsNavigator },
   account: { screen: AccountNavigator }

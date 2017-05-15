@@ -77,7 +77,7 @@ class SettingsScreen extends React.Component {
 	});
 	handleLogout = () => {
 		logout(ApolloClient).then( res => {
-			this.props.navigation.navigate('login')
+			this.props.navigation.navigate('auth')
 			ApolloClient.resetStore();
 		});
 	}
