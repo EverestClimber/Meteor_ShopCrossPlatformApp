@@ -63,7 +63,7 @@ class AccountScreen extends React.Component {
 	});
 	render(){
 
-		if (this.props.screenProps.data.loading || this.props.data.loading) {
+		/*if (this.props.screenProps.data.loading || this.props.data.loading) {
 			return (
 				<LoadingScreen />
 			);
@@ -73,14 +73,13 @@ class AccountScreen extends React.Component {
 				<ScrollView style={{padding: 10, backgroundColor: '#f5f5f5'}}>
 				</ScrollView>
 			);
-		}
+		}*/
 		//style={styles.container}
 		//contentContainerStyle={styles.contentContainerStyle}
-		console.log(this.props.data)
 		return (
 			<View style={{flex: 1}}>
 			
-				<Tabs defaultActiveKey="1"
+				{/*<Tabs defaultActiveKey="1"
 					textColor={colorConfig.darkGrey}
 					activeTextColor={colorConfig.business}
 					activeUnderlineColor={colorConfig.business} 
@@ -105,7 +104,7 @@ class AccountScreen extends React.Component {
 						/>
 			      	</ScrollView>
 			      </TabPane>
-			    </Tabs>
+			    </Tabs>*/}
 				
 				
 				
@@ -118,8 +117,6 @@ class AccountScreen extends React.Component {
 
 
 
-export default graphql(FETCH_WATCHGROUPS)(
-	connect(null, actions)(AccountScreen)
-);
+export default connect(null, actions)(AccountScreen);
 
 

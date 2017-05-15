@@ -14,18 +14,8 @@ import PrivacyPolicyScreen from './screens/PrivacyPolicyScreen';
 import TermsScreen from './screens/TermsScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import HelpScreen from './screens/HelpScreen';
-import ReportsScreen from './screens/ReportsScreen';
-import AddReport from './screens/AddReport';
-import ReportDetail from './screens/ReportDetail';
 import AccountScreen from './screens/AccountScreen';
-import WatchgroupsScreen from './screens/WatchgroupsScreen';
-import HouseholdsScreen from './screens/HouseholdsScreen';
-import HouseholdDetail from './screens/HouseholdDetail';
-import AddHousehold from './screens/AddHousehold';
-import WatchgroupDetail from './screens/WatchgroupDetail';
-import NeighborsScreen from './screens/Neighbors';
-import NeighborDetail from './screens/NeighborDetail';
-import SearchScreen from './screens/SearchScreen';
+
 //
 import registerForNotifications from './services/push_notifications';
 //
@@ -33,55 +23,27 @@ import { GET_USER_DATA } from './apollo/queries';
 import { SAVE_USER_EXPO_PUSH_ID } from './apollo/mutations'
 
 
-
-
-
-// NeighborsNavigator
-// =================================
-const NeighborsNavigator = StackNavigator({
-  neighbors: {  screen: NeighborsScreen },
-  neighborDetail: { screen: NeighborDetail }
-},{
-  tabBarLabel: 'Neighbors',
-});
-
+const HomeScreen = () => {
+  return (
+    <View style={{flex: 1}}>
+      <Text>HomeScreen</Text>
+      <Text>HomeScreen</Text>
+      <Text>HomeScreen</Text>
+    </View>
+  );
+}
 
 // HomeNavigator
 // =================================
-const ReportsNavigator = StackNavigator({
-  home: {  screen: ReportsScreen },
-  addReport: {  screen: AddReport },
-  search: {  screen: SearchScreen },
-  reportDetail: {  screen: ReportDetail },
-  neighborDetail: { screen: NeighborDetail },
-  watchgroupDetail: {  screen: WatchgroupDetail },
-  
+const HomeNavigator = StackNavigator({
+  home: {  screen: HomeScreen },
 },{
   tabBarLabel: 'Home',
 });
 
 
-// HouseholdsNavigator
-// =================================
-const HouseholdsNavigator = StackNavigator({
-  households: {  screen: HouseholdsScreen },
-  addHousehold: {  screen: AddHousehold },
-  householdDetail: {  screen: HouseholdDetail },
-  neighborDetail: { screen: NeighborDetail },
-},{
-  tabBarLabel: 'Households',
-});
 
-// WatchgroupsNavigator
-// =================================
-const WatchgroupsNavigator = StackNavigator({
-  watchgroups: {  screen: WatchgroupsScreen },
-  watchgroupDetail: {  screen: WatchgroupDetail },
-  reportDetail: {  screen: ReportDetail },
-  neighborDetail: { screen: NeighborDetail },
-},{
-  tabBarLabel: 'Home',
-});
+
 
 const AccountNavigator = StackNavigator({
   account: {  screen: AccountScreen },
@@ -114,10 +76,10 @@ const APP_NAVIGATOR_OPTIONS = {
 };
 
 const APP_NAVIGATOR_ROUTES = {
-  home: { screen: ReportsNavigator },
-  groups: { screen: WatchgroupsNavigator },
-  households: { screen: HouseholdsNavigator },
-  neighbors: { screen: NeighborsNavigator },
+  home: { screen: HomeNavigator },
+  //groups: { screen: WatchgroupsNavigator },
+  //households: { screen: HouseholdsNavigator },
+  //neighbors: { screen: NeighborsNavigator },
   account: { screen: AccountNavigator }
 };
 
@@ -170,7 +132,8 @@ const MAIN_NAVIGATOR_OPTIONS = {
 
 
 const MAIN_NAVIGATOR_ROUTES = {
-  auth: { screen: AuthScreen },
+  auth: { screen: LoginScreen },
+  signup: { screen: SignupScreen },
   welcome: { screen: WelcomeScreen },
   main: { screen: AppNavigator },
 };
