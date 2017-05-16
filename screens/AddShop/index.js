@@ -1,6 +1,6 @@
 import React from 'react';
 import { Permissions, Location } from 'expo';
-import { View, ScrollView, Text, Platform, StyleSheet, Alert } from 'react-native';
+import { View, ScrollView, KeyboardAvoidingView, Text, Platform, StyleSheet, Alert } from 'react-native';
 import { Icon, Button } from 'react-native-elements';
 import { stylesConfig, colorConfig } from '../../modules/config';
 import BackButton from '../../components/BackButton';
@@ -41,18 +41,18 @@ class AddShop extends React.Component {
 	}
 	render(){
 		return (
-			<ScrollView
-				style={styles.container}
-				contentContainerStyle={styles.contentContainerStyle}
-			>
-				<AddShopForm
-					location={this.state.location}
-					navigation={this.props.navigation}
-				/>
-			</ScrollView>
+			<KeyboardAvoidingView behavior={'padding'} style={{ flex: 1 }}>
+				<ScrollView style={styles.container} contentContainerStyle={styles.contentContainerStyle}>
+					<AddShopForm
+						location={this.state.location}
+						navigation={this.props.navigation}
+					/>
+				</ScrollView>
+			</KeyboardAvoidingView>
 		);
 	}
 }
+
 
 const styles = StyleSheet.create({
 	contentContainerStyle: {

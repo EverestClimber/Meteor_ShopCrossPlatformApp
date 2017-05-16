@@ -33,6 +33,26 @@ export const FETCH_SHOPS = gql`
   ${shopFragment}
 `;
 
+
+
+export const SEARCH_SHOPS_BY_OWNER = gql`
+  query searchShopsByOwner($string: String) {
+    shopsByOwner (string: $string) {
+      ...shopFragment
+    } 
+  }
+  ${shopFragment}
+`;
+
+export const FETCH_SHOPS_BY_OWNER = gql`
+  {
+    shopsByOwner {
+      ...shopFragment
+    } 
+  }
+  ${shopFragment}
+`;
+
 // MESSAGE QUERIES
 // ============================
 

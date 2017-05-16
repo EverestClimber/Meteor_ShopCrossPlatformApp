@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, ScrollView, Text, Platform, Image, FlatList } from 'react-native';
+import { View, ScrollView, Text, Platform, Image, FlatList, TouchableOpacity } from 'react-native';
+import { Permissions, Location, MapView, DangerZone } from 'expo';
 //MODULES
 import { FETCH_SHOP } from '../../apollo/queries';
-import { stylesConfig, colorConfig } from '../../modules/config';
+import { stylesConfig, colorConfig, DEFAULT_SHOP_IMAGE } from '../../modules/config';
 import LoadingScreen from '../../components/LoadingScreen';
 import ShopCard from '../../components/ShopCard';
 import { Icon, Button, Card } from 'react-native-elements';
@@ -25,51 +26,42 @@ const {
 } = stylesConfig;
 
 
-const ItemsList = ({ items, navigation, cardType }) => {
-
-	if (!items || items.length === 0) {
-		return (
-			<EmptyState 
-				imageComponent={
-					<Image source={require('../../assets/marketing.png')} style={emptyStateIcon}/>
-				}
-				pageText={cardType === 'members' ? 'NO MEMBERS YET...' : 'NO MESSAGES YET...' }
-			/>
-		);
-	}
+const GeneralInfo = ({ shopById }) => {
 
 	return (
-		<FlatList
-		  data={items}
-		  keyExtractor={(item, index) => item._id}
-		  renderItem={({item}) => {
-
-		  	switch(cardType){
-		  		case 'members':
-		  			return <ShopCard item={item} navigation={navigation} />;
-		  		case 'messages':
-		  			return <ShopCard item={item} navigation={navigation} />;
-		  		default:
-		  			return null
-		  	}
-
-		  }}
-		/>
+		<View>
+			<Text style={[textHeader, {textAlign: 'center'}]}>
+				{shopById.title || ''}
+			</Text>
+			<Text style={[textSubHeader, {textAlign: 'center'}]}>
+				{shopById.description || ''}
+			</Text>
+			<Text style={[textBody, {textAlign: 'center'}]}>
+				{shopById.category || ''}
+			</Text>
+			<Text style={[textBody, {textAlign: 'center'}]}>
+				{shopById.phone || ''}
+			</Text>
+			<Text style={[textBody, {textAlign: 'center'}]}>
+				{shopById.email || ''}
+			</Text>
+			<Text style={[textBody, {textAlign: 'center'}]}>
+				{shopById.website || ''}
+			</Text>
+		</View>
 	);
-
 }
-   
 
    
-
+// EXPORTED 
+// ========================================
 class ShopDetail extends React.Component {
 	static navigationOptions = ({ navigation, screenProps }) => ({
-		title: 'Shop Detail', //`${navigation.state.params.group}`,
+		title: `${navigation.state.params && navigation.state.params.shopTitle || 'Shop Detail'}`,
 		tabBarIcon: ({ tintColor }) => <Icon name="group" size={30} color={tintColor} />,
 	  	headerTitleStyle: titleStyle,
-	  	headerVisible: Platform.OS !== 'android',
-	  	tabBarLabel: 'Groups',
 	  	headerStyle: basicHeaderStyle,
+	  	//header: null,
 	  	tabBarVisible: false,
 	  	headerLeft: <BackButton goBack={navigation.goBack} label='' />,
 	});
@@ -85,12 +77,14 @@ class ShopDetail extends React.Component {
 			<View style={{flex: 1, backgroundColor: colorConfig.screenBackground}}>
 
 				<Card containerStyle={{marginBottom: 25}}>
-					<Text style={[textHeader, {textAlign: 'center'}]}>
-						{data.shopById.title}
-					</Text>
+					<Image source={{uri: data.shopById.image || DEFAULT_SHOP_IMAGE}} style={{width: 200, height: 200}}/>
+					<GeneralInfo shopById={data.shopById} />
+					<TouchableOpacity onPress={()=>navigation.navigate('detailMap', { _id: data.shopById._id })}>
+						<Text>GO TO MAP</Text>
+					</TouchableOpacity>
 				</Card>
 
-				<Tabs defaultActiveKey="1"
+				{/*<Tabs defaultActiveKey="1"
 					textColor={colorConfig.darkGrey}
 					activeTextColor={colorConfig.business}
 					activeUnderlineColor={colorConfig.business} 
@@ -99,23 +93,25 @@ class ShopDetail extends React.Component {
 				>
 			      <TabPane tab="Details" key="1">
 			      	<View style={{minHeight: 300}}>
-				      	{/*<ItemsList 
-				      		items={data.watchgroupById.members} 
-				      		navigation={navigation}
-				      		cardType='members'
-				      	/>*/}
 			      	</View>
 			      </TabPane>
 			      <TabPane tab="Map" key="2">
-			      	<View style={{minHeight: 300}}>
-				      	{/*<ItemsList 
-				      		items={data.watchgroupById.messages} 
-				      		navigation={navigation}
-				      		cardType='messages'
-				      	/>*/}
+			      	<View style={{minHeight: 400}}>
+				      	<MapView
+				          region={this.state.region}
+				          style={{ flex: 1 }}
+				          loadingEnabled
+				          onRegionChangeComplete={this.onRegionChangeComplete}
+				        >
+				        	<MapView.Marker
+		        				title={data.shopById.title}
+		        				description={data.shopById.description}
+		        				coordinate={{ latitude: parseFloat(data.shopById.location.lat), longitude: parseFloat(data.shopById.location.lng) }}
+		        			/>
+				        </MapView>
 			      	</View>
 			      </TabPane>
-			    </Tabs>
+			    </Tabs>*/}
 			</View>
 		);
 	}

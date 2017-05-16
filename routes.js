@@ -20,6 +20,8 @@ import AddShop from './screens/AddShop';
 import SearchScreen from './screens/SearchScreen';
 import ShopDetail from './screens/ShopDetail';
 import MapScreen from './screens/MapScreen';
+import MyListingsScreen from './screens/MyListingsScreen';
+import DetailMap from './screens/DetailMap';
 
 //
 import registerForNotifications from './services/push_notifications';
@@ -35,10 +37,27 @@ const HomeNavigator = StackNavigator({
   addShop: {  screen: AddShop },
   search: {  screen: SearchScreen },
   shopDetail: {  screen: ShopDetail },
+  detailMap: {  screen: DetailMap },
 },{
   tabBarLabel: 'Home',
 });
 
+
+// MapNavigator
+// =================================
+const MapNavigator = StackNavigator({
+  map: {  screen: MapScreen },
+},{
+  tabBarLabel: 'Location',
+});
+
+// ListingsNavigator
+// =================================
+const ListingsNavigator = StackNavigator({
+  listings: { screen: MyListingsScreen },
+},{
+  tabBarLabel: 'Location',
+});
 
 
 
@@ -75,9 +94,8 @@ const APP_NAVIGATOR_OPTIONS = {
 
 const APP_NAVIGATOR_ROUTES = {
   home: { screen: HomeNavigator },
-  map: { screen: MapScreen },
-  //households: { screen: HouseholdsNavigator },
-  //neighbors: { screen: NeighborsNavigator },
+  map: { screen: MapNavigator },
+  listings: { screen: ListingsNavigator },
   account: { screen: AccountNavigator }
 };
 

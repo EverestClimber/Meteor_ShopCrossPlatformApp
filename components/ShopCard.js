@@ -40,7 +40,7 @@ const ReportCardTop = ({ item, navigation }) => {
 
 	const onCardPress = () => {
 		//if location exists, go to map, if not, do not go to map
-		navigation.navigate('shopDetail', { _id: item._id });
+		navigation.navigate('shopDetail', { _id: item._id, shopTitle: item.title });
 	}
 
 

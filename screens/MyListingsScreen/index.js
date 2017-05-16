@@ -6,13 +6,13 @@ import { Icon, Card, SearchBar } from 'react-native-elements';
 import { stylesConfig, colorConfig, SCREEN_WIDTH } from '../../modules/config';
 // APOLLO
 import { userId } from 'meteor-apollo-accounts'
-import { FETCH_SHOPS } from '../../apollo/queries';
+import { FETCH_SHOPS_BY_OWNER, SEARCH_SHOPS_BY_OWNER } from '../../apollo/queries';
 import { graphql, withApollo } from 'react-apollo';
 //COMMON COMPONENTS
 import LoadingScreen from '../../components/LoadingScreen';
 import EmptyState from '../../components/EmptyState';
 import ShopCard from '../../components/ShopCard';
-
+import client from '../../ApolloClient';
 
 // CONSTANTS & DESTRUCTURING
 // ====================================
@@ -22,15 +22,15 @@ const { basicHeaderStyle, titleStyle, regularFont, emptyStateIcon } = stylesConf
 
 
 
-class HomeScreen extends React.Component {
+class MyListingsScreen extends React.Component {
 	static navigationOptions = ({ navigation, screenProps }) => ({
-		title: 'Home',
+		title: 'My Listings',
 		tabBarIcon: ({ tintColor }) => <Icon name="home" size={30} color={tintColor} />,
 	  	headerTitleStyle: titleStyle,
 	  	headerVisible: Platform.OS !== 'android',
-	  	tabBarLabel: 'Home',
+	  	tabBarLabel: 'My Listings',
 	  	headerStyle: basicHeaderStyle,
-	  	headerLeft: (
+	  	/*headerLeft: (
 	  		<Icon
 	  			name="search" 
 	  			color={'#fff'}
@@ -45,12 +45,16 @@ class HomeScreen extends React.Component {
 	  			color={'#fff'} 
 	  			onPress={()=>navigation.navigate('addShop')} 
 	  		/>
-	  	),
+	  	),*/
 	});
 	constructor(props){
 		super(props);
 		this.onEndReached = this.onEndReached.bind(this);
-		this.state = { refreshing: false }
+		this.state = { 
+			refreshing: false,
+			data: [],
+			searching: true
+		}
 	}
 	
 	keyExtractor(item, index){
@@ -61,71 +65,72 @@ class HomeScreen extends React.Component {
 		setTimeout(()=>this.setState({refreshing: false}), 1500)
 	}
 	onEndReached(){
-		if (this.props.data.shops.length < 10) { 
-			//if there are less than 10 resuls on the screen, 
+		if (this.state.data.length < 10) { 
+			// if there are less than 10 resuls on the screen, 
 			// there are no more results in the DB (as it sends 10 at a time)
-			return console.log('more more results'); 
+			return console.log('more more results')
 		}
 		this.props.data.fetchMore({
-			variables: { offset: this.props.data.shops.length },
+			variables: { offset: this.state.data.length },
 			updateQuery: (previousResult, { fetchMoreResult }) => {
 					// Don't do anything if there weren't any new items
-					if (!fetchMoreResult || fetchMoreResult.shops.length === 0) {
+					if (!fetchMoreResult || fetchMoreResult.shopsByOwner.length === 0) {
 						return previousResult;
 					}
-
+					let newData = this.state.data.concat(fetchMoreResult.shopsByOwner)
+					this.setState({data: newData });
 					return {
 					// Append the new feed results to the old one
-					shops: previousResult.shops.concat(fetchMoreResult.shops),
+					shopsByOwner: previousResult.shopsByOwner.concat(fetchMoreResult.shopsByOwner),
 					};
 			},
 		}).catch(err => {
-			console.log('error ran')
 			const errors = err && err.graphQLErrors && err.graphQLErrors.map( err => err.message );
-			console.log(errors)
 			this.setState({ errors: errors });
 		});
 	}
+	onSearchChange = (value) => {
+		//this.setState({searching: true, data: []});
+		client.query({
+	      query: SEARCH_SHOPS_BY_OWNER,
+	      variables: { string: value }
+	    }).then(({ data }) => {
+	    	this.setState({data: data.shopsByOwner, searching: false});
+	    }); 
+	}
+	componentWillMount(){
+		client.query({
+	      query: FETCH_SHOPS_BY_OWNER,
+	    }).then(({ data }) => {
+	    	this.setState({data: data.shopsByOwner, searching: false})
+	    });
+	}
 	render(){
-
-		if (this.props.data.loading) {
-			return <LoadingScreen loadingMessage='loading shops...' />
-		}
-
-		if (!this.props.data.shops || this.props.data.shops.length === 0) {
-			return (
-				<EmptyState 
-					imageComponent={
-						<Image source={require('../../assets/marketing.png')} style={emptyStateIcon}/>
-					}
-					pageText='NO SHOPS YET...' 
-				/>
-			);
-		}
-
 
 		return (
 			<View style={{ paddingBottom: 2, flex: 1, backgroundColor: colorConfig.screenBackground }}>
-				{/*<SearchBar
-				  onChangeText={()=>{}}
-				  placeholder='Search reports...'
-				  lightTheme
-				  inputStyle={{ backgroundColor: '#fff' }}
-				  containerStyle={{ width: SCREEN_WIDTH, backgroundColor: colorConfig.business }}
-				/>*/}
+				<SearchBar
+				  	onChangeText={this.onSearchChange}
+				  	placeholder='Search shops...'
+				  	lightTheme
+				  	inputStyle={{ backgroundColor: '#fff' }}
+					containerStyle={{ width: SCREEN_WIDTH }}
+				/>
+				{this.state.searching && <LoadingScreen loadingMessage='loading shops...' />}
+				{!this.state.data || this.state.data.length === 0 && <EmptyState imageComponent={<Image source={require('../../assets/search.png')} style={emptyStateIcon}/>} pageText='NO RESULTS...' />}
 				<FlatList
-				  data={this.props.data.shops}
+				  data={this.state.data}
+				  removeClippedSubviews={false}
 				  keyExtractor={this.keyExtractor}
 				  refreshing={this.state.refreshing}
 				  onRefresh={this.onRefresh}
 				  onEndReached={this.onEndReached}
-				  removeClippedSubviews={false}
 				  renderItem={({item}) => {
 				  	//return <View><Text>{item.title}</Text></View>
 				  	return <ShopCard item={item} navigation={this.props.navigation} />
 				  }}
 				/>
-				{this.props.data.networkStatus === 4 && (
+				{this.state.searching && (
 					<View style={{height: 30}}>
 						<ActivityIndicator />
 					</View>	
@@ -155,12 +160,13 @@ class HomeScreen extends React.Component {
 //				{this.props.data.messages.map( item => <MessageItem key={item._id} item={item} navigation={this.props.navigation} />)}
 //			</ListView>
 
+export default MyListingsScreen;
 
-export default graphql(FETCH_SHOPS, {
+/*export default graphql(FETCH_SHOPS_BY_OWNER, {
 	options: {
 		//notifyOnNetworkStatusChange: true,
 	}
-})(HomeScreen);
+})(MyListingsScreen);*/
 
 
 

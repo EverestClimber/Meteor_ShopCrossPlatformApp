@@ -4,7 +4,7 @@ import { Permissions, Location } from 'expo';
 import { View, ScrollView, Text, Platform, StyleSheet, Dimensions, FlatList } from 'react-native';
 import { Icon, SearchBar } from 'react-native-elements';
 // MODULES
-import { stylesConfig, colorConfig } from '../../modules/config';
+import { stylesConfig, colorConfig, SCREEN_WIDTH } from '../../modules/config';
 // COMPONENTS
 import BackButton from '../../components/BackButton';
 import ShopCard from '../../components/ShopCard';
@@ -16,7 +16,6 @@ import client from '../../ApolloClient';
 // CONSTANTS & DESTRUCTURING
 // ========================================
 const { boldFont, semiboldFont, regularFont, titleStyle, basicHeaderStyle } = stylesConfig;
-const SCREEN_WIDTH = Dimensions.get('window').width;
 
 
 

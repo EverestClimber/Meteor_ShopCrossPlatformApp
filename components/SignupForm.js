@@ -68,7 +68,7 @@ class SignupForm extends React.Component {
         const id = await createUser({ email: this.state.email.trim().toLowerCase(), password: this.state.password.trim().toLowerCase() }, apollo)
         apollo.resetStore();
         this.setState({loading: false});
-        return this.props.navigation.navigate('main');
+        return this.props.navigation.navigate('welcome');
     } catch (err) {
         //
         if (Platform.OS === 'android') {
@@ -85,17 +85,6 @@ class SignupForm extends React.Component {
         return console.log('error ran')
     }
 
-    /*createUser({ email, password }, apollo)
-      .then(userId => {
-        console.log(userId)
-        //apollo.resetStore();
-        //this.setState({loading: false});
-        //this.props.navigation.navigate('main');
-      })
-      .catch( err => {
-        const errors = err.graphQLErrors.map( err => err.message );
-        console.log(err)
-      })*/
   }
   render(){
     const { handleSubmit, navigation } = this.props;
@@ -107,9 +96,6 @@ class SignupForm extends React.Component {
 
     return (
       <View style={styles.container}>
-        {/*<Image style={{ width: 215, height: 45, marginBottom: 50}} 
-            source={require('../assets/logo.png')} 
-          />*/}
           <View style={{width: 250}}>
         <TextInput
           style={styles.input} 

@@ -44,6 +44,17 @@ const CATEGORY_OPTIONS = [
   { label: 'Variety Stores', value: 'varietystores'},
 ];
 
+const DAYS_OPTIONS = [
+  { label: 'Sunday', value: 'Sunday'},
+  { label: 'Monday', value: 'Monday'},
+  { label: 'Tuesday', value: 'Tuesday'},
+  { label: 'Wednesday', value: 'Wednesday'},
+  { label: 'Thursday', value: 'Thursday'},
+  { label: 'Friday', value: 'Friday'},
+  { label: 'Saturday', value: 'Saturday'},
+  { label: 'Sunday', value: 'Sunday'},
+];
+
 
 
 const ImageArea = ({ image, onImageClick, onImageCameraClick, onRemoveImage, imageLoading }) => {
@@ -106,21 +117,18 @@ class AddShopForm extends React.Component {
   }
   
   onSubmit = () => {
-    const { title, description, category, image } = this.state;
+    const { title, description, category, image, phone, email, website } = this.state;
+    const { mutate, navigation, location } = this.props;
     this.setState({loading: true})
 
     let variables = {
-      title: title,
-      description: description,
-      category: category,
-      image: image,
-      longitude: this.props.location.coords.longitude,
-      latitude: this.props.location.coords.latitude,
-    }
-    this.props.mutate({ variables })
+      title, description, category, image, phone, email, website, longitude: location.coords.longitude, latitude: location.coords.latitude,
+    };
+
+    mutate({ variables })
       .then(() => {
-        client.resetStore()
-        this.props.navigation.goBack()
+        client.resetStore();
+        navigation.goBack();
         return this.setState({ loading: false });
     }).catch(err => {
       let errors = err && err.graphQLErrors && err.graphQLErrors.length > 0 && err.graphQLErrors.map( err => err.message );
@@ -189,7 +197,7 @@ class AddShopForm extends React.Component {
 
 
     return (
-      <View style={{width: 300}}>
+      <View style={{width: 300}} behavior="padding">
         <ImageArea 
           image={this.state.image}  
           imageLoading={this.state.imageLoading}  
@@ -222,6 +230,27 @@ class AddShopForm extends React.Component {
               {i.label}
             </RadioItem>
           ))}
+        </List>
+        <List renderHeader={() => 'Phone'}>
+          <InputItem
+              clear
+              placeholder="Shop phone number..."
+              onChange={(val)=>this.setState({phone: val})}
+          />
+        </List>
+        <List renderHeader={() => 'Website'}>
+          <InputItem
+              clear
+              placeholder="website..."
+              onChange={(val)=>this.setState({website: val})}
+          />
+        </List>
+        <List renderHeader={() => 'Email'}>
+          <InputItem
+              clear
+              placeholder="Shop email..."
+              onChange={(val)=>this.setState({email: val})}
+          />
         </List>
         <View style={{marginTop: 20}}>
           <Button 

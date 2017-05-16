@@ -8,10 +8,12 @@ import { stylesConfig, colorConfig, SCREEN_WIDTH } from '../../modules/config';
 // COMPONENTS
 import LoadingScreen from '../../components/LoadingScreen';
 import ShopCard from '../../components/ShopCard';
+import BackButton from '../../components/BackButton';
+
 // APOLLO
 import client from '../../ApolloClient';
 import { userId } from 'meteor-apollo-accounts'
-import { FETCH_SHOPS, SEARCH_SHOPS } from '../../apollo/queries';
+import { FETCH_SHOP } from '../../apollo/queries';
 import { graphql, withApollo } from 'react-apollo';
 
 // CONSTANTS & DESTRUCTURING
@@ -19,7 +21,7 @@ import { graphql, withApollo } from 'react-apollo';
 const { boldFont, semiboldFont, regularFont, titleStyle, basicHeaderStyle } = stylesConfig;
 
 
-class MapScreen extends React.Component {
+class DetailMap extends React.Component {
 	static navigationOptions = ({ navigation, screenProps }) => ({
 		title: 'Map',
 		tabBarIcon: ({ tintColor }) => <Icon name="add-location" size={30} color={tintColor} />,
@@ -27,6 +29,8 @@ class MapScreen extends React.Component {
 	  	header: (headerProps) => Platform.OS === 'android' ? null : <Header {...headerProps} />, 
 	  	tabBarLabel: Platform.OS === 'android' ? ({ tintColor }) => <Icon name="add-location" size={30} color={tintColor} /> : 'Location',
 	  	headerStyle: basicHeaderStyle,
+	  	tabBarVisible: false,
+	  	headerLeft: <BackButton goBack={navigation.goBack} label='' />,
 	});
 	constructor(props){
 		super(props);
@@ -57,28 +61,9 @@ class MapScreen extends React.Component {
 	    throw new Error('Location permission not granted');
 	  }
 	}
-	onRegionChangeComplete = (region) => {
-		this.setState({ region });
-	}
-	onSearchChange = (value) => {
-		//this.setState({searching: true, data: []});
-		client.query({
-	      query: SEARCH_SHOPS,
-	      variables: { string: value }
-	    }).then(({ data }) => {
-	    	this.setState({data: data.shops, searching: false})
-	    }); 
-	}
-	componentWillMount(){
-		client.query({
-	      query: FETCH_SHOPS,
-	    }).then(({ data }) => {
-	    	this.setState({data: data.shops, searching: false})
-	    });
-	}
 	render(){
-
-		if (this.state.searching) {
+		const { data, navigation } = this.props;
+		if (data.loading) {
 			return (
 				<LoadingScreen loadingMessage='Loading...' />
 			);
@@ -87,35 +72,22 @@ class MapScreen extends React.Component {
 
 			return (
 				<View style={styles.container}>
-					<SearchBar
-					  	onChangeText={this.onSearchChange}
-					  	placeholder='Search shops...'
-					  	lightTheme
-					  	inputStyle={{ backgroundColor: '#fff' }}
-						containerStyle={{ width: SCREEN_WIDTH }}
-					/>
-					
 					<MapView
 			          region={this.state.region}
 			          style={{ flex: 1 }}
 			          loadingEnabled
 			          onRegionChangeComplete={this.onRegionChangeComplete}
 			        >
-			        	{this.state.data && this.state.data.length > 0 && this.state.data.map( item => {
-			        		return (
-			        			<MapView.Marker
-			        				key={item._id}
-			        				title={item.title}
-			        				description={item.description}
-			        				coordinate={{ latitude: parseFloat(item.location.lat), longitude: parseFloat(item.location.lng) }}
-			        			>
-				        			<MapView.Callout tooltip>
-						        		<ShopCard item={item} navigation={this.props.navigation} />
-						        	</MapView.Callout>
-					        	</MapView.Marker>
-			        		);
-			        	})}
-			        	
+			        <MapView.Marker
+        				key={data.shopById._id}
+        				title={data.shopById.title}
+        				description={data.shopById.description}
+        				coordinate={{ latitude: parseFloat(data.shopById.location.lat), longitude: parseFloat(data.shopById.location.lng) }}
+        			>
+	        			<MapView.Callout tooltip>
+			        		<ShopCard item={data.shopById} navigation={navigation} />
+			        	</MapView.Callout>
+		        	</MapView.Marker>
 			        </MapView>
 				</View>
 			);
@@ -129,7 +101,13 @@ const styles = StyleSheet.create({
 	}
 });
 
-export default MapScreen
+
+export default graphql(FETCH_SHOP, {
+  options: (props) => { 
+  	let variables = { _id: props.navigation.state.params._id };
+  	return { variables } 
+  }
+})(DetailMap);
 /*export default graphql(FETCH_SHOPS, {
 	options: {
 		//notifyOnNetworkStatusChange: true,

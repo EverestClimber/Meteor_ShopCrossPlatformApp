@@ -41,6 +41,11 @@ const LegalSettings = ({navigation}) => {
 					<TouchableOpacity onPress={()=>navigation.navigate('privacy')}>
 		            	<Text style={styles.linkText}>PRIVACY POLICY</Text>
 		            </TouchableOpacity>
+		            <TouchableOpacity onPress={()=>AsyncStorage.removeItem('onboardingComplete')}>
+		            	<Text style={styles.linkText}>RESET ONBOARDING</Text>
+		            </TouchableOpacity>
+
+		            
 				</Card>
 			</View>
 	);
