@@ -1,6 +1,6 @@
 import React from 'react';
-import { ImagePicker } from 'expo';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform, Image, ActivityIndicator } from 'react-native';
+import { ImagePicker, Permissions } from 'expo';
+import { View, Text, TextInput, Alert, TouchableOpacity, StyleSheet, Platform, Image, ActivityIndicator } from 'react-native';
 //REDUX
 import _ from 'lodash';
 //COMPONENTS
@@ -16,16 +16,32 @@ import { handleFileUpload } from '../modules/helpers';
 
 const RadioItem = Radio.RadioItem;
 
-const PRIORITY_LEVEL = [
-  { key: 1, value: '1', intValue: 1, label: 'General'},
-  { key: 2, value: '2', intValue: 2, label: 'Suspicious but not Urgent'},
-  { key: 3, value: '3', intValue: 3, label: 'Urgent'}
-];
 
 const CATEGORY_OPTIONS = [
-  { label: 'food', value: 'food'},
-  { label: 'clothing', value: 'clothing'},
-  { label: 'electronics', value: 'electronics'}
+  { label: 'Bags & Luggage', value: 'bagsluggage'},
+  { label: 'Banks', value: 'banks'},
+  { label: 'Books, Cards & Gifts', value: 'bookscardsgifts'},
+  { label: 'Department Stores', value: 'departmentstores'},
+  { label: 'Discount & Variety', value: 'discountvariety'},
+  { label: 'Entertainment', value: 'entertainment'},
+  { label: 'Fashion', value: 'fashion'},
+  { label: 'Food & Drink', value: 'fooddrink'},
+  { label: 'Groceries', value: 'groceries'},
+  { label: 'Health & Beauty', value: 'healthbeauty'},
+  { label: 'Health Services', value: 'healthservices'},
+  { label: 'Home', value: 'home'},
+  { label: 'Jewellery & Watches', value: 'jewelrywatches'},
+  { label: 'Kids & Parents', value: 'kidsparents'},
+  { label: 'Luxury Retailers', value: 'luxury-retailers'},
+  { label: 'Pets', value: 'pets'},
+  { label: 'Premium Retailers', value: 'premium-retailers'},
+  { label: 'Services', value: 'services'},
+  { label: 'Shoes', value: 'shoes'},
+  { label: 'Specialty Services', value: 'specialtyservices'},
+  { label: 'Sports & Fitness', value: 'sportsfitness'},
+  { label: 'Tech', value: 'tech'},
+  { label: 'Toys & Hobbies', value: 'toyshobbies'},
+  { label: 'Variety Stores', value: 'varietystores'},
 ];
 
 
@@ -112,6 +128,7 @@ class AddShopForm extends React.Component {
     });
 
   }
+
   async onImageClick(){
     let result;
     let _this = this;

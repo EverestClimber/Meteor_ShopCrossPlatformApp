@@ -1,12 +1,19 @@
 import React from 'react';
 import { View, Text, Platform, StyleSheet, Animated } from 'react-native';
-import { stylesConfig, colorConfig } from '../../modules/config';
-import { graphql } from 'react-apollo'
-import LoadingScreen from '../../components/LoadingScreen';
 import { Button, Icon } from 'react-native-elements';
-import ApolloClient from '../../ApolloClient';
-import { Permissions, Location, MapView, DangerZone } from 'expo';
 import { Header } from 'react-navigation';
+import { Permissions, Location, MapView, DangerZone } from 'expo';
+// MODULES
+import { stylesConfig, colorConfig } from '../../modules/config';
+// COMPONENTS
+import LoadingScreen from '../../components/LoadingScreen';
+// APOLLO
+import ApolloClient from '../../ApolloClient';
+import { userId } from 'meteor-apollo-accounts'
+import { FETCH_SHOPS } from '../../apollo/queries';
+import { graphql, withApollo } from 'react-apollo';
+
+
 // CONSTANTS & DESTRUCTURING
 // ========================================
 const { boldFont, semiboldFont, regularFont, titleStyle, basicHeaderStyle } = stylesConfig;
@@ -54,19 +61,30 @@ class MapScreen extends React.Component {
 	}
 	render(){
 
-		if (this.state.loadingLocation) {
+		if (this.state.loadingLocation || this.props.data.loading) {
 			return (
-				<LoadingScreen loadingMessage='Loading Location...' />
+				<LoadingScreen loadingMessage='Loading...' />
 			);
 		}
-		
 		return (
 			<View style={styles.container}>
 				<MapView
 		          region={this.state.region}
 		          style={{ flex: 1 }}
 		          onRegionChangeComplete={this.onRegionChangeComplete}
-		        />
+		        >
+		        	{this.props.data.shops.map( item => {
+		        		return (
+		        			<MapView.Marker
+		        				key={item._id}
+		        				title={item.title}
+		        				description={item.description}
+		        				coordinate={{ latitude: parseFloat(item.location.lat), longitude: parseFloat(item.location.lng) }}
+		        			/>
+		        		);
+		        	})}
+		        	
+		        </MapView>
 			</View>
 		);
 	}
@@ -79,4 +97,9 @@ const styles = StyleSheet.create({
 	}
 });
 
-export default MapScreen;
+
+export default graphql(FETCH_SHOPS, {
+	options: {
+		//notifyOnNetworkStatusChange: true,
+	}
+})(MapScreen);

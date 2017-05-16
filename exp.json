@@ -7,6 +7,18 @@
   "version": "1.0.0",
   "orientation": "portrait",
   "primaryColor": "#cccccc",
+  "hooks": {
+    "postPublish": [
+      {
+        "file": "sentry-expo/upload-sourcemaps",
+        "config": {
+          "organization": "Anthony Comito",
+          "project": "truelife",
+          "authToken": "6eb981d2f49e43209b46ee67d64d773b"
+        }
+      }
+    ]
+  },
   "icon": "./assets/icons/app.png",
   "loading": {
     "icon": "./assets/icons/loading.png",

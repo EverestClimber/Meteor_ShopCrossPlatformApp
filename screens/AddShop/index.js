@@ -1,7 +1,7 @@
 import React from 'react';
 import { Permissions, Location } from 'expo';
-import { View, ScrollView, Text, Platform, StyleSheet } from 'react-native';
-import { Icon } from 'react-native-elements';
+import { View, ScrollView, Text, Platform, StyleSheet, Alert } from 'react-native';
+import { Icon, Button } from 'react-native-elements';
 import { stylesConfig, colorConfig } from '../../modules/config';
 import BackButton from '../../components/BackButton';
 import AddShopForm from '../../components/AddShopForm';
@@ -21,16 +21,23 @@ class AddShop extends React.Component {
 	  	headerLeft: <BackButton goBack={navigation.goBack} label='' />,
 	});
 
-	state = { location: null, errors: [] }
-
+	state = { 
+		location: null, 
+		errors: [],
+	}
 	async componentDidMount() {
-	  const { status } = await Permissions.askAsync(Permissions.LOCATION);
-	  if (status === 'granted') {
-	    let location = await Location.getCurrentPositionAsync({enableHighAccuracy: true});
-	    return this.setState({location})
-	  } else {
-	    throw new Error('Location permission not granted');
-	  }
+
+		const cameraResponse = await Permissions.askAsync(Permissions.CAMERA);
+		console.log(cameraResponse)
+
+		const locationResponse = await Permissions.askAsync(Permissions.LOCATION);
+
+		if (locationResponse.status === 'granted') {
+			this.setState({locationPermissions: true})
+			let location = await Location.getCurrentPositionAsync({enableHighAccuracy: true});
+			this.setState({location})
+		} else { throw new Error('Location permission not granted'); }
+
 	}
 	render(){
 		return (

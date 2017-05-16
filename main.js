@@ -8,25 +8,12 @@ import client from './ApolloClient';
 import enUS from 'antd-mobile/lib/locale-provider/en_US';
 import {LocaleProvider} from 'antd-mobile';
 import registerForNotifications from './services/push_notifications';
+import Sentry from 'sentry-expo';
+import { SENTRY_DSN } from './modules/config'
 
+Sentry.config(SENTRY_DSN).install();
 
 class App extends React.Component {
-	async componentDidMount() {
-
-	    Notifications.addListener((notification) => {
-	      const { data: { text }, origin } = notification;
-
-	      switch(origin){
-	      	case 'received':
-	      		return Alert.alert('New Push Notification when app is open', text, [{ text: 'Ok.' }]);
-	      	case 'received':
-	      		return Alert.alert('New Push Notification when app is closed', text, [{ text: 'Ok.' }]);
-	      	default:
-	      		return;
-	      }
-
-	    });
-	}
 	render() {
 		return (
 			<ApolloProvider store={store} client={client}>

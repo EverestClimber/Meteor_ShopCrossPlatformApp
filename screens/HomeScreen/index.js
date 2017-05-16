@@ -1,7 +1,10 @@
+// TOP LEVEL IMPORTS
 import React from 'react';
 import { View, FlatList, Text, Platform, Button, Dimensions, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import { Icon, Card, SearchBar } from 'react-native-elements';
+// MODULES
 import { stylesConfig, colorConfig, SCREEN_WIDTH } from '../../modules/config';
+// APOLLO
 import { userId } from 'meteor-apollo-accounts'
 import { FETCH_SHOPS } from '../../apollo/queries';
 import { graphql, withApollo } from 'react-apollo';
