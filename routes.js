@@ -14,7 +14,7 @@ import AccountScreen from './screens/AccountScreen';
 import AddShop from './screens/AddShop';
 import FiltersScreen from './screens/FiltersScreen';
 import HelpScreen from './screens/HelpScreen';
-import HomeScreen from './screens/HomeScreen';
+import ExploreScreen from './screens/ExploreScreen';
 import LoginScreen from './screens/LoginScreen';
 import PrivacyPolicyScreen from './screens/PrivacyPolicyScreen';
 import MapScreen from './screens/MapScreen';
@@ -43,7 +43,7 @@ const ListingsNavigator = StackNavigator({
 // HomeNavigator
 // =================================
 const HomeNavigator = StackNavigator({
-  home: {  screen: HomeScreen },
+  home: {  screen: ExploreScreen },
   map: { screen: MapScreen },
   filters: { screen: FiltersScreen },
   shopDetail: {  screen: ShopDetail },

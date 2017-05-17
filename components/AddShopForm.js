@@ -9,6 +9,7 @@ import { Button, Icon } from 'react-native-elements'
 //MODULES
 import { colorConfig } from '../modules/config';
 import { graphql, withApollo } from 'react-apollo';
+import { FETCH_SHOPS, SEARCH_SHOPS_BY_OWNER } from '../apollo/queries'
 import { CREATE_SHOP } from '../apollo/mutations'
 import { List, Radio, InputItem, SegmentedControl, TextareaItem, WhiteSpace } from 'antd-mobile';
 import client from '../ApolloClient';
@@ -110,7 +111,7 @@ class AddShopForm extends React.Component {
       value: 0,
       priorityLevel: null,
       reportType: null,
-      erorrs: []
+      errors: []
   }
     this.onImageClick = this.onImageClick.bind(this);
     this.onImageCameraClick = this.onImageCameraClick.bind(this);
@@ -119,21 +120,36 @@ class AddShopForm extends React.Component {
   
   onSubmit = () => {
     const { title, description, category, image, phone, email, website } = this.state;
-    const { mutate, navigation, location } = this.props;
+    const { mutate, navigation, location, data } = this.props;
+    let errors = [];
     this.setState({loading: true})
 
     let variables = {
       title, description, category, image, phone, email, website, longitude: location.coords.longitude, latitude: location.coords.latitude,
     };
 
-    mutate({ variables })
-      .then(() => {
+    if (!title) {
+      errors.push('title is required')
+      return this.setState({loading: false, errors: errors});
+    }
+    if (!description) {
+      errors.push('description is required')
+      return this.setState({loading: false, errors: errors});
+    }
+    if (!category) {
+      errors.push('category is required')
+      return this.setState({loading: false, errors: errors});
+    }
+    //, refetchQueries: [ 'shops', 'shopsByOwner']
+    mutate({ variables}).then(() => {
+        console.log(client)
         client.resetStore();
         navigation.goBack();
         return this.setState({ loading: false });
     }).catch(err => {
-      let errors = err && err.graphQLErrors && err.graphQLErrors.length > 0 && err.graphQLErrors.map( err => err.message );
-      return this.setState({loading: false, errors: errors});
+      console.log(err)
+      //let newErrors = errors.concat(err && err.graphQLErrors && err.graphQLErrors.length > 0 && err.graphQLErrors.map( err => err.message ));
+      return this.setState({loading: false, errors});
     });
 
   }
@@ -206,6 +222,11 @@ class AddShopForm extends React.Component {
           onImageCameraClick={this.onImageCameraClick}
           onRemoveImage={()=>this.setState({image: null})}
         />
+        <View style={{marginTop: 8, marginBottom: 8, alignItems: 'center',  justifyContent: 'center',}}>
+          {this.state.errors.length > 0 && this.state.errors.map(item => {
+            return <Text key={item} style={{color: '#e74c3c'}}>{item}</Text>
+          })}
+        </View>
         <List renderHeader={() => 'Title'}>
           <InputItem
               clear
@@ -255,6 +276,11 @@ class AddShopForm extends React.Component {
               onChange={(val)=>this.setState({email: val})}
           />
         </List>
+        <View style={{marginTop: 8, marginBottom: 8, alignItems: 'center',  justifyContent: 'center',}}>
+          {this.state.errors.length > 0 && this.state.errors.map(item => {
+            return <Text key={item} style={{color: '#e74c3c'}}>{item}</Text>
+          })}
+        </View>
         <View style={{marginTop: 20}}>
           <Button 
             title='ADD SHOP'
@@ -314,5 +340,11 @@ const styles = StyleSheet.create({
   }
 })
 
+let options = { 
+  refetchQueries: [ 
+    { query: FETCH_SHOPS },
+    { query: SEARCH_SHOPS_BY_OWNER },  
+  ]
+}
 
-export default graphql(CREATE_SHOP)(AddShopForm);
+export default graphql(CREATE_SHOP, options)(AddShopForm);

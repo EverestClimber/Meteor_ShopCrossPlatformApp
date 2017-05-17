@@ -86,7 +86,7 @@ const dataIdFromObject = (result) => {
 // see: http://dev.apollodata.com/react/api.html#ApolloClient
 const client = new ApolloClient({ 
   networkInterface,
-  dataIdFromObject: o => o.id
+  dataIdFromObject
 });
 
 

@@ -12,7 +12,6 @@ const s3options = {
 
 
 export const handleFileUpload = (file, callback) => {
-      console.log(file);
       let fileToUpload = {
         uri: file.uri,
         name: uuidV4(),

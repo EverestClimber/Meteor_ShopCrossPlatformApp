@@ -56,7 +56,11 @@ class MyListingsScreen extends React.Component {
 	}
 	onRefresh = () => {
 		this.setState({refreshing: true})
-		setTimeout(()=>this.setState({refreshing: false}), 1500)
+		client.query({
+	      query: FETCH_SHOPS_BY_OWNER,
+	    }).then(({ data }) => {
+	    	this.setState({data: data.shopsByOwner, refreshing: false})
+	    });
 	}
 	onEndReached(){
 		if (this.state.data.length < 10) { 

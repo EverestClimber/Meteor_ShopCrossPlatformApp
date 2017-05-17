@@ -86,7 +86,7 @@ class SettingsScreen extends React.Component {
 		tabBarIcon: ({ tintColor }) => <Icon name="settings" size={30} color={tintColor} />,
 	  	headerTitleStyle: titleStyle,
 	  	headerVisible: Platform.OS !== 'android',
-	  	tabBarLabel: 'Settings',
+	  	tabBarVisible: false,
 	  	headerStyle: basicHeaderStyle,
 	  	headerLeft: <BackButton goBack={navigation.goBack} label='' />,
 	});

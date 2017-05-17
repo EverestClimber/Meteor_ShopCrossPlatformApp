@@ -7,7 +7,7 @@ import { Permissions, Location, MapView, DangerZone } from 'expo';
 import { stylesConfig, colorConfig, SCREEN_WIDTH } from '../../modules/config';
 // APOLLO
 import { userId } from 'meteor-apollo-accounts'
-import { FETCH_SHOPS } from '../../apollo/queries';
+import { FETCH_SHOPS, SEARCH_SHOPS } from '../../apollo/queries';
 import { graphql, withApollo } from 'react-apollo';
 import client from '../../ApolloClient';
 // COMPONENTS
@@ -32,44 +32,77 @@ const navigationOptions = ({ navigation, screenProps }) => ({
 	  	headerVisible: Platform.OS !== 'android',
 	  	tabBarLabel: 'Explore',
 	  	headerStyle: basicHeaderStyle,
-	  	/*headerLeft: (
-	  		<Icon
-	  			name="search" 
-	  			color={'#fff'}
-	  			iconStyle={{marginLeft: 15}}
-	  			onPress={()=>navigation.navigate('search')} 
-	  		/>
-	  	),*/
-	  	/*headerRight: (
-	  		<Button
-	  			backgroundColor={colorConfig.business}
-	  			fontFamily={regularFont}
-	  			title={'+ Add Shop'} 
-	  			color={'#fff'} 
-	  			onPress={()=>navigation.navigate('addShop')} 
-	  		/>
-	  	),*/
 	});
 
 
+const FloatingButtonArea = (props) => {
+
+	const getButton = (route, icon, label) => (
+		<Button
+			buttonStyle={{borderRadius: 50, width: 70}}
+			backgroundColor={'#fff'}
+			title={label}
+			color={'#000'}
+			iconRight
+			textStyle={{fontSize: 12}}
+			icon={{ name: icon, color: '#000'}}
+			onPress={()=>props.navigation.navigate(route, { data: props.data})}
+		/>
+	);
+
+	return (
+		<View style={styles.buttonContainer}>
+			<View style={styles.buttonInsideContainer}>
+				{getButton('map', 'map', "MAP")}
+				{getButton('filters', 'filter-list', "FILTER")}
+			</View>
+		</View>
+	);
+}
+
 // EXPORTED COMPONENT
 // ====================================
-class HomeScreen extends React.Component {
+class ExploreScreen extends React.Component {
 
 	static navigationOptions = navigationOptions;
 
 	constructor(props){
 		super(props);
 		this.onEndReached = this.onEndReached.bind(this);
-		this.state = { refreshing: false }
+		this.state = { 
+			refreshing: false,
+			data: [],
+			searching: true
+		}
 	}
 	
 	keyExtractor(item, index){
 		return item._id;
 	}
+	onSearchChange = (value) => {
+		//this.setState({searching: true, data: []});
+		client.query({
+	      query: SEARCH_SHOPS,
+	      variables: { string: value }
+	    }).then(({ data }) => {
+	    	this.setState({data: data.shops, searching: false});
+	    }); 
+	}
+	componentWillMount(){
+		client.query({
+	      query: FETCH_SHOPS,
+	    }).then(({ data }) => {
+	    	console.log(data.shops)
+	    	this.setState({data: data.shops, searching: false})
+	    });
+	}
 	onRefresh = () => {
 		this.setState({refreshing: true})
-		setTimeout(()=>this.setState({refreshing: false}), 1500)
+		client.query({
+	      query: FETCH_SHOPS,
+	    }).then(({ data }) => {
+	    	this.setState({data: data.shopsByOwner, refreshing: false})
+	    });
 	}
 	onEndReached(){
 		if (this.props.data.shops.length < 10) { 
@@ -99,11 +132,15 @@ class HomeScreen extends React.Component {
 	}
 	render(){
 
-		if (this.props.data.loading) {
+		/*if (this.props.data.loading) {
+			return <LoadingScreen loadingMessage='loading shops...' />
+		}*/
+
+		if (this.state.searching) {
 			return <LoadingScreen loadingMessage='loading shops...' />
 		}
 
-		if (!this.props.data.shops || this.props.data.shops.length === 0) {
+		/*if (!this.props.data.shops || this.props.data.shops.length === 0) {
 			return (
 				<EmptyState 
 					imageComponent={
@@ -112,55 +149,31 @@ class HomeScreen extends React.Component {
 					pageText='NO SHOPS YET...' 
 				/>
 			);
-		}
-
+		}*/
+		//onEndReached={this.onEndReached}
 		return (
 			<View style={{ paddingBottom: 2, flex: 1, backgroundColor: colorConfig.screenBackground }}>
 				<SearchBar
-				  	onChangeText={()=>{}}
+				  	onChangeText={this.onSearchChange}
 				  	placeholder='Search shops...'
 				  	lightTheme
 				  	inputStyle={{ backgroundColor: '#fff' }}
 					containerStyle={{ width: SCREEN_WIDTH }}
 				/>
 				<FlatList
-				  data={this.props.data.shops}
+				  data={this.state.data}
 				  keyExtractor={this.keyExtractor}
 				  refreshing={this.state.refreshing}
 				  onRefresh={this.onRefresh}
-				  onEndReached={this.onEndReached}
 				  removeClippedSubviews={false}
 				  renderItem={({item}) => <ShopCard item={item} navigation={this.props.navigation} />}
 				/>
-				{this.props.data.networkStatus === 4 && (
+				{/*this.props.data.networkStatus === 4 && (
 					<View style={{height: 30}}>
 						<ActivityIndicator />
 					</View>	
-				)}
-				<View style={styles.buttonContainer}>
-					<View style={styles.buttonInsideContainer}>
-								<Button
-						            buttonStyle={{borderRadius: 50, width: 70}}
-						            backgroundColor={'#fff'}
-						            title="MAP"
-						            color={'#000'}
-						            iconRight
-						            textStyle={{fontSize: 12}}
-						            icon={{ name: 'map', color: '#000'}}
-						            onPress={()=>this.props.navigation.navigate('map', { data: this.props.data.shops})}
-					        	/>
-								<Button
-					        		buttonStyle={{borderRadius: 50, width: 70}}
-						            backgroundColor={'#fff'}
-						            title="FILTER"
-						            color={'#000'}
-						            textStyle={{fontSize: 12}}
-						            iconRight
-						            icon={{ name: 'filter-list', color: '#000'}}
-						            onPress={()=>this.props.navigation.navigate('filters', { data: this.props.data.shops})}
-					        	/>
-						</View>
-				</View>
+				)*/}
+				<FloatingButtonArea navigation={this.props.navigation} data={this.state.data} />
 			</View>		
 		);
 	}
@@ -203,11 +216,12 @@ const styles = StyleSheet.create({
 
 // EXPORT
 // ====================================
-export default graphql(FETCH_SHOPS, {
+export default ExploreScreen;
+/*export default graphql(FETCH_SHOPS, {
 	options: {
 		//notifyOnNetworkStatusChange: true,
 	}
-})(HomeScreen);
+})(ExploreScreen);*/
 
 
 
