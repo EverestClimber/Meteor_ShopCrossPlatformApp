@@ -103,43 +103,6 @@ class SearchScreen extends React.Component {
 }
 
 
-// STYLES
-// ========================================
-const styles = StyleSheet.create({
-	contentContainerStyle: {
-		backgroundColor: colorConfig.screenBackground,
-		alignItems: 'center',
-		justifyContent: 'flex-start',
-		paddingBottom: 50
-	},
-	container: {
-		flex: 1,
-		backgroundColor: colorConfig.screenBackground,
-		padding: 15,
-		paddingTop: 0,
-		width: SCREEN_WIDTH
-	},
-  linkText: {
-  	color: colorConfig.business,
-	fontSize: 15,
-	fontFamily: boldFont,
-  },
-	headerStyle: {
-		marginBottom: 6, 
-		color: '#000',
-		fontSize: 20,
-		fontFamily: semiboldFont
-	},
-	subHeaderStyle: {
-		fontFamily: regularFont,
-		textAlign: 'center', 
-		color: '#888'
-	},
-	contactButton: {
-		backgroundColor: '#fff',
-	}
-});
-
 
 // EXPORT
 // ========================================

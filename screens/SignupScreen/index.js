@@ -1,34 +1,38 @@
+// TOP LEVEL IMPORTS
 import React from 'react';
-import { Text, View, AsyncStorage, Platform, Image, StyleSheet } from 'react-native';
+import { BlurView } from 'expo';
+import { Text, View, Platform, Image, StyleSheet } from 'react-native';
+import { Button, Icon } from 'react-native-elements'
+// COMPONENTS
 import SignupForm from '../../components/SignupForm'
-import LoadingScreen from '../../components/LoadingScreen'
+// APOLLO
 import { withApollo } from 'react-apollo';
 import { userId } from 'meteor-apollo-accounts'
-import { Button, Icon } from 'react-native-elements'
+// MODULES
 import { colorConfig, stylesConfig } from '../../modules/config';
-import { BlurView } from 'expo';
 
+
+// CONSTANTS & DESTRUCTURING
+// =============================================
 const { basicHeaderStyle, titleStyle } = stylesConfig;
 
 
 
-
+// EXPORTED COMPONENT
+// =============================================
 class SignupScreen extends React.Component {
 	 static navigationOptions = {
 	    title: 'Signup',
 	    tabBarIcon: ({ tintColor }) => <Icon name="person-add" size={30} color={tintColor} />,
 	      headerTitleStyle: titleStyle, 
 	      tabBarLabel: 'Signup',
-	      headerVisible: true, //Platform.OS !== 'android',
+	      headerVisible: true,
 	      headerStyle: basicHeaderStyle
 	  };
 
 	state = { stillLoading: true }
 
 	render(){
-		/*if (this.state.stillLoading) {
-			return <LoadingScreen loadingMessage={''} />;
-		}*/
 		return (
 			<View style={{ flex: 1}}>
 				<Image style={{ width: null, height: null, flex: 1, }} source={require('../../assets/background.jpg')} />
@@ -41,4 +45,7 @@ class SignupScreen extends React.Component {
 	}
 }
 
+// EXPORT
+// =============================================
 export default SignupScreen;
+

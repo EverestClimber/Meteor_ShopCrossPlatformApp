@@ -1,17 +1,23 @@
+//TOP LEVEL IMPORTS
 import React from 'react';
 import { Permissions, Location } from 'expo';
 import { View, ScrollView, KeyboardAvoidingView, Text, Platform, StyleSheet, Alert } from 'react-native';
 import { Icon, Button } from 'react-native-elements';
+// MODULES
 import { stylesConfig, colorConfig } from '../../modules/config';
+// COMPONENTS
 import BackButton from '../../components/BackButton';
 import AddShopForm from '../../components/AddShopForm';
 
 
-
+// CONSTANTS & DESTRUCTURING
+// ========================================
 const { boldFont, semiboldFont, regularFont, titleStyle, basicHeaderStyle } = stylesConfig;
 
-class AddShop extends React.Component {
-	static navigationOptions = ({ navigation, screenProps }) => ({
+
+// NAVIGATION OPTIONS
+// ====================================
+const navigationOptions = ({ navigation, screenProps }) => ({
 		title: 'Add Shop',
 		tabBarIcon: ({ tintColor }) => <Icon name="list" size={30} color={tintColor} />,
 	  	headerTitleStyle: titleStyle,
@@ -21,10 +27,15 @@ class AddShop extends React.Component {
 	  	headerLeft: <BackButton goBack={navigation.goBack} label='' />,
 	});
 
-	state = { 
-		location: null, 
-		errors: [],
-	}
+
+// EXPORTED COMPONENT
+// ========================================
+class AddShop extends React.Component {
+
+	static navigationOptions = navigationOptions;
+
+	state = { location: null,  errors: [] };
+
 	async componentDidMount() {
 
 		const cameraResponse = await Permissions.askAsync(Permissions.CAMERA);
@@ -53,7 +64,8 @@ class AddShop extends React.Component {
 	}
 }
 
-
+// STYLES
+// ========================================
 const styles = StyleSheet.create({
 	contentContainerStyle: {
 		backgroundColor: colorConfig.screenBackground,
@@ -87,4 +99,6 @@ const styles = StyleSheet.create({
 	}
 });
 
+// EXPORT
+// ========================================
 export default AddShop;

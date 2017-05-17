@@ -1,28 +1,28 @@
+//TOP LEVEL IMPORTS
 import React from 'react';
-import { View, Text, Platform, StyleSheet, Animated, Image } from 'react-native';
-import { Button, Icon, SearchBar } from 'react-native-elements';
+import { View, Text, Platform, StyleSheet } from 'react-native';
+import { Button, Icon } from 'react-native-elements';
 import { Header } from 'react-navigation';
-import { Permissions, Location, MapView, DangerZone } from 'expo';
+import { Permissions, Location, MapView } from 'expo';
 // MODULES
 import { stylesConfig, colorConfig, SCREEN_WIDTH } from '../../modules/config';
+// APOLLO
+import { FETCH_SHOP } from '../../apollo/queries';
+import { graphql } from 'react-apollo';
 // COMPONENTS
 import LoadingScreen from '../../components/LoadingScreen';
 import ShopCard from '../../components/ShopCard';
 import BackButton from '../../components/BackButton';
 
-// APOLLO
-import client from '../../ApolloClient';
-import { userId } from 'meteor-apollo-accounts'
-import { FETCH_SHOP } from '../../apollo/queries';
-import { graphql, withApollo } from 'react-apollo';
 
 // CONSTANTS & DESTRUCTURING
 // ========================================
 const { boldFont, semiboldFont, regularFont, titleStyle, basicHeaderStyle } = stylesConfig;
 
 
-class DetailMap extends React.Component {
-	static navigationOptions = ({ navigation, screenProps }) => ({
+// NAVIGATION OPTIONS
+// ====================================
+const navigationOptions = ({ navigation, screenProps }) => ({
 		title: 'Map',
 		tabBarIcon: ({ tintColor }) => <Icon name="add-location" size={30} color={tintColor} />,
 	  	headerTitleStyle: titleStyle,
@@ -32,6 +32,12 @@ class DetailMap extends React.Component {
 	  	tabBarVisible: false,
 	  	headerLeft: <BackButton goBack={navigation.goBack} label='' />,
 	});
+
+
+// EXPORTED COMPONENT
+// ========================================
+class DetailMap extends React.Component {
+	static navigationOptions = navigationOptions;
 	constructor(props){
 		super(props);
 		this.state = {
@@ -94,6 +100,9 @@ class DetailMap extends React.Component {
 	}
 }
 
+
+// STYLES
+// ========================================
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
@@ -101,15 +110,11 @@ const styles = StyleSheet.create({
 	}
 });
 
-
+// EXPORT
+// ========================================
 export default graphql(FETCH_SHOP, {
   options: (props) => { 
   	let variables = { _id: props.navigation.state.params._id };
   	return { variables } 
   }
 })(DetailMap);
-/*export default graphql(FETCH_SHOPS, {
-	options: {
-		//notifyOnNetworkStatusChange: true,
-	}
-})(MapScreen);*/

@@ -8,10 +8,10 @@ export default async ({mutate}) => {
 
   if (await userId()) {  
 
-  	let previousToken
+  	let previousToken;
 
   	try {
-  		previousToken = await AsyncStorage.getItem('pushtoken');
+  		previousToken = await AsyncStorage.getItem('pushtoken'); // check to see if the user already has a push notification token
   	}
   	catch(e) {
 

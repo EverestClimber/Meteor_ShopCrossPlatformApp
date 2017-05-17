@@ -1,11 +1,14 @@
-import Expo, { AppLoading, Font, Amplitude, Constants } from 'expo';
+// TOP LEVEL IMPORTS
 import React from 'react';
+import Expo, { AppLoading, Font, Amplitude, Constants } from 'expo';
 import { StyleSheet, Text, View, Platform, AsyncStorage } from 'react-native';
 import { TabNavigator, StackNavigator } from 'react-navigation';
 //CONFIG
 import { colorConfig } from './modules/config';
-//
+// APOLLO
 import { graphql } from 'react-apollo';
+import { GET_USER_DATA } from './apollo/queries';
+import { SAVE_USER_EXPO_PUSH_ID } from './apollo/mutations'
 //SCREENS
 import WelcomeScreen from './screens/WelcomeScreen';
 import LoginScreen from './screens/LoginScreen';
@@ -22,25 +25,13 @@ import ShopDetail from './screens/ShopDetail';
 import MapScreen from './screens/MapScreen';
 import MyListingsScreen from './screens/MyListingsScreen';
 import DetailMap from './screens/DetailMap';
-
-//
+// SERVICES
 import registerForNotifications from './services/push_notifications';
-//
-import { GET_USER_DATA } from './apollo/queries';
-import { SAVE_USER_EXPO_PUSH_ID } from './apollo/mutations'
 
 
-// HomeNavigator
-// =================================
-const HomeNavigator = StackNavigator({
-  home: {  screen: HomeScreen },
-  addShop: {  screen: AddShop },
-  search: {  screen: SearchScreen },
-  shopDetail: {  screen: ShopDetail },
-  detailMap: {  screen: DetailMap },
-},{
-  tabBarLabel: 'Home',
-});
+
+
+
 
 
 // MapNavigator
@@ -48,8 +39,10 @@ const HomeNavigator = StackNavigator({
 const MapNavigator = StackNavigator({
   map: {  screen: MapScreen },
 },{
-  tabBarLabel: 'Location',
+  mode: 'modal'
 });
+
+
 
 // ListingsNavigator
 // =================================
@@ -59,9 +52,23 @@ const ListingsNavigator = StackNavigator({
   tabBarLabel: 'Location',
 });
 
+// HomeNavigator
+// =================================
+const HomeNavigator = StackNavigator({
+  home: {  screen: HomeScreen },
+  addShop: {  screen: AddShop },
+  search: {  screen: SearchScreen },
+  map: { screen: MapScreen },
+  shopDetail: {  screen: ShopDetail },
+  detailMap: {  screen: DetailMap },
+},{
+  tabBarLabel: 'Home',
+  mode: 'modal'
+});
 
 
-
+// AccountNavigator
+// =================================
 const AccountNavigator = StackNavigator({
   account: {  screen: AccountScreen },
   settings: { screen: SettingsScreen },
@@ -69,8 +76,6 @@ const AccountNavigator = StackNavigator({
   privacy: { screen: PrivacyPolicyScreen },
   help: { screen: HelpScreen }
 });
-
-
 
 
 // AppNavigator
@@ -94,7 +99,7 @@ const APP_NAVIGATOR_OPTIONS = {
 
 const APP_NAVIGATOR_ROUTES = {
   home: { screen: HomeNavigator },
-  map: { screen: MapNavigator },
+  //map: { screen: MapNavigator },
   listings: { screen: ListingsNavigator },
   account: { screen: AccountNavigator }
 };
@@ -106,7 +111,6 @@ const AppNavigator = TabNavigator(APP_NAVIGATOR_ROUTES, APP_NAVIGATOR_OPTIONS);
 
 // AutScreen
 // =================================
-
 const AUTH_NAVIGATOR_OPTIONS = {
   lazy: true,
   swipeEnabled: false,
@@ -146,7 +150,6 @@ const MAIN_NAVIGATOR_OPTIONS = {
 };
 
 
-
 const MAIN_NAVIGATOR_ROUTES = {
   auth: { screen: LoginScreen },
   signup: { screen: SignupScreen },
@@ -181,7 +184,7 @@ class AppRoutes extends React.Component {
 
   }
   render() {
-    //if not connected to DPP, wait for connection
+
     if (this.state.loadingFont || this.props.data.loading) {
       return (
         <View style={styles.container}>
@@ -190,13 +193,15 @@ class AppRoutes extends React.Component {
       );
     }
 
-    return (
-      <MainNavigator screenProps={this.props} />
-    );
+    return <MainNavigator screenProps={this.props} />;
 
   }
 }
 
+
+
+// STYLES
+// =================================
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -206,6 +211,10 @@ const styles = StyleSheet.create({
   },
 });
 
+
+
+// EXPORT
+// =================================
 export default graphql(SAVE_USER_EXPO_PUSH_ID)(
   graphql(GET_USER_DATA)(AppRoutes)
 );

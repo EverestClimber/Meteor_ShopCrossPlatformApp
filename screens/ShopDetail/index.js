@@ -1,19 +1,21 @@
+// TOP LEVEL IMPORTS
 import React from 'react';
 import { View, ScrollView, Text, Platform, Image, FlatList, TouchableOpacity } from 'react-native';
-import { Permissions, Location, MapView, DangerZone } from 'expo';
+import { Icon, Button, Card } from 'react-native-elements';
+import { Tabs, WhiteSpace,  } from 'antd-mobile';
 //MODULES
-import { FETCH_SHOP } from '../../apollo/queries';
 import { stylesConfig, colorConfig, DEFAULT_SHOP_IMAGE } from '../../modules/config';
+// APOLLO
+import { graphql } from 'react-apollo';
+import { FETCH_SHOP } from '../../apollo/queries';
+// COMPONENTS
 import LoadingScreen from '../../components/LoadingScreen';
 import ShopCard from '../../components/ShopCard';
-import { Icon, Button, Card } from 'react-native-elements';
-import { graphql } from 'react-apollo';
 import BackButton from '../../components/BackButton';
-import { Tabs, WhiteSpace,  } from 'antd-mobile';
 import EmptyState from '../../components/EmptyState';
 
 
-//
+// CONSTANTS & DESTRUCTURING
 // ========================================
 const TabPane = Tabs.TabPane;
 const { 
@@ -26,6 +28,9 @@ const {
 } = stylesConfig;
 
 
+
+// INTERNAL COMPONENTS
+// ========================================
 const GeneralInfo = ({ shopById }) => {
 
 	return (
@@ -53,7 +58,7 @@ const GeneralInfo = ({ shopById }) => {
 }
 
    
-// EXPORTED 
+// EXPORTED COMPONENT
 // ========================================
 class ShopDetail extends React.Component {
 	static navigationOptions = ({ navigation, screenProps }) => ({
@@ -83,41 +88,14 @@ class ShopDetail extends React.Component {
 						<Text>GO TO MAP</Text>
 					</TouchableOpacity>
 				</Card>
-
-				{/*<Tabs defaultActiveKey="1"
-					textColor={colorConfig.darkGrey}
-					activeTextColor={colorConfig.business}
-					activeUnderlineColor={colorConfig.business} 
-					underlineColor={colorConfig.lightGrey}
-					barStyle={{backgroundColor: '#fff'}}
-				>
-			      <TabPane tab="Details" key="1">
-			      	<View style={{minHeight: 300}}>
-			      	</View>
-			      </TabPane>
-			      <TabPane tab="Map" key="2">
-			      	<View style={{minHeight: 400}}>
-				      	<MapView
-				          region={this.state.region}
-				          style={{ flex: 1 }}
-				          loadingEnabled
-				          onRegionChangeComplete={this.onRegionChangeComplete}
-				        >
-				        	<MapView.Marker
-		        				title={data.shopById.title}
-		        				description={data.shopById.description}
-		        				coordinate={{ latitude: parseFloat(data.shopById.location.lat), longitude: parseFloat(data.shopById.location.lng) }}
-		        			/>
-				        </MapView>
-			      	</View>
-			      </TabPane>
-			    </Tabs>*/}
 			</View>
 		);
 	}
 	
 }
 
+// EXPORT
+// ========================================
 export default graphql(FETCH_SHOP, {
   options: (props) => { 
   	let variables = { _id: props.navigation.state.params._id };

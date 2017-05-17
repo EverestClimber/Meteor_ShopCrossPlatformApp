@@ -1,8 +1,7 @@
 //TOP-LEVEL IMPORTS
 import React from 'react';
-import { View, Text, AsyncStorage, Image } from 'react-native';
-import { AppLoading, Amplitude } from 'expo';
-import _ from 'lodash';
+import { View, Text, AsyncStorage } from 'react-native';
+import { AppLoading } from 'expo';
 //COMPONENTS
 import Slides from '../../components/Slides'
 //MODULES
@@ -44,19 +43,7 @@ class WelcomeScreen extends React.Component {
 		this.props.markOnboardingComplete();
 		this.props.navigation.navigate('main');
 	}
-
-	componentDidMount(){
-		//analyticsHelpers.logPageView('user hit welcome page');
-	  }
 	render(){
-
-		//if (_.isNull(this.state.onboardingComplete)) { return <AppLoading /> }
-
-		/*return (
-			<View style={{backgroundColor: 'blue', flex: 1}}>
-			</View>
-		);*/
-
 		return (
 			<Slides data={SLIDE_DATA} onSlidesComplete={this.onSlidesComplete} />
 		);
@@ -66,7 +53,5 @@ class WelcomeScreen extends React.Component {
 let mapStateToProps = (state) => {
 	return { onboardingComplete: state.auth.onboardingComplete }
 }
-
-//export default WelcomeScreen
 
 export default connect(mapStateToProps, actions)(WelcomeScreen);

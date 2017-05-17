@@ -1,18 +1,26 @@
+// TOP LEVEL IMPORTS
 import React from 'react';
-import { Text, InteractionManager, View, AsyncStorage, Image, Platform, StyleSheet } from 'react-native';
+import { Text, View, AsyncStorage, Image, Platform, StyleSheet } from 'react-native';
+import { Button, Icon } from 'react-native-elements';
+import { BlurView } from 'expo';
+// APOLLO
+import { withApollo } from 'react-apollo';
+import { userId } from 'meteor-apollo-accounts'
+// MODULES
+import { colorConfig, stylesConfig } from '../../modules/config';
+// COMPONENTS
 import LoginForm from '../../components/LoginForm'
 import LoadingScreen from '../../components/LoadingScreen'
-import { withApollo } from 'react-apollo';
-import { TabBarTop } from 'react-navigation';
-import { userId } from 'meteor-apollo-accounts'
-import { Button, Icon } from 'react-native-elements'
-import { colorConfig, stylesConfig } from '../../modules/config';
-import { BlurView } from 'expo';
 
 
 
+// CONSTANTS & DESCTRUCTURING
+// ==============================
 const { basicHeaderStyle, titleStyle } = stylesConfig;
 
+
+// STYLES
+// ==============================
 const s = StyleSheet.create({
   backgroundImage: {
       flex: 1,
@@ -33,6 +41,8 @@ const s = StyleSheet.create({
 });
 
 
+// EXPORTED COMPONENT
+// ==============================
 class LoginScreen extends React.Component {
 	 static navigationOptions = {
 	 	
@@ -84,4 +94,7 @@ class LoginScreen extends React.Component {
 	}
 }
 
+
+// EXPORT
+// ==============================
 export default LoginScreen;

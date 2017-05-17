@@ -1,19 +1,28 @@
+// TOP LEVEL IMPORTS
 import React from 'react';
 import { View, Text, AsyncStorage, ScrollView, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { Icon, Button, Card } from 'react-native-elements';
-import { connect } from 'react-redux';
 import { AppLoading } from 'expo';
-import * as actions from '../../actions';
-//MODULES
-import { stylesConfig, colorConfig } from '../../modules/config';
-import BackButton from '../../components/BackButton';
+// APOLLO
 import ApolloClient from '../../ApolloClient';
-import { logout } from 'meteor-apollo-accounts'
-//
+import { logout } from 'meteor-apollo-accounts';
+// REDUX
+import { connect } from 'react-redux';
+import * as actions from '../../actions';
+// MODULES
+import { stylesConfig, colorConfig } from '../../modules/config';
+// COMPONENTS
+import BackButton from '../../components/BackButton';
+
+
+
+// CONSTANTS & DESTRUCTURING
 // ========================================
 const { boldFont, semiboldFont, regularFont, titleStyle, basicHeaderStyle } = stylesConfig;
 
 
+// INTERNAL COMPONENTS
+// ========================================
 const AppSettings = ({ clearLocation, clearLikes }) => {
 	return (
 		<View style={{marginBottom: 15, flex: 1}}>
@@ -63,13 +72,14 @@ const ContactUs = ({ navigation }) => {
 		          style={{marginTop: 10}} 
 		        />
 			</View>
-			{/*<Button onPress={()=>navigation.navigate('help')} block style={{backgroundColor: '#fff',}}>
-				<Text style={{fontFamily: boldFont}}>HELP & SUPPORT</Text>
-			</Button>*/}
 		</View>
 	);
 }
 
+
+
+// EXPORTED COMPONENT
+// ========================================
 class SettingsScreen extends React.Component {
 	static navigationOptions = ({ navigation, screenProps }) => ({
 		title: 'Settings',
@@ -106,6 +116,9 @@ class SettingsScreen extends React.Component {
 }
 
 
+
+// STYLES
+// ========================================
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -135,4 +148,6 @@ const styles = StyleSheet.create({
 });
 
 
+// EXPORT
+// ========================================
 export default connect(null, actions)(SettingsScreen);

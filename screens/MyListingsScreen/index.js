@@ -1,18 +1,18 @@
 // TOP LEVEL IMPORTS
 import React from 'react';
-import { View, FlatList, Text, Platform, Button, Dimensions, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import { View, FlatList, Text, Platform, Button, Image, ActivityIndicator } from 'react-native';
 import { Icon, Card, SearchBar } from 'react-native-elements';
 // MODULES
 import { stylesConfig, colorConfig, SCREEN_WIDTH } from '../../modules/config';
 // APOLLO
+import client from '../../ApolloClient';
 import { userId } from 'meteor-apollo-accounts'
 import { FETCH_SHOPS_BY_OWNER, SEARCH_SHOPS_BY_OWNER } from '../../apollo/queries';
-import { graphql, withApollo } from 'react-apollo';
 //COMMON COMPONENTS
 import LoadingScreen from '../../components/LoadingScreen';
 import EmptyState from '../../components/EmptyState';
 import ShopCard from '../../components/ShopCard';
-import client from '../../ApolloClient';
+
 
 // CONSTANTS & DESTRUCTURING
 // ====================================
@@ -21,7 +21,8 @@ const { basicHeaderStyle, titleStyle, regularFont, emptyStateIcon } = stylesConf
 
 
 
-
+// EXPORTED COMPONENT
+// ====================================
 class MyListingsScreen extends React.Component {
 	static navigationOptions = ({ navigation, screenProps }) => ({
 		title: 'My Listings',
@@ -30,22 +31,6 @@ class MyListingsScreen extends React.Component {
 	  	headerVisible: Platform.OS !== 'android',
 	  	tabBarLabel: 'My Listings',
 	  	headerStyle: basicHeaderStyle,
-	  	/*headerLeft: (
-	  		<Icon
-	  			name="search" 
-	  			color={'#fff'}
-	  			iconStyle={{marginLeft: 15}}
-	  			onPress={()=>navigation.navigate('search')} 
-	  		/>
-	  	),
-	  	headerRight: (
-	  		<Button 
-	  			style={{fontFamily: regularFont, fontSize: 10}} 
-	  			title={'+ Add Shop'} 
-	  			color={'#fff'} 
-	  			onPress={()=>navigation.navigate('addShop')} 
-	  		/>
-	  	),*/
 	});
 	constructor(props){
 		super(props);
@@ -142,31 +127,9 @@ class MyListingsScreen extends React.Component {
 
 
 
-/*{
-	"data":{
-		"variables":{},
-		"loading":false,
-		"networkStatus":7,
-		"user":{
-			"emails":[{"address":"arcomito@gmail.com","verified":false,"__typename":"Email"}],
-			"roles":null,
-			"_id":"vDvicBgXbPodjxw7w",
-			"profile":{"watchgroupIds":["Apps6cahtuLkcnShu","pJsYzscT3dsG2DiDb","KkahyirQ5p7maLNsF"],"firstName":"Anthony","lastName":"Comito","cell":"5555555","cellVisibility":"show","gender":"other","image":"https://veg-corp.s3.amazonaws.com/vDvicBgXbPodjxw7w/1494248420002/Business-Headshot-Gray.jpg","__typename":"Profile"},"__typename":"User"
-		}
-	}
-}
-*/
-//<ListView style={{flex: 1, padding: 10, backgroundColor: colorConfig.screenBackground}}>
-//				{this.props.data.messages.map( item => <MessageItem key={item._id} item={item} navigation={this.props.navigation} />)}
-//			</ListView>
-
+// EXPORT
+// ====================================
 export default MyListingsScreen;
-
-/*export default graphql(FETCH_SHOPS_BY_OWNER, {
-	options: {
-		//notifyOnNetworkStatusChange: true,
-	}
-})(MyListingsScreen);*/
 
 
 

@@ -1,18 +1,28 @@
-import Expo, { Notifications } from 'expo';
+// TOP LEVEL IMPORTS
+import Expo from 'expo';
 import React from 'react';
-import { Alert, AsyncStorage } from 'react-native';
-import { ApolloProvider } from 'react-apollo';
 import AppRoutes from './routes'
-import { store } from './store'
+// APOLLO
+import { ApolloProvider } from 'react-apollo';
 import client from './ApolloClient';
+// REDUX
+import { store } from './store'
+// ANTD
 import enUS from 'antd-mobile/lib/locale-provider/en_US';
-import {LocaleProvider} from 'antd-mobile';
-import registerForNotifications from './services/push_notifications';
+import { LocaleProvider } from 'antd-mobile';
+// OTHER
 import Sentry from 'sentry-expo';
 import { SENTRY_DSN } from './modules/config'
 
+
+
+// INITIALIZE SENTRY ERROR LOGGING: https://sentry.io/
+// ===================================================
 Sentry.config(SENTRY_DSN).install();
 
+
+// ROOT COMPONENT TO ENTIRE RN APP
+// ===================================================
 class App extends React.Component {
 	render() {
 		return (
@@ -26,4 +36,6 @@ class App extends React.Component {
 }
 
 
+// REGISTER ROOT COMPONENT WITH EXPO HELPER
+// ===================================================
 Expo.registerRootComponent(App);
