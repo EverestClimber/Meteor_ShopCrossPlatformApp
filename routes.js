@@ -10,37 +10,23 @@ import { graphql } from 'react-apollo';
 import { GET_USER_DATA } from './apollo/queries';
 import { SAVE_USER_EXPO_PUSH_ID } from './apollo/mutations'
 //SCREENS
-import WelcomeScreen from './screens/WelcomeScreen';
-import LoginScreen from './screens/LoginScreen';
-import SignupScreen from './screens/SignupScreen';
-import PrivacyPolicyScreen from './screens/PrivacyPolicyScreen';
-import TermsScreen from './screens/TermsScreen';
-import SettingsScreen from './screens/SettingsScreen';
-import HelpScreen from './screens/HelpScreen';
 import AccountScreen from './screens/AccountScreen';
-import HomeScreen from './screens/HomeScreen';
 import AddShop from './screens/AddShop';
-import SearchScreen from './screens/SearchScreen';
-import ShopDetail from './screens/ShopDetail';
+import DetailMap from './screens/DetailMap';
+import FiltersScreen from './screens/FiltersScreen';
+import HelpScreen from './screens/HelpScreen';
+import HomeScreen from './screens/HomeScreen';
+import LoginScreen from './screens/LoginScreen';
+import PrivacyPolicyScreen from './screens/PrivacyPolicyScreen';
 import MapScreen from './screens/MapScreen';
 import MyListingsScreen from './screens/MyListingsScreen';
-import DetailMap from './screens/DetailMap';
+import SignupScreen from './screens/SignupScreen';
+import SettingsScreen from './screens/SettingsScreen';
+import ShopDetail from './screens/ShopDetail';
+import TermsScreen from './screens/TermsScreen';
+import WelcomeScreen from './screens/WelcomeScreen';
 // SERVICES
 import registerForNotifications from './services/push_notifications';
-
-
-
-
-
-
-
-// MapNavigator
-// =================================
-const MapNavigator = StackNavigator({
-  map: {  screen: MapScreen },
-},{
-  mode: 'modal'
-});
 
 
 
@@ -48,17 +34,18 @@ const MapNavigator = StackNavigator({
 // =================================
 const ListingsNavigator = StackNavigator({
   listings: { screen: MyListingsScreen },
+  addShop: {  screen: AddShop },
 },{
   tabBarLabel: 'Location',
 });
+
 
 // HomeNavigator
 // =================================
 const HomeNavigator = StackNavigator({
   home: {  screen: HomeScreen },
-  addShop: {  screen: AddShop },
-  search: {  screen: SearchScreen },
   map: { screen: MapScreen },
+  filters: { screen: FiltersScreen },
   shopDetail: {  screen: ShopDetail },
   detailMap: {  screen: DetailMap },
 },{

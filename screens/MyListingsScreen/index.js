@@ -1,7 +1,7 @@
 // TOP LEVEL IMPORTS
 import React from 'react';
-import { View, FlatList, Text, Platform, Button, Image, ActivityIndicator } from 'react-native';
-import { Icon, Card, SearchBar } from 'react-native-elements';
+import { View, FlatList, Text, Platform, Image, ActivityIndicator } from 'react-native';
+import { Icon, Card, SearchBar, Button } from 'react-native-elements';
 // MODULES
 import { stylesConfig, colorConfig, SCREEN_WIDTH } from '../../modules/config';
 // APOLLO
@@ -31,6 +31,15 @@ class MyListingsScreen extends React.Component {
 	  	headerVisible: Platform.OS !== 'android',
 	  	tabBarLabel: 'My Listings',
 	  	headerStyle: basicHeaderStyle,
+	  	headerRight: (
+	  		<Button
+	  			backgroundColor={colorConfig.business}
+	  			fontFamily={regularFont}
+	  			title={'+ Add Shop'} 
+	  			color={'#fff'} 
+	  			onPress={()=>navigation.navigate('addShop')} 
+	  		/>
+	  	),
 	});
 	constructor(props){
 		super(props);

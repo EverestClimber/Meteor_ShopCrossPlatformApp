@@ -16,7 +16,6 @@ import { stylesConfig, colorConfig } from '../../modules/config';
 import ProfileAvatar from '../../components/ProfileAvatar';
 import LoadingScreen from '../../components/LoadingScreen';
 import AccountForm from '../../components/AccountForm';
-import NotificationSettings from '../../components/NotificationSettings';
 
 
 

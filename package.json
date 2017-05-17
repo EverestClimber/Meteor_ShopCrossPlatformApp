@@ -25,7 +25,8 @@
     "redux-form": "^6.6.3",
     "redux-persist": "^4.6.0",
     "redux-thunk": "^2.2.0",
-    "sentry-expo": "^1.0.0"
+    "sentry-expo": "^1.0.0",
+    "uuid": "^3.0.1"
   },
   "devDependencies": {
     "babel-plugin-import": "^1.1.1"

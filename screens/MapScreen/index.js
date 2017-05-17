@@ -72,9 +72,9 @@ class MapScreen extends React.Component {
 			        <View style={styles.backButtonContainer}>
 						<Button
 				            backgroundColor={'transparent'}
-				            title="Back"
+				            title=""
 				            color={'#000'}
-				            icon={{ name: 'keyboard-backspace', color: '#000'}}
+				            icon={{ name: 'close', color: '#000', iconStyle: { fontSize: 30}}}
 				            onPress={()=>this.props.navigation.goBack()}
 				          />
 					</View>

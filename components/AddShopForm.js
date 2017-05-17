@@ -1,6 +1,6 @@
 import React from 'react';
 import { ImagePicker, Permissions } from 'expo';
-import { View, Text, TextInput, Alert, TouchableOpacity, StyleSheet, Platform, Image, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, ScrollView, Alert, TouchableOpacity, StyleSheet, Platform, Image, ActivityIndicator } from 'react-native';
 //REDUX
 import _ from 'lodash';
 //COMPONENTS
@@ -67,6 +67,7 @@ const ImageArea = ({ image, onImageClick, onImageCameraClick, onRemoveImage, ima
     );
   }
   
+  console.log(image)
 
   return (
     <View style={{marginBottom: 15, marginTop: 15}}>
@@ -221,15 +222,17 @@ class AddShopForm extends React.Component {
           />
         </List>
         <List renderHeader={() => 'Category'}>
-          {CATEGORY_OPTIONS.map(i => (
-            <RadioItem 
-              key={i.value} 
-              checked={this.state.category === i.value} 
-              onChange={() => this.setState({category: i.value})}
-            >
-              {i.label}
-            </RadioItem>
-          ))}
+          <ScrollView style={{height: 200}}>
+            {CATEGORY_OPTIONS.map(i => (
+              <RadioItem 
+                key={i.value} 
+                checked={this.state.category === i.value} 
+                onChange={() => this.setState({category: i.value})}
+              >
+                {i.label}
+              </RadioItem>
+            ))}
+          </ScrollView>
         </List>
         <List renderHeader={() => 'Phone'}>
           <InputItem

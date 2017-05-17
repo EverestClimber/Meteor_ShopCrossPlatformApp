@@ -1,4 +1,5 @@
 import { RNS3 } from 'react-native-aws3';
+import uuidV4 from 'uuid/v4'
 
 const s3options = {
   keyPrefix: "uploads/",
@@ -14,7 +15,7 @@ export const handleFileUpload = (file, callback) => {
       console.log(file);
       let fileToUpload = {
         uri: file.uri,
-        //name: file.fileName,
+        name: uuidV4(),
         type: "image/png"
       }
       RNS3.put(fileToUpload, s3options).then(({ status, body }) => {

@@ -23,91 +23,6 @@ const { basicHeaderStyle, titleStyle, regularFont, emptyStateIcon } = stylesConf
 
 
 
-class MapArea extends React.Component {
-	constructor(props){
-		super(props);
-		this.state = {
-			loadingLocation: false,
-			data: [],
-			searching: true,
-			region: {
-	    		longitude: -122,
-      			latitude: 37,
-		      	longitudeDelta: 0.04,
-		      	latitudeDelta: 0.09
-		    }
-		}
-	}
-	async componentDidMount() {
-	  const { status } = await Permissions.askAsync(Permissions.LOCATION);
-	  if (status === 'granted') {
-	    let location = await Location.getCurrentPositionAsync({enableHighAccuracy: true});
-	    let region = {
-	    		longitude: location.coords.longitude || -122,
-      			latitude: location.coords.latitude || 37,
-		      	latitudeDelta: 0.0922,
-      			longitudeDelta: 0.0421,
-		    }
-	    return this.setState({region})
-	  } else {
-	    throw new Error('Location permission not granted');
-	  }
-	}
-	onRegionChangeComplete = (region) => {
-		this.setState({ region });
-	}
-	onSearchChange = (value) => {
-		//this.setState({searching: true, data: []});
-		client.query({
-	      query: SEARCH_SHOPS,
-	      variables: { string: value }
-	    }).then(({ data }) => {
-	    	this.setState({data: data.shops, searching: false})
-	    }); 
-	}
-	componentWillMount(){
-		client.query({
-	      query: FETCH_SHOPS,
-	    }).then(({ data }) => {
-	    	this.setState({data: data.shops, searching: false})
-	    });
-	}
-	render(){
-
-		if (this.state.searching) {
-			return (
-				<LoadingScreen loadingMessage='Loading...' />
-			);
-		}
-
-
-			return (
-					<MapView
-			          region={this.state.region}
-			          style={{ flex: 1 }}
-			          loadingEnabled
-			          onRegionChangeComplete={this.onRegionChangeComplete}
-			        >
-			        	{this.state.data && this.state.data.length > 0 && this.state.data.map( item => {
-			        		return (
-			        			<MapView.Marker
-			        				key={item._id}
-			        				title={item.title}
-			        				description={item.description}
-			        				coordinate={{ latitude: parseFloat(item.location.lat), longitude: parseFloat(item.location.lng) }}
-			        			>
-				        			<MapView.Callout tooltip>
-						        		<ShopCard item={item} navigation={this.props.navigation} />
-						        	</MapView.Callout>
-					        	</MapView.Marker>
-			        		);
-			        	})}
-			        	
-			        </MapView>
-			);
-	}
-}
-
 // NAVIGATION OPTIONS
 // ====================================
 const navigationOptions = ({ navigation, screenProps }) => ({
@@ -125,7 +40,7 @@ const navigationOptions = ({ navigation, screenProps }) => ({
 	  			onPress={()=>navigation.navigate('search')} 
 	  		/>
 	  	),*/
-	  	headerRight: (
+	  	/*headerRight: (
 	  		<Button
 	  			backgroundColor={colorConfig.business}
 	  			fontFamily={regularFont}
@@ -133,7 +48,7 @@ const navigationOptions = ({ navigation, screenProps }) => ({
 	  			color={'#fff'} 
 	  			onPress={()=>navigation.navigate('addShop')} 
 	  		/>
-	  	),
+	  	),*/
 	});
 
 
@@ -223,16 +138,28 @@ class HomeScreen extends React.Component {
 					</View>	
 				)}
 				<View style={styles.buttonContainer}>
-					<Button
-			            buttonStyle={{borderRadius: 50, width: 150}}
-			            backgroundColor={'#fff'}
-			            title="Map"
-			            color={'#666'}
-			            iconRight
-			            raised
-			            icon={{ name: 'map', color: '#666'}}
-			            onPress={()=>this.props.navigation.navigate('map', { data: this.props.data.shops})}
-			          />
+					<View style={styles.buttonInsideContainer}>
+								<Button
+						            buttonStyle={{borderRadius: 50, width: 70}}
+						            backgroundColor={'#fff'}
+						            title="MAP"
+						            color={'#000'}
+						            iconRight
+						            textStyle={{fontSize: 12}}
+						            icon={{ name: 'map', color: '#000'}}
+						            onPress={()=>this.props.navigation.navigate('map', { data: this.props.data.shops})}
+					        	/>
+								<Button
+					        		buttonStyle={{borderRadius: 50, width: 70}}
+						            backgroundColor={'#fff'}
+						            title="FILTER"
+						            color={'#000'}
+						            textStyle={{fontSize: 12}}
+						            iconRight
+						            icon={{ name: 'filter-list', color: '#000'}}
+						            onPress={()=>this.props.navigation.navigate('filters', { data: this.props.data.shops})}
+					        	/>
+						</View>
 				</View>
 			</View>		
 		);
@@ -245,6 +172,22 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: colorConfig.screenBackground,
+	},
+	buttonInsideContainer: {
+		shadowColor: '#888',
+	    shadowOffset: {
+	      width: 0,
+	      height: 1
+	    },
+	    shadowRadius: 4,
+	    shadowOpacity: .5,
+		borderRadius: 50, 
+		backgroundColor: '#fff', 
+		flexDirection: 'row', 
+		display: 'flex', 
+		width: 195, 
+		alignItems: 'stretch', 
+		justifyContent: 'center'
 	},
 	buttonContainer: {
 	    position: 'absolute',
