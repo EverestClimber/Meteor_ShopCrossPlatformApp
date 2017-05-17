@@ -73,7 +73,7 @@ class ShopDetail extends React.Component {
 		tabBarIcon: ({ tintColor }) => <Icon name="group" size={30} color={tintColor} />,
 	  	headerTitleStyle: titleStyle,
 	  	headerStyle: basicHeaderStyle,
-	  	//header: null,
+	  	header: null,
 	  	tabBarVisible: false,
 	  	headerLeft: <BackButton goBack={navigation.goBack} label='' />,
 	});
@@ -87,8 +87,12 @@ class ShopDetail extends React.Component {
 
 		return (
 			<ScrollView style={styles.container} contentContainerStyle={styles.contentContainerStyle}>
-				<Image source={{uri: data.shopById.image || DEFAULT_SHOP_IMAGE}} style={{width: SCREEN_WIDTH, height: 200}}/>
-				<View style={{padding: 10}}>
+				<Image source={{uri: data.shopById.image || DEFAULT_SHOP_IMAGE}} style={{width: SCREEN_WIDTH, height: 250}}>
+					<View style={styles.backButtonContainer}>
+				          <Icon size={35} color='#fff' name='chevron-left' onPress={()=>this.props.navigation.goBack()} />
+					</View>
+				</Image>
+				<View style={{padding: 10, minHeight: 300}}>
 					<GeneralInfo shopById={data.shopById} />
 				</View>
 				<MapArea 
@@ -120,9 +124,13 @@ const styles = StyleSheet.create({
 	},
 	settingFormItem: {
 		flex: 1, justifyContent: 'center', alignItems: 'center'
-	}
+	},
+	backButtonContainer: {
+	    position: 'absolute',
+	    top: 25,
+	    left: 5
+	  }
 });
-
 
 
 // EXPORT

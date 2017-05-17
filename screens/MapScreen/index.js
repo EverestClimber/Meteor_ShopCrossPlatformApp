@@ -1,11 +1,11 @@
 // TOP LEVEL IMPORTS
 import React from 'react';
-import { View, Text, Platform, StyleSheet, Animated, Image, ScrollView } from 'react-native';
+import { View, Text, Platform, StyleSheet, Animated, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { Button, Icon, SearchBar, Card } from 'react-native-elements';
 import { Header } from 'react-navigation';
 import { Permissions, Location, MapView, DangerZone } from 'expo';
 // MODULES
-import { stylesConfig, colorConfig, SCREEN_WIDTH } from '../../modules/config';
+import { stylesConfig, colorConfig, SCREEN_WIDTH, DEFAULT_SHOP_IMAGE } from '../../modules/config';
 // COMPONENTS
 import LoadingScreen from '../../components/LoadingScreen';
 import ShopCard from '../../components/ShopCard';
@@ -18,10 +18,54 @@ import { FETCH_SHOPS, SEARCH_SHOPS } from '../../apollo/queries';
 const { boldFont, semiboldFont, regularFont, titleStyle, basicHeaderStyle } = stylesConfig;
 
 
+
+const ShopListCard = ({ item, navigation }) => {
+	const onCardPress = () => {
+		//if location exists, go to map, if not, do not go to map
+		navigation.navigate('shopDetail', { _id: item._id, shopTitle: item.title });
+	}
+	return (
+		<Card containerStyle={{width: 150, padding: 0}}>
+			<TouchableOpacity onPress={() => onCardPress()} activeOpacity={0.9}>
+				<Image 
+					source={{ uri: item.image || DEFAULT_SHOP_IMAGE }} 
+					style={{flex: 1, minHeight: 100}}
+				/>
+				<View style={{flex: 2, padding: 10}}>
+					<View style={{flexDirection:'row', flexWrap:'wrap', alignItems: 'flex-end', justifyContent: 'flex-start'}}>
+						<Icon name='label-outline' iconStyle={{ fontSize: 13, marginRight: 5, color: '#bdc3c7' }} />
+						<Text style={{ fontSize: 13, color: '#bdc3c7' }}>
+							{item.category || ''}
+						</Text>
+					</View>
+					{/*<CardDescription item={item}  navigation={navigation} />
+					<CardBottom item={item}  />*/}
+				</View>
+			</TouchableOpacity>
+		</Card>
+	);
+}
+
+
+const ShopListHorizontal = (props) => {
+	return (
+		<View style={{flex: 2, backgroundColor: colorConfig.screenBackground, padding: 10}}>
+	    	<ScrollView horizontal style={{flex: 1}}>
+	    		{props.navigation.state.params.data.map( item => {
+	    			return (
+	    				<ShopListCard key={item._id} item={item} {...props} />
+	    			);
+	    		})}
+	    	</ScrollView>
+	    </View>
+	);
+}
+
+
 class MapScreen extends React.Component {
 	static navigationOptions = ({ navigation, screenProps }) => ({
 		mode: 'modal',
-	  	header: null, //(headerProps) => Platform.OS === 'android' ? null : <Header {...headerProps} />, 
+	  	header: null, 
 	  	tabBarVisible: false
 	});
 	constructor(props){
@@ -65,18 +109,12 @@ class MapScreen extends React.Component {
 				<View style={styles.container}>
 				<MapView
 			          region={this.state.region}
-			          style={{ flex: 4 }}
+			          style={{ flex: 5 }}
 			          loadingEnabled
 			          onRegionChangeComplete={this.onRegionChangeComplete}
 			        >
 			        <View style={styles.backButtonContainer}>
-						<Button
-				            backgroundColor={'transparent'}
-				            title=""
-				            color={'#000'}
-				            icon={{ name: 'close', color: '#000', iconStyle: { fontSize: 30}}}
-				            onPress={()=>this.props.navigation.goBack()}
-				          />
+			        	<Icon size={33} color='#666' name='close' onPress={()=>this.props.navigation.goBack()} />
 					</View>
 			        	{this.props.navigation.state.params.data 
 			        		&& this.props.navigation.state.params.data.length > 0 
@@ -96,15 +134,7 @@ class MapScreen extends React.Component {
 			        	})}
 			        	
 			        </MapView>
-			        <View style={{flex: 2, backgroundColor: colorConfig.screenBackground}}>
-			        	<ScrollView horizontal style={{flex: 1}}>
-			        		{this.props.navigation.state.params.data.map( item => {
-			        			return (
-			        				<ShopCard key={item._id} item={item} />
-			        			);
-			        		})}
-			        	</ScrollView>
-			        </View>
+			        <ShopListHorizontal {...this.props} />
 			    </View>
 			);
 	}
@@ -117,9 +147,9 @@ const styles = StyleSheet.create({
 	},
 	backButtonContainer: {
 	    position: 'absolute',
-	    top: 20,
-	    left: 0
-	  }
+	    top: 22,
+	    left: 10
+	}
 });
 
 

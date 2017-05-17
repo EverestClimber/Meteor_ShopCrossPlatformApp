@@ -32,13 +32,7 @@ class FiltersScreen extends React.Component {
 			return (
 				<View style={styles.container}>
 			        <View style={styles.backButtonContainer}>
-						<Button
-				            backgroundColor={'transparent'}
-				            title="Back"
-				            color={'#000'}
-				            icon={{ name: 'keyboard-backspace', color: '#000'}}
-				            onPress={()=>this.props.navigation.goBack()}
-				          />
+			        	<Icon size={33} color='#666' name='keyboard-backspace' onPress={()=>this.props.navigation.goBack()} />
 					</View>
 			        <Text>FILTER OPTIONS WILL GO HERE</Text>
 			    </View>
@@ -55,9 +49,9 @@ const styles = StyleSheet.create({
 	},
 	backButtonContainer: {
 	    position: 'absolute',
-	    top: 20,
-	    left: 0
-	  }
+	    top: 22,
+	    left: 10
+	}
 });
 
 
