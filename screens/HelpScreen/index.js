@@ -1,3 +1,4 @@
+// TOP LEVEL IMPORTS
 import React from 'react';
 import { View, Text, Dimensions, TextInput, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
@@ -8,18 +9,28 @@ import { stylesConfig, appConfig, colorConfig } from '../../modules/config';
 import ContactUsForm from '../../components/ContactUsForm';
 import BackButton from '../../components/BackButton'
 
-
+// CONSTANTS & DESTRUCTURING
+// ====================================
 const { appName, supportEmail } = appConfig;
 const { boldFont, semiboldFont, regularFont, titleStyle, basicHeaderStyle } = stylesConfig;
 
-class HelpScreen extends React.Component {
-	static navigationOptions = ({ navigation, screenProps }) => ({
+
+// NAVIGATION OPTIONS
+// ====================================
+const navigationOptions = ({ navigation, screenProps }) => ({
 		title: 'Help & Support',
 	  	headerTitleStyle: titleStyle, 
 	  	headerStyle: basicHeaderStyle,
 	  	tabBarVisible: false,
 	  	headerLeft: <BackButton goBack={navigation.goBack} label='' />,
 	});
+
+
+// EXPORTED COMPONENT
+// ====================================
+class HelpScreen extends React.Component {
+
+	static navigationOptions = navigationOptions;
 
 	render(){
 		return (
@@ -30,6 +41,9 @@ class HelpScreen extends React.Component {
 	}
 }
 
+
+// STYLES
+// ====================================
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -40,5 +54,6 @@ const styles = StyleSheet.create({
   },
 });
 
-
+// EXPORT
+// ====================================
 export default HelpScreen;

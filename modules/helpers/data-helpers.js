@@ -1,55 +1,101 @@
 
 
 
-export const PRIORITY_LEVEL = [
-	{ key: 1, value: '1', intValue: 1, label: 'General'},
-	{ key: 2, value: '2', intValue: 2, label: 'Suspicious but not Urgent'},
-	{ key: 3, value: '3', intValue: 3, label: 'Urgent'}
-];
-
-
-export const REPORT_TYPE = [
-	{ key: 1, value: '1', intValue: 1, label: 'General'},
-	{ key: 2, value: '2', intValue: 2, label: 'Suspicious Vehicle'},
-	{ key: 3, value: '3', intValue: 3, label: 'Suspicious Person'},
-	{ key: 4, value: '4', intValue: 4, label: 'Checking In'},
-	{ key: 5, value: '5', intValue: 5, label: 'Checking Out'}
-];
-
-
-export const getPriorityLevel = (priorityLevel) => {
-  switch(priorityLevel){
-    case 1:
-      return PRIORITY_LEVEL[0].label;
-    case 2:
-      return PRIORITY_LEVEL[1].label;
-    case 3:
-      return PRIORITY_LEVEL[2].label;
-    default:
-      return ''
-  }
-}
-
-
-
-export const getAlertLevel = (reportType) => {
-   switch(reportType) {
-          case 'General':
-              return 1
+export const getCategoryTag = (tag) => {
+   switch(tag) {
+          case 'bagsluggage':
+              return 'Bags & Luggage'
               break;
-          case 'Checking In':
-              return 1
+          case 'banks':
+              return 'Banks'
               break;
-          case 'Checking Out':
-              return 1
+          case 'bookscardsgifts':
+              return 'Books, Cards & Gifts'
               break;
-          case 'Suspicious Vehicle':
-              return 3
+          case 'departmentstores':
+              return 'Department Stores'
               break;
-          case 'Suspicious Person':
-              return 5
+          case 'entertainment':
+              return 'Entertainment'
               break;
+          case 'fashion':
+              return 'Fashion'
+              break;
+          case 'fooddrink':
+              return 'Food & Drink'
+          case 'groceries':
+              return 'Groceries'
+          case 'healthbeauty':
+              return 'Health & Beauty'
+          case 'healthservices':
+              return 'Health Services'
+          case 'home':
+              return 'Home'
+          case 'jewelrywatches':
+              return 'Jewellery & Watches'
+          case 'kidsparents':
+              return 'Kids & Parents'
+          case 'luxury-retailers':
+              return 'Luxury Retailers'
+          case 'pets':
+              return 'Pets'
+          case 'premium-retailers':
+              return 'Premium Retailers'
+          case 'services':
+              return 'Services'
+          case 'shoes':
+              return 'Shoes'
+          case 'sportsfitness':
+              return 'Sports & Fitness'
+          case 'tech':
+              return 'Tech';
+          case 'toyshobbies':
+              return 'Toys & Hobbies';
+          case 'varietystores':
+              return 'Variety Stores'
           default:
-             return 0
+             return ''
       }
 }
+
+export const CATEGORY_OPTIONS = [
+  { label: 'Bags & Luggage', value: 'bagsluggage'},
+  { label: 'Banks', value: 'banks'},
+  { label: 'Books, Cards & Gifts', value: 'bookscardsgifts'},
+  { label: 'Department Stores', value: 'departmentstores'},
+  { label: 'Discount & Variety', value: 'discountvariety'},
+  { label: 'Entertainment', value: 'entertainment'},
+  { label: 'Fashion', value: 'fashion'},
+  { label: 'Food & Drink', value: 'fooddrink'},
+  { label: 'Groceries', value: 'groceries'},
+  { label: 'Health & Beauty', value: 'healthbeauty'},
+  { label: 'Health Services', value: 'healthservices'},
+  { label: 'Home', value: 'home'},
+  { label: 'Jewellery & Watches', value: 'jewelrywatches'},
+  { label: 'Kids & Parents', value: 'kidsparents'},
+  { label: 'Luxury Retailers', value: 'luxury-retailers'},
+  { label: 'Pets', value: 'pets'},
+  { label: 'Premium Retailers', value: 'premium-retailers'},
+  { label: 'Services', value: 'services'},
+  { label: 'Shoes', value: 'shoes'},
+  { label: 'Specialty Services', value: 'specialtyservices'},
+  { label: 'Sports & Fitness', value: 'sportsfitness'},
+  { label: 'Tech', value: 'tech'},
+  { label: 'Toys & Hobbies', value: 'toyshobbies'},
+  { label: 'Variety Stores', value: 'varietystores'},
+];
+
+export const DAYS_OPTIONS = [
+  { label: 'Sunday', value: 'Sunday'},
+  { label: 'Monday', value: 'Monday'},
+  { label: 'Tuesday', value: 'Tuesday'},
+  { label: 'Wednesday', value: 'Wednesday'},
+  { label: 'Thursday', value: 'Thursday'},
+  { label: 'Friday', value: 'Friday'},
+  { label: 'Saturday', value: 'Saturday'},
+  { label: 'Sunday', value: 'Sunday'},
+];
+
+
+
+

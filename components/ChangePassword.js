@@ -14,15 +14,6 @@ import { loginWithPassword, userId } from 'meteor-apollo-accounts'
 
 const { basicHeaderStyle, titleStyle } = stylesConfig;
 
-const renderTextInput = ({ input, ...inputProps }) => {
-  return (
-    <TextInput
-      style={styles.input} 
-      onChangeText={input.onChange}
-      {...inputProps}
-    />
-  );
-}
 
 const ErrorsArea = (errors) => {
   return (
@@ -33,47 +24,19 @@ const ErrorsArea = (errors) => {
 }
 
 
-class LoginForm extends React.Component {
+class ChangePassword extends React.Component {
   state = { loading: false, errors: [] }
  
   onSubmit = async () => {
     this.setState({loading: true, errors: []});
 
-    if (!this.state.email) {
-      let errors = this.state.errors;
-      errors.push('please enter an email')
-      return this.setState({errors: errors, loading: false});
-    }
-
-    if (!this.state.password) {
+    if (!this.state.oldPassword || !this.state.newPassword) {
       let errors = this.state.errors;
       errors.push('please enter a password')
       return this.setState({errors: errors, loading: false});
     }
-      
-     try {
-        const id = await loginWithPassword({ 
-          email: this.state.email.trim().toLowerCase(), 
-          password: this.state.password.trim().toLowerCase() 
-        }, apollo)
-        apollo.resetStore();
-        this.setState({loading: false});
-        return this.props.navigation.navigate('main');
-    } catch (err) {
-        //
-        if (Platform.OS === 'android') {
-          if(await userId()){
-            apollo.resetStore();
-            this.setState({loading: false});
-            return this.props.navigation.navigate('main');
-          }
-          
-        }
-        let errors = err && err.graphQLErrors && err.graphQLErrors.length > 0 && err.graphQLErrors.map( err => err.message );
-        this.setState({loading: false, errors: errors});
-        return console.log('error ran')
-    }
 
+    this.setState({loading: false, errors: []});
 
   }
   render(){
@@ -87,45 +50,36 @@ class LoginForm extends React.Component {
 
     return (
       <View style={styles.container}>
-        {/*<Image style={{ width: 215, height: 45, marginBottom: 50}} 
-            source={require('../assets/logo.png')} 
-          />*/}
         <View style={{width: 250}}>
         <TextInput
           style={styles.input} 
-          onChangeText={ (val) => this.setState({email: val}) }
-          placeholder={'Email'}
+          onChangeText={ (val) => this.setState({oldPassword: val}) }
+          secureTextEntry
+          placeholder={'Old Password...'}
         />
         <TextInput
           style={styles.input} 
-          onChangeText={ (val) => this.setState({password: val}) }
+          onChangeText={ (val) => this.setState({newPassword: val}) }
           secureTextEntry
-          placeholder={'Password'}
+          placeholder={'New Password...'}
+        />
+        <TextInput
+          style={styles.input} 
+          onChangeText={ (val) => this.setState({confirmNewPassword: val}) }
+          secureTextEntry
+          placeholder={'Confirm New Password...'}
         />
         <Button 
-          title='LOGIN'
+          title='CHANGE PASSWORD'
           backgroundColor={colorConfig.business} 
           onPress={this.onSubmit} 
           style={{marginTop: 10}} 
         />
-
         <View style={{marginTop: 8, marginBottom: 8, alignItems: 'center',  justifyContent: 'center',}}>
           {this.state.errors.length > 0 && this.state.errors.map(item => {
             return <Text key={item} style={{color: '#e74c3c'}}>{item}</Text>
           })}
         </View>
-
-        <TouchableOpacity onPress={() => navigation.navigate('signup')}>
-          <Text style={{marginTop: 25, color: '#fff', textAlign: 'center'}}>
-            Or signup
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => this.props.toggleForm('forgot')}>
-          <Text style={{marginTop: 25, color: '#fff', textAlign: 'center'}}>
-            Forgot your password?
-          </Text>
-        </TouchableOpacity>
-
       </View>
       </View>
     )
@@ -166,4 +120,4 @@ const styles = StyleSheet.create({
 
 
 
-export default LoginForm
+export default ChangePassword

@@ -1,14 +1,19 @@
+// TOP LEVEL IMPORTS
 import React from 'react';
-import { View, ScrollView, Image, Text, Platform, Button, StyleSheet, TouchableOpacity, ListView, RefreshControl } from 'react-native';
+import { View, Image, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Icon, Card } from 'react-native-elements';
-import { stylesConfig, colorConfig, DEFAULT_SHOP_IMAGE } from '../modules/config';
-import { getPriorityLevel, timeAgo } from '../modules/helpers';
 import { Flex } from 'antd-mobile';
+// MODULES
+import { stylesConfig, colorConfig, DEFAULT_SHOP_IMAGE,  } from '../modules/config';
+import { getPriorityLevel, timeAgo, getCategoryTag } from '../modules/helpers';
 
+// CONSTANTS & DESTRUCTURING
+// ==========================================
 const { basicHeaderStyle, boldFont, titleStyle, regularFont } = stylesConfig;
 
 
-
+// STYLES
+// ==========================================
 const styles = StyleSheet.create({
 	groupBadge: {
 		height: 9, 
@@ -35,23 +40,17 @@ const styles = StyleSheet.create({
 });
 
 
-
-const ReportCardTop = ({ item, navigation }) => {
-
-	const onCardPress = () => {
-		//if location exists, go to map, if not, do not go to map
-		navigation.navigate('shopDetail', { _id: item._id, shopTitle: item.title });
-	}
-
-
+// INTERNAL COMPONENTS
+// ==========================================
+const CardDescription = ({ item, navigation }) => {
 	return (
 		<Flex align='start' style={{marginBottom: 20}}>
 			
 			<Flex.Item style={{flex: 3}}>
-					<TouchableOpacity onPress={ ()=>onCardPress() }>
+					
 					<Text style={styles.cardHeader}>{item.title}</Text>
 					{/*<Text style={styles.cardSubHeader}>{getPriorityLevel(item.priorityLevel)}</Text>*/}
-					<View style={{marginTop: 20, paddingLeft: 10}}>
+					<View style={{marginTop: 20}}>
 						<Text
 							ellipsizeMode='tail'
 							numberOfLines={5}
@@ -60,14 +59,9 @@ const ReportCardTop = ({ item, navigation }) => {
 							{item.description}
 						</Text>
 					</View>
-				</TouchableOpacity> 
 			</Flex.Item>
 			
 			<Flex.Item>
-				<Image 
-					source={{ uri: item.image || DEFAULT_SHOP_IMAGE }} 
-					style={{height: 65, width: 60}}
-				/>
 				<Text style={{color: '#888', fontSize: 10}}>
 					{item.owner.profile && item.owner.profile.firstName || ''} 
 					{item.owner.profile && item.owner.profile.lastName || ''}
@@ -77,33 +71,43 @@ const ReportCardTop = ({ item, navigation }) => {
 	);
 }
 
-
-const ShopCard = ({ item, navigation }) => {
+const CardBottom = ({item}) => {
 	return (
-		<Card containerStyle={{minWidth: 250}}>
-			<ReportCardTop item={item}  navigation={navigation} />
-			<Flex>
-				<Flex.Item>
-					<View style={{flexDirection:'row', flexWrap:'wrap', alignItems: 'flex-end', justifyContent: 'flex-start'}}>
-						<Icon name='label-outline' iconStyle={{ fontSize: 13, marginRight: 5, color: '#bdc3c7' }} />
-						<Text style={{ fontSize: 13, color: '#bdc3c7' }}>
-							{item.category || ''}
-						</Text>
-					</View>
-				</Flex.Item>
-				{/*<Flex.Item>
-					<TouchableOpacity 
-						onPress={()=>navigation.navigate('watchgroupDetail', { _id: item.watchgroup._id, group: item.watchgroup.title})}
-					>
-					<View style={{flexDirection:'row', flexWrap:'wrap', alignItems: 'center', justifyContent: 'flex-end'}}>
-						<View style={[{backgroundColor: item.watchgroup.color_id }, styles.groupBadge]} />
-						<Text>{item.watchgroup.title}</Text>
-					</View>
-					</TouchableOpacity>
-				</Flex.Item>*/}
-			</Flex>
+		<View style={{flexDirection:'row', flexWrap:'wrap', alignItems: 'flex-end', justifyContent: 'flex-start'}}>
+			<Icon name='label-outline' iconStyle={{ fontSize: 13, marginRight: 5, color: '#bdc3c7' }} />
+			<Text style={{ fontSize: 13, color: '#bdc3c7' }}>
+				{item.category && getCategoryTag(item.category) || ''}
+			</Text>
+		</View>
+	);
+}
+
+
+
+// EXPORTED COMPONENT
+// ==========================================
+const ShopCard = ({ item, navigation }) => {
+	const onCardPress = () => {
+		//if location exists, go to map, if not, do not go to map
+		navigation.navigate('shopDetail', { _id: item._id, shopTitle: item.title });
+	}
+	return (
+		<Card containerStyle={{minWidth: 250, padding: 0}}>
+			<TouchableOpacity onPress={ ()=>onCardPress() } activeOpacity={0.9}>
+				<Image 
+					source={{ uri: item.image || DEFAULT_SHOP_IMAGE }} 
+					style={{flex: 1, minHeight: 150}}
+				/>
+				<View style={{flex: 2, padding: 10}}>
+					<CardDescription item={item}  navigation={navigation} />
+					<CardBottom item={item}  />
+				</View>
+			</TouchableOpacity>
 		</Card>
 	);
 }
 
+
+// EXPORT
+// ==========================================
 export default ShopCard;

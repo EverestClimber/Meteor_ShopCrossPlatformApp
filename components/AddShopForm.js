@@ -1,14 +1,15 @@
 import React from 'react';
 import { ImagePicker, Permissions } from 'expo';
-import { View, Text, TextInput, Alert, TouchableOpacity, StyleSheet, Platform, Image, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, ScrollView, Alert, TouchableOpacity, StyleSheet, Platform, Image, ActivityIndicator } from 'react-native';
 //REDUX
 import _ from 'lodash';
 //COMPONENTS
 import LoadingScreen from './LoadingScreen'
 import { Button, Icon } from 'react-native-elements'
 //MODULES
-import { colorConfig } from '../modules/config';
+import { colorConfig, CATEGORY_OPTIONS } from '../modules/config';
 import { graphql, withApollo } from 'react-apollo';
+import { FETCH_SHOPS, SEARCH_SHOPS_BY_OWNER } from '../apollo/queries'
 import { CREATE_SHOP } from '../apollo/mutations'
 import { List, Radio, InputItem, SegmentedControl, TextareaItem, WhiteSpace } from 'antd-mobile';
 import client from '../ApolloClient';
@@ -16,44 +17,6 @@ import { handleFileUpload } from '../modules/helpers';
 
 const RadioItem = Radio.RadioItem;
 
-
-const CATEGORY_OPTIONS = [
-  { label: 'Bags & Luggage', value: 'bagsluggage'},
-  { label: 'Banks', value: 'banks'},
-  { label: 'Books, Cards & Gifts', value: 'bookscardsgifts'},
-  { label: 'Department Stores', value: 'departmentstores'},
-  { label: 'Discount & Variety', value: 'discountvariety'},
-  { label: 'Entertainment', value: 'entertainment'},
-  { label: 'Fashion', value: 'fashion'},
-  { label: 'Food & Drink', value: 'fooddrink'},
-  { label: 'Groceries', value: 'groceries'},
-  { label: 'Health & Beauty', value: 'healthbeauty'},
-  { label: 'Health Services', value: 'healthservices'},
-  { label: 'Home', value: 'home'},
-  { label: 'Jewellery & Watches', value: 'jewelrywatches'},
-  { label: 'Kids & Parents', value: 'kidsparents'},
-  { label: 'Luxury Retailers', value: 'luxury-retailers'},
-  { label: 'Pets', value: 'pets'},
-  { label: 'Premium Retailers', value: 'premium-retailers'},
-  { label: 'Services', value: 'services'},
-  { label: 'Shoes', value: 'shoes'},
-  { label: 'Specialty Services', value: 'specialtyservices'},
-  { label: 'Sports & Fitness', value: 'sportsfitness'},
-  { label: 'Tech', value: 'tech'},
-  { label: 'Toys & Hobbies', value: 'toyshobbies'},
-  { label: 'Variety Stores', value: 'varietystores'},
-];
-
-const DAYS_OPTIONS = [
-  { label: 'Sunday', value: 'Sunday'},
-  { label: 'Monday', value: 'Monday'},
-  { label: 'Tuesday', value: 'Tuesday'},
-  { label: 'Wednesday', value: 'Wednesday'},
-  { label: 'Thursday', value: 'Thursday'},
-  { label: 'Friday', value: 'Friday'},
-  { label: 'Saturday', value: 'Saturday'},
-  { label: 'Sunday', value: 'Sunday'},
-];
 
 
 
@@ -67,6 +30,7 @@ const ImageArea = ({ image, onImageClick, onImageCameraClick, onRemoveImage, ima
     );
   }
   
+  console.log(image)
 
   return (
     <View style={{marginBottom: 15, marginTop: 15}}>
@@ -109,7 +73,7 @@ class AddShopForm extends React.Component {
       value: 0,
       priorityLevel: null,
       reportType: null,
-      erorrs: []
+      errors: []
   }
     this.onImageClick = this.onImageClick.bind(this);
     this.onImageCameraClick = this.onImageCameraClick.bind(this);
@@ -118,21 +82,36 @@ class AddShopForm extends React.Component {
   
   onSubmit = () => {
     const { title, description, category, image, phone, email, website } = this.state;
-    const { mutate, navigation, location } = this.props;
+    const { mutate, navigation, location, data } = this.props;
+    let errors = [];
     this.setState({loading: true})
 
     let variables = {
       title, description, category, image, phone, email, website, longitude: location.coords.longitude, latitude: location.coords.latitude,
     };
 
-    mutate({ variables })
-      .then(() => {
+    if (!title) {
+      errors.push('title is required')
+      return this.setState({loading: false, errors: errors});
+    }
+    if (!description) {
+      errors.push('description is required')
+      return this.setState({loading: false, errors: errors});
+    }
+    if (!category) {
+      errors.push('category is required')
+      return this.setState({loading: false, errors: errors});
+    }
+    //, refetchQueries: [ 'shops', 'shopsByOwner']
+    mutate({ variables}).then(() => {
+        console.log(client)
         client.resetStore();
         navigation.goBack();
         return this.setState({ loading: false });
     }).catch(err => {
-      let errors = err && err.graphQLErrors && err.graphQLErrors.length > 0 && err.graphQLErrors.map( err => err.message );
-      return this.setState({loading: false, errors: errors});
+      console.log(err)
+      //let newErrors = errors.concat(err && err.graphQLErrors && err.graphQLErrors.length > 0 && err.graphQLErrors.map( err => err.message ));
+      return this.setState({loading: false, errors});
     });
 
   }
@@ -205,6 +184,11 @@ class AddShopForm extends React.Component {
           onImageCameraClick={this.onImageCameraClick}
           onRemoveImage={()=>this.setState({image: null})}
         />
+        <View style={{marginTop: 8, marginBottom: 8, alignItems: 'center',  justifyContent: 'center',}}>
+          {this.state.errors.length > 0 && this.state.errors.map(item => {
+            return <Text key={item} style={{color: '#e74c3c'}}>{item}</Text>
+          })}
+        </View>
         <List renderHeader={() => 'Title'}>
           <InputItem
               clear
@@ -221,15 +205,17 @@ class AddShopForm extends React.Component {
           />
         </List>
         <List renderHeader={() => 'Category'}>
-          {CATEGORY_OPTIONS.map(i => (
-            <RadioItem 
-              key={i.value} 
-              checked={this.state.category === i.value} 
-              onChange={() => this.setState({category: i.value})}
-            >
-              {i.label}
-            </RadioItem>
-          ))}
+          <ScrollView style={{height: 200}}>
+            {CATEGORY_OPTIONS.map(i => (
+              <RadioItem 
+                key={i.value} 
+                checked={this.state.category === i.value} 
+                onChange={() => this.setState({category: i.value})}
+              >
+                {i.label}
+              </RadioItem>
+            ))}
+          </ScrollView>
         </List>
         <List renderHeader={() => 'Phone'}>
           <InputItem
@@ -252,6 +238,11 @@ class AddShopForm extends React.Component {
               onChange={(val)=>this.setState({email: val})}
           />
         </List>
+        <View style={{marginTop: 8, marginBottom: 8, alignItems: 'center',  justifyContent: 'center',}}>
+          {this.state.errors.length > 0 && this.state.errors.map(item => {
+            return <Text key={item} style={{color: '#e74c3c'}}>{item}</Text>
+          })}
+        </View>
         <View style={{marginTop: 20}}>
           <Button 
             title='ADD SHOP'
@@ -311,5 +302,11 @@ const styles = StyleSheet.create({
   }
 })
 
+let options = { 
+  refetchQueries: [ 
+    { query: FETCH_SHOPS },
+    { query: SEARCH_SHOPS_BY_OWNER },  
+  ]
+}
 
-export default graphql(CREATE_SHOP)(AddShopForm);
+export default graphql(CREATE_SHOP, options)(AddShopForm);

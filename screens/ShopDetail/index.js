@@ -1,19 +1,22 @@
+// TOP LEVEL IMPORTS
 import React from 'react';
-import { View, ScrollView, Text, Platform, Image, FlatList, TouchableOpacity } from 'react-native';
-import { Permissions, Location, MapView, DangerZone } from 'expo';
+import { View, ScrollView, Text, Platform, Image, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { Icon, Button, Card } from 'react-native-elements';
+import { Tabs, WhiteSpace,  } from 'antd-mobile';
 //MODULES
+import { stylesConfig, colorConfig, DEFAULT_SHOP_IMAGE, SCREEN_WIDTH } from '../../modules/config';
+// APOLLO
+import { graphql } from 'react-apollo';
 import { FETCH_SHOP } from '../../apollo/queries';
-import { stylesConfig, colorConfig, DEFAULT_SHOP_IMAGE } from '../../modules/config';
+// COMPONENTS
 import LoadingScreen from '../../components/LoadingScreen';
 import ShopCard from '../../components/ShopCard';
-import { Icon, Button, Card } from 'react-native-elements';
-import { graphql } from 'react-apollo';
 import BackButton from '../../components/BackButton';
-import { Tabs, WhiteSpace,  } from 'antd-mobile';
 import EmptyState from '../../components/EmptyState';
+import MapArea from '../../components/MapArea';
 
 
-//
+// CONSTANTS & DESTRUCTURING
 // ========================================
 const TabPane = Tabs.TabPane;
 const { 
@@ -26,16 +29,24 @@ const {
 } = stylesConfig;
 
 
+
+// INTERNAL COMPONENTS
+// ========================================
 const GeneralInfo = ({ shopById }) => {
 
 	return (
 		<View>
-			<Text style={[textHeader, {textAlign: 'center'}]}>
+			<Text style={[textHeader, {textAlign: 'left', fontSize: 30}]}>
 				{shopById.title || ''}
 			</Text>
-			<Text style={[textSubHeader, {textAlign: 'center'}]}>
-				{shopById.description || ''}
-			</Text>
+			<View style={{marginTop: 10}}>
+				<Text style={[textSubHeader, {textAlign: 'left'}]}>
+					About this shop
+				</Text>
+				<Text style={[textBody, {textAlign: 'left', fontSize: 13}]}>
+					{shopById.description || ''}
+				</Text>
+			</View>
 			<Text style={[textBody, {textAlign: 'center'}]}>
 				{shopById.category || ''}
 			</Text>
@@ -52,8 +63,9 @@ const GeneralInfo = ({ shopById }) => {
 	);
 }
 
+
    
-// EXPORTED 
+// EXPORTED COMPONENT
 // ========================================
 class ShopDetail extends React.Component {
 	static navigationOptions = ({ navigation, screenProps }) => ({
@@ -61,10 +73,11 @@ class ShopDetail extends React.Component {
 		tabBarIcon: ({ tintColor }) => <Icon name="group" size={30} color={tintColor} />,
 	  	headerTitleStyle: titleStyle,
 	  	headerStyle: basicHeaderStyle,
-	  	//header: null,
+	  	header: null,
 	  	tabBarVisible: false,
 	  	headerLeft: <BackButton goBack={navigation.goBack} label='' />,
 	});
+
 	render(){
 
 		const { data, navigation } = this.props;
@@ -74,50 +87,56 @@ class ShopDetail extends React.Component {
 		}
 
 		return (
-			<View style={{flex: 1, backgroundColor: colorConfig.screenBackground}}>
-
-				<Card containerStyle={{marginBottom: 25}}>
-					<Image source={{uri: data.shopById.image || DEFAULT_SHOP_IMAGE}} style={{width: 200, height: 200}}/>
+			<ScrollView style={styles.container} contentContainerStyle={styles.contentContainerStyle}>
+				<Image source={{uri: data.shopById.image || DEFAULT_SHOP_IMAGE}} style={{width: SCREEN_WIDTH, height: 250}}>
+					<View style={styles.backButtonContainer}>
+				          <Icon size={35} color='#fff' name='chevron-left' onPress={()=>this.props.navigation.goBack()} />
+					</View>
+				</Image>
+				<View style={{padding: 10, minHeight: 300}}>
 					<GeneralInfo shopById={data.shopById} />
-					<TouchableOpacity onPress={()=>navigation.navigate('detailMap', { _id: data.shopById._id })}>
-						<Text>GO TO MAP</Text>
-					</TouchableOpacity>
-				</Card>
-
-				{/*<Tabs defaultActiveKey="1"
-					textColor={colorConfig.darkGrey}
-					activeTextColor={colorConfig.business}
-					activeUnderlineColor={colorConfig.business} 
-					underlineColor={colorConfig.lightGrey}
-					barStyle={{backgroundColor: '#fff'}}
-				>
-			      <TabPane tab="Details" key="1">
-			      	<View style={{minHeight: 300}}>
-			      	</View>
-			      </TabPane>
-			      <TabPane tab="Map" key="2">
-			      	<View style={{minHeight: 400}}>
-				      	<MapView
-				          region={this.state.region}
-				          style={{ flex: 1 }}
-				          loadingEnabled
-				          onRegionChangeComplete={this.onRegionChangeComplete}
-				        >
-				        	<MapView.Marker
-		        				title={data.shopById.title}
-		        				description={data.shopById.description}
-		        				coordinate={{ latitude: parseFloat(data.shopById.location.lat), longitude: parseFloat(data.shopById.location.lng) }}
-		        			/>
-				        </MapView>
-			      	</View>
-			      </TabPane>
-			    </Tabs>*/}
-			</View>
+				</View>
+				<MapArea 
+					region={{
+			    		longitude: parseFloat(data.shopById.location.lng) || -122,
+		      			latitude: parseFloat(data.shopById.location.lat) || 37,
+				      	latitudeDelta: 0.0922,
+		      			longitudeDelta: 0.0421,
+			    	}}
+			    	data={data}
+			    	navigation={navigation}
+			    	{...this.props}
+			    />
+			</ScrollView>
 		);
 	}
 	
 }
 
+// STYLES
+// ========================================
+const styles = StyleSheet.create({
+	contentContainerStyle: {
+		backgroundColor: colorConfig.screenBackground,
+		justifyContent: 'flex-start',
+	},
+	container: {
+		flex: 1,
+		backgroundColor: colorConfig.screenBackground,
+	},
+	settingFormItem: {
+		flex: 1, justifyContent: 'center', alignItems: 'center'
+	},
+	backButtonContainer: {
+	    position: 'absolute',
+	    top: 25,
+	    left: 5
+	  }
+});
+
+
+// EXPORT
+// ========================================
 export default graphql(FETCH_SHOP, {
   options: (props) => { 
   	let variables = { _id: props.navigation.state.params._id };

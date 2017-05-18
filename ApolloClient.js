@@ -3,8 +3,7 @@ import ApolloClient, { createNetworkInterface } from 'apollo-client';
 import { loginWithPassword, userId, setTokenStore, getLoginToken, logout } from 'meteor-apollo-accounts'
 
 // SETUP METEOR-APOLLO-ACCOUNTS
-// Then you'll have to define a TokenStore for your user data using setTokenStore 
-// (for instance when your component is mounted):
+// =============================================
 setTokenStore({
   set: async function ({userId, token, tokenExpires}) {
     await AsyncStorage.setItem('Meteor.userId', userId)
@@ -23,20 +22,23 @@ setTokenStore({
 
 
 
-
-const NOW_URL = 'https://pvsafe-apollo-friwbklszc.now.sh/graphql'
+// we hit different URLs when working locally vs hitting the online/remote staging server
 const LIVE_URL = 'https://truelife.meteorapp.com/graphql';
 const DEV_URL = 'http://localhost:3000/graphql';
-//set network options
-//create networkInterface
+
+
+// create networkInterface
+// see: http://dev.apollodata.com/core/network.html
 const networkInterface = createNetworkInterface({ uri: LIVE_URL });
 
+
+// This middleware setup attaches the user's current auth token 
+// along with any graphql request to the server
 networkInterface.use([{
   async applyMiddleware(req, next) {
     if (!req.options.headers) {
       req.options.headers = {};  // Create the header object if needed.
     }
-    
     let token = await getLoginToken()
     //req.options.headers['authorization'] = token || null;
     req.options.headers['meteor-login-token'] = token || null;
@@ -46,6 +48,8 @@ networkInterface.use([{
 
 
 // middleware for responses
+// this will catch any 400 errors if the server is down 
+// or when graphql tries to hit the graphql endpoint
 networkInterface.useAfter([{
   applyAfterware({ response }, next) {
     if (!response.ok) {
@@ -68,7 +72,8 @@ networkInterface.useAfter([{
 
 
 
-
+// tell apollo about the _ids on the objects we are sending down from server
+// see: http://dev.apollodata.com/react/cache-updates.html
 const dataIdFromObject = (result) => {
     if (result._id && result.__typename) {
       const dataId = result.__typename + result._id;
@@ -77,12 +82,15 @@ const dataIdFromObject = (result) => {
     return null;
   }
 
-//create new apollo client instance
+// create new apollo client instance
+// see: http://dev.apollodata.com/react/api.html#ApolloClient
 const client = new ApolloClient({ 
   networkInterface,
-  dataIdFromObject: o => o.id
+  dataIdFromObject
 });
 
-//logout(client).then(res => console.log('logged out'))
-//logout(client).then(res => console.log('logged out').catch(e => console.log(e)))
+
+// EXPORT APOLLO CLIENT
+// ===================================
 export default client;
+
