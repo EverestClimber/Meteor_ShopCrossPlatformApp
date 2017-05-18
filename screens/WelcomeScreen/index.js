@@ -12,7 +12,8 @@ import * as actions from '../../actions';
 
 
 
-
+// CONSTANTS & DESTRUCTURING
+// ====================================
 const SLIDE_DATA = [
 	{
 		text: 'Welcome to the App!',
@@ -34,7 +35,8 @@ const SLIDE_DATA = [
 
 
 
-
+// EXPORTED COMPONENT
+// ====================================
 class WelcomeScreen extends React.Component {
 
 	state = { onboardingComplete: null }
@@ -50,8 +52,14 @@ class WelcomeScreen extends React.Component {
 	}
 }
 
+
+// REDUX
+// ====================================
 let mapStateToProps = (state) => {
 	return { onboardingComplete: state.auth.onboardingComplete }
 }
 
+
+// EXPORT
+// ====================================
 export default connect(mapStateToProps, actions)(WelcomeScreen);

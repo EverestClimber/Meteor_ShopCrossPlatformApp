@@ -9,6 +9,8 @@ import { stylesConfig, colorConfig, SCREEN_WIDTH, DEFAULT_SHOP_IMAGE } from '../
 // COMPONENTS
 import LoadingScreen from '../../components/LoadingScreen';
 import ShopCard from '../../components/ShopCard';
+import ShopListHorizontal from '../../components/ShopListHorizontal';
+
 // APOLLO
 import client from '../../ApolloClient';
 import { FETCH_SHOPS, SEARCH_SHOPS } from '../../apollo/queries';
@@ -19,53 +21,12 @@ const { boldFont, semiboldFont, regularFont, titleStyle, basicHeaderStyle } = st
 
 
 
-const ShopListCard = ({ item, navigation }) => {
-	const onCardPress = () => {
-		//if location exists, go to map, if not, do not go to map
-		navigation.navigate('shopDetail', { _id: item._id, shopTitle: item.title });
-	}
-	return (
-		<Card containerStyle={{width: 150, padding: 0}}>
-			<TouchableOpacity onPress={() => onCardPress()} activeOpacity={0.9}>
-				<Image 
-					source={{ uri: item.image || DEFAULT_SHOP_IMAGE }} 
-					style={{flex: 1, minHeight: 100}}
-				/>
-				<View style={{flex: 2, padding: 10}}>
-					<View style={{flexDirection:'row', flexWrap:'wrap', alignItems: 'flex-end', justifyContent: 'flex-start'}}>
-						<Icon name='label-outline' iconStyle={{ fontSize: 13, marginRight: 5, color: '#bdc3c7' }} />
-						<Text style={{ fontSize: 13, color: '#bdc3c7' }}>
-							{item.category || ''}
-						</Text>
-					</View>
-					{/*<CardDescription item={item}  navigation={navigation} />
-					<CardBottom item={item}  />*/}
-				</View>
-			</TouchableOpacity>
-		</Card>
-	);
-}
 
-
-const ShopListHorizontal = (props) => {
-	return (
-		<View style={{flex: 2, backgroundColor: colorConfig.screenBackground, padding: 10}}>
-	    	<ScrollView horizontal style={{flex: 1}}>
-	    		{props.navigation.state.params.data.map( item => {
-	    			return (
-	    				<ShopListCard key={item._id} item={item} {...props} />
-	    			);
-	    		})}
-	    	</ScrollView>
-	    </View>
-	);
-}
-
-
+// CONSTANTS & DESTRUCTURING
+// ========================================
 class MapScreen extends React.Component {
 	static navigationOptions = ({ navigation, screenProps }) => ({
-		mode: 'modal',
-	  	header: null, 
+	  	//header: null,
 	  	tabBarVisible: false
 	});
 	constructor(props){
@@ -75,50 +36,60 @@ class MapScreen extends React.Component {
 			loading: true,
 			data: [],
 			searching: true,
-			region: {
+			selectedRegion: null,
+			region: null
+			/*region: {
 	    		longitude: -122,
       			latitude: 37,
 		      	longitudeDelta: 0.04,
 		      	latitudeDelta: 0.09
-		    }
+		    }*/
 		}
 	}
 	async componentDidMount() {
+
 	  	let firstLocation = this.props.navigation.state.params.data[0];
 	    let region = {
-	    		longitude: parseFloat(firstLocation.location.lng) || -122,
-      			latitude: parseFloat(firstLocation.location.lat) || 37,
-		      	latitudeDelta: 0.0922,
-      			longitudeDelta: 0.0421,
+	    		longitude: parseFloat(firstLocation.location.lng),
+      			latitude: parseFloat(firstLocation.location.lat),
+		      	latitudeDelta: 0.09,
+      			longitudeDelta: 0.09,
 		    }
-	    return this.setState({region, loading: false});
+		    
+	    return this.setState({region, selectedRegion: firstLocation._id, loading: false});
 	}
-	onRegionChangeComplete = (region) => {
-		this.setState({ region });
+	renderCurrentLocation(){
+		const { coords } = this.props.screenProps.currentLocation;
+		return (
+			<MapView.Marker
+				title={'Your Current Location'}
+				pinColor='#000'
+				coordinate={{ latitude: parseFloat(coords.latitude), longitude: parseFloat(coords.longitude) }}
+			/>
+		);
 	}
-
 	render(){
 
+		const { navigation } = this.props;
 
 		if (this.state.loading) {
 			return <LoadingScreen loadingMessage='Loading...' />;
 		}
-
-
 			return (
 				<View style={styles.container}>
 				<MapView
 			          region={this.state.region}
 			          style={{ flex: 5 }}
-			          loadingEnabled
-			          onRegionChangeComplete={this.onRegionChangeComplete}
-			        >
-			        <View style={styles.backButtonContainer}>
-			        	<Icon size={33} color='#666' name='close' onPress={()=>this.props.navigation.goBack()} />
-					</View>
-			        	{this.props.navigation.state.params.data 
-			        		&& this.props.navigation.state.params.data.length > 0 
-			        		&& this.props.navigation.state.params.data.map( item => {
+			          showsUserLocation
+			          showsMyLocationButton
+			          ref={ref => { this.map = ref; }}
+			    >
+			       {/*<View style={styles.backButtonContainer}>
+			        	<Icon size={33} color='#666' name='close' onPress={()=>navigation.goBack()} />
+					</View>*/}
+			        	{navigation.state.params.data 
+			        		&& navigation.state.params.data.length > 0 
+			        		&& navigation.state.params.data.map( item => {
 			        		return (
 			        			<MapView.Marker
 			        				key={item._id}
@@ -127,14 +98,15 @@ class MapScreen extends React.Component {
 			        				coordinate={{ latitude: parseFloat(item.location.lat), longitude: parseFloat(item.location.lng) }}
 			        			>
 				        			<MapView.Callout tooltip>
-						        		<ShopCard item={item} navigation={this.props.navigation} />
+						        		<ShopCard item={item} navigation={navigation} />
 						        	</MapView.Callout>
 					        	</MapView.Marker>
 			        		);
 			        	})}
-			        	
 			        </MapView>
-			        <ShopListHorizontal {...this.props} />
+			        <View style={{flex: 2, backgroundColor: colorConfig.screenBackground, padding: 10}}>
+			        	<ShopListHorizontal {...this.props} />
+			        </View>
 			    </View>
 			);
 	}

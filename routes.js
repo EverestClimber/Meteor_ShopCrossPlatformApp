@@ -1,6 +1,6 @@
 // TOP LEVEL IMPORTS
 import React from 'react';
-import Expo, { AppLoading, Font, Amplitude, Constants } from 'expo';
+import Expo, { AppLoading, Font, Amplitude, Constants, Permissions, Location } from 'expo';
 import { StyleSheet, Text, View, Platform, AsyncStorage } from 'react-native';
 import { TabNavigator, StackNavigator } from 'react-navigation';
 //CONFIG
@@ -150,7 +150,7 @@ const MainNavigator = TabNavigator(MAIN_NAVIGATOR_ROUTES, MAIN_NAVIGATOR_OPTIONS
 // EXPORTED COMPONENT
 // =================================
 class AppRoutes extends React.Component {
-  state = { loadingFont: true }
+  state = { loadingFont: true, currentLocation: null }
   async componentWillMount(){
       //initialize Amplitude analytics
       //Amplitude.initialize(AMPLITUDE_API_KEY);
@@ -164,8 +164,22 @@ class AppRoutes extends React.Component {
 
       this.setState({loadingFont: false})
   }
-  componentDidMount() {
+  async componentDidMount() {
+
     registerForNotifications(this.props);
+
+    const locationResponse = await Permissions.askAsync(Permissions.LOCATION);
+    if (locationResponse.status === 'granted') {
+      let locationOptions = { 
+        enableHighAccuracy: true,
+        timeInterval: 60000,
+        distanceInterval: 10
+      };
+      Location.watchPositionAsync(locationOptions, (currentLocation) => {
+        this.setState({ currentLocation });
+      });
+    } 
+    else { throw new Error('Location permission not granted'); }
 
   }
   render() {
@@ -178,7 +192,14 @@ class AppRoutes extends React.Component {
       );
     }
 
-    return <MainNavigator screenProps={this.props} />;
+    return (
+      <MainNavigator 
+        screenProps={{
+          currentLocation: this.state.currentLocation, 
+          ...this.props
+        }} 
+      />
+    );;
 
   }
 }

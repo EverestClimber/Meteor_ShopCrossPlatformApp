@@ -23,6 +23,16 @@ class MapArea extends React.Component {
 	constructor(props){
 		super(props);
 	}
+	renderCurrentLocation(){
+		const { coords } = this.props.screenProps.currentLocation;
+		return (
+			<MapView.Marker
+				title={'Your Current Location'}
+				pinColor='#000'
+				coordinate={{ latitude: parseFloat(coords.latitude), longitude: parseFloat(coords.longitude) }}
+			/>
+		);
+	}
 	render(){
 		const { data, navigation, region } = this.props;
 			return (
@@ -33,16 +43,17 @@ class MapArea extends React.Component {
 			          loadingEnabled
 			          onRegionChangeComplete={this.onRegionChangeComplete}
 			        >
-			        <MapView.Marker
-        				key={data.shopById._id}
-        				title={data.shopById.title}
-        				description={data.shopById.description}
-        				coordinate={{ latitude: parseFloat(data.shopById.location.lat), longitude: parseFloat(data.shopById.location.lng) }}
-        			>
-	        			<MapView.Callout tooltip>
-			        		<ShopCard item={data.shopById} navigation={navigation} />
-			        	</MapView.Callout>
-		        	</MapView.Marker>
+				        <MapView.Marker
+	        				key={data.shopById._id}
+	        				title={data.shopById.title}
+	        				description={data.shopById.description}
+	        				coordinate={{ latitude: parseFloat(data.shopById.location.lat), longitude: parseFloat(data.shopById.location.lng) }}
+	        			>
+		        			<MapView.Callout tooltip>
+				        		<ShopCard item={data.shopById} navigation={navigation} />
+				        	</MapView.Callout>
+			        	</MapView.Marker>
+			        	{this.renderCurrentLocation()}
 			        </MapView>
 				</View>
 			);

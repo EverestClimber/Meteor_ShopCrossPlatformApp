@@ -13,6 +13,7 @@ import * as actions from '../../actions';
 import { stylesConfig, colorConfig } from '../../modules/config';
 // COMPONENTS
 import BackButton from '../../components/BackButton';
+import ChangePassword from '../../components/ChangePassword';
 
 
 
@@ -76,6 +77,15 @@ const ContactUs = ({ navigation }) => {
 	);
 }
 
+const ChangePasswordArea = ({ navigation }) => {
+	return (
+		<View style={{marginBottom: 25, flex: 1}}>
+			<Text style={styles.headerStyle}>Change Password</Text>
+			<ChangePassword {...this.props}  />
+		</View>
+	);
+}
+
 
 
 // EXPORTED COMPONENT
@@ -102,6 +112,9 @@ class SettingsScreen extends React.Component {
 				{/*<AppSettings {...this.props} />*/}
 				<ContactUs {...this.props} />
 				<LegalSettings {...this.props}  />
+				
+				<ChangePasswordArea {...this.props} />
+				
 				<View>
 					<Button 
 			          title='LOG OUT'

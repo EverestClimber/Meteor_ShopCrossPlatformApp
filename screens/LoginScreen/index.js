@@ -11,6 +11,7 @@ import { colorConfig, stylesConfig } from '../../modules/config';
 // COMPONENTS
 import LoginForm from '../../components/LoginForm'
 import LoadingScreen from '../../components/LoadingScreen'
+import ForgotPasswordForm from '../../components/ForgotPasswordForm'
 
 
 
@@ -41,27 +42,36 @@ const s = StyleSheet.create({
 });
 
 
+// NAVIGATION OPTIONS
+// ==============================
+const navigationOptions = {	 	
+	title: 'Login',
+	tabBarIcon: ({ tintColor }) => <Icon name="person" size={30} color={tintColor} />,
+	headerTitleStyle: titleStyle, 
+	tabBarLabel: 'Login',
+	tabBarVisible: false,
+	headerVisible: false,
+	headerStyle: basicHeaderStyle
+};
+
+
 // EXPORTED COMPONENT
 // ==============================
 class LoginScreen extends React.Component {
-	 static navigationOptions = {
-	 	
-	    title: 'Login',
-	    tabBarIcon: ({ tintColor }) => <Icon name="person" size={30} color={tintColor} />,
-	      headerTitleStyle: titleStyle, 
-	      tabBarLabel: 'Login',
-	      tabBarVisible: false,
-	      headerVisible: false,
-	      headerStyle: basicHeaderStyle
-	  };
+	 
+	static navigationOptions = navigationOptions;
 
-	state = { stillLoading: true }
+	state = { 
+		stillLoading: true, 
+		formToShow: 'login' 
+	}
 
 	 async componentDidMount(){
-	 	//await AsyncStorage.removeItem('onboardingComplete');
+
 	 	if (await userId()){
 	 		setTimeout(() => this.props.navigation.navigate('main')) 
 	 	}
+
 		if (this.props.screenProps.data && this.props.screenProps.data.user) {
 			let onboardingComplete = await AsyncStorage.getItem('onboardingComplete');
 			if (onboardingComplete === 'true') {
@@ -81,12 +91,12 @@ class LoginScreen extends React.Component {
 			return <LoadingScreen loadingMessage={''} />;
 		}
 		
-
 		return (
 			<View style={{ flex: 1}}>
 				<Image style={{ width: null, height: null, flex: 1, }} source={require('../../assets/background.jpg')} />
 				<BlurView tint="default" intensity={95} style={StyleSheet.absoluteFill}>
-		          	<LoginForm {...this.props} />
+		          	{this.state.formToShow === 'login' && <LoginForm {...this.props} toggleForm={(formToShow)=>this.setState({ formToShow })} />}
+		          	{this.state.formToShow === 'forgot'  && <ForgotPasswordForm {...this.props} toggleForm={(formToShow)=>this.setState({ formToShow })} />}
 		        </BlurView>
 	        </View>
 		);

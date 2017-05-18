@@ -36,7 +36,7 @@ const GeneralInfo = ({ shopById }) => {
 
 	return (
 		<View>
-			<Text style={[textHeader, {textAlign: 'left'}]}>
+			<Text style={[textHeader, {textAlign: 'left', fontSize: 30}]}>
 				{shopById.title || ''}
 			</Text>
 			<View style={{marginTop: 10}}>
@@ -77,6 +77,7 @@ class ShopDetail extends React.Component {
 	  	tabBarVisible: false,
 	  	headerLeft: <BackButton goBack={navigation.goBack} label='' />,
 	});
+
 	render(){
 
 		const { data, navigation } = this.props;
@@ -104,6 +105,7 @@ class ShopDetail extends React.Component {
 			    	}}
 			    	data={data}
 			    	navigation={navigation}
+			    	{...this.props}
 			    />
 			</ScrollView>
 		);

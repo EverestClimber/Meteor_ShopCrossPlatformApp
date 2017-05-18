@@ -1,23 +1,16 @@
+// REDUX
 import { reducer as formReducer } from 'redux-form'
 import { combineReducers } from 'redux';
+// APOLLO
 import client from '../ApolloClient';
+// REDUCERS
 import auth from './auth_reducer'
-import { SUBMIT_LOGIN_FORM } from '../actions/types';
-
-const myReducer = (state={}, action) => {
-  
-  switch(action.type){
-    case SUBMIT_LOGIN_FORM:
-      return { ...state };
-    default:
-      return state;
-  }
-}
+import filter from './filter_reducer'
 
 
 export default combineReducers({ 
-	auth: auth, 
+  	auth, 
+  	filter,
 	form: formReducer, 
 	apollo: client.reducer(), 
-	myReducer 
 });

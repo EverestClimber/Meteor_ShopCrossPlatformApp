@@ -39,15 +39,13 @@ class AddShop extends React.Component {
 	async componentDidMount() {
 
 		const cameraResponse = await Permissions.askAsync(Permissions.CAMERA);
-		console.log(cameraResponse)
-
-		const locationResponse = await Permissions.askAsync(Permissions.LOCATION);
+		/*const locationResponse = await Permissions.askAsync(Permissions.LOCATION);
 
 		if (locationResponse.status === 'granted') {
 			this.setState({locationPermissions: true})
 			let location = await Location.getCurrentPositionAsync({enableHighAccuracy: true});
 			this.setState({location})
-		} else { throw new Error('Location permission not granted'); }
+		} else { throw new Error('Location permission not granted'); }*/
 
 	}
 	render(){
@@ -55,7 +53,7 @@ class AddShop extends React.Component {
 			<KeyboardAvoidingView behavior={'padding'} style={{ flex: 1 }}>
 				<ScrollView style={styles.container} contentContainerStyle={styles.contentContainerStyle}>
 					<AddShopForm
-						location={this.state.location}
+						location={this.props.screenProps.currentLocation}
 						navigation={this.props.navigation}
 					/>
 				</ScrollView>

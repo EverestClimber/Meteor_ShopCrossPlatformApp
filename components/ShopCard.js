@@ -1,14 +1,19 @@
+// TOP LEVEL IMPORTS
 import React from 'react';
-import { View, ScrollView, Image, Text, Platform, Button, StyleSheet, TouchableOpacity, ListView, RefreshControl } from 'react-native';
+import { View, Image, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Icon, Card } from 'react-native-elements';
-import { stylesConfig, colorConfig, DEFAULT_SHOP_IMAGE } from '../modules/config';
-import { getPriorityLevel, timeAgo } from '../modules/helpers';
 import { Flex } from 'antd-mobile';
+// MODULES
+import { stylesConfig, colorConfig, DEFAULT_SHOP_IMAGE,  } from '../modules/config';
+import { getPriorityLevel, timeAgo, getCategoryTag } from '../modules/helpers';
 
+// CONSTANTS & DESTRUCTURING
+// ==========================================
 const { basicHeaderStyle, boldFont, titleStyle, regularFont } = stylesConfig;
 
 
-
+// STYLES
+// ==========================================
 const styles = StyleSheet.create({
 	groupBadge: {
 		height: 9, 
@@ -35,7 +40,8 @@ const styles = StyleSheet.create({
 });
 
 
-
+// INTERNAL COMPONENTS
+// ==========================================
 const CardDescription = ({ item, navigation }) => {
 	return (
 		<Flex align='start' style={{marginBottom: 20}}>
@@ -70,13 +76,16 @@ const CardBottom = ({item}) => {
 		<View style={{flexDirection:'row', flexWrap:'wrap', alignItems: 'flex-end', justifyContent: 'flex-start'}}>
 			<Icon name='label-outline' iconStyle={{ fontSize: 13, marginRight: 5, color: '#bdc3c7' }} />
 			<Text style={{ fontSize: 13, color: '#bdc3c7' }}>
-				{item.category || ''}
+				{item.category && getCategoryTag(item.category) || ''}
 			</Text>
 		</View>
 	);
 }
 
 
+
+// EXPORTED COMPONENT
+// ==========================================
 const ShopCard = ({ item, navigation }) => {
 	const onCardPress = () => {
 		//if location exists, go to map, if not, do not go to map
@@ -98,4 +107,7 @@ const ShopCard = ({ item, navigation }) => {
 	);
 }
 
+
+// EXPORT
+// ==========================================
 export default ShopCard;
