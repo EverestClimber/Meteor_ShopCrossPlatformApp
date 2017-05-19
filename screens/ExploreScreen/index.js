@@ -51,7 +51,7 @@ const FloatingButtonArea = (props) => {
 			iconRight
 			textStyle={{fontSize: 12}}
 			icon={{ name: icon, color: '#000'}}
-			onPress={()=>props.navigation.navigate(route, { data: props.data})}
+			onPress={()=>props.navigation.navigate(route, { data: []})}
 		/>
 	);
 
@@ -73,52 +73,16 @@ class ExploreScreen extends React.Component {
 
 	constructor(props){
 		super(props);
-		this.onEndReached = this.onEndReached.bind(this);
 		this.state = { 
 			refreshing: false,
 			data: [],
 			searching: true
 		}
 	}
-	
-	keyExtractor(item, index){
-		return item._id;
-	}
 	onSearchChange = (value) => {
-		//this.setState({searching: true, data: []});
 		this.props.onSearchTextChange(value)
 	}
-	onEndReached(){
-		if (this.props.data.shops.length < 10) { 
-			//if there are less than 10 resuls on the screen, 
-			// there are no more results in the DB (as it sends 10 at a time)
-			return console.log('more more results'); 
-		}
-		this.props.data.fetchMore({
-			variables: { offset: this.props.data.shops.length },
-			updateQuery: (previousResult, { fetchMoreResult }) => {
-					// Don't do anything if there weren't any new items
-					if (!fetchMoreResult || fetchMoreResult.shops.length === 0) {
-						return previousResult;
-					}
-
-					return {
-					// Append the new feed results to the old one
-					shops: previousResult.shops.concat(fetchMoreResult.shops),
-					};
-			},
-		}).catch(err => {
-			console.log('error ran')
-			const errors = err && err.graphQLErrors && err.graphQLErrors.map( err => err.message );
-			console.log(errors)
-			this.setState({ errors: errors });
-		});
-	}
 	render(){
-
-		/*if (this.props.data.loading) {
-			return <LoadingScreen loadingMessage='loading shops...' />
-		}*/
 
 		return (
 			<View style={{ paddingBottom: 2, flex: 1, backgroundColor: colorConfig.screenBackground }}>
@@ -129,21 +93,8 @@ class ExploreScreen extends React.Component {
 				  	inputStyle={{ backgroundColor: '#fff' }}
 					containerStyle={{ width: SCREEN_WIDTH }}
 				/>
-				<SearchResults />
-				{/*<FlatList
-				  data={this.props.data.shops}
-				  keyExtractor={this.keyExtractor}
-				  refreshing={this.state.refreshing}
-				  onRefresh={this.onRefresh}
-				  removeClippedSubviews={false}
-				  renderItem={({item}) => <ShopCard item={item} navigation={this.props.navigation} />}
-				/>*/}
-				{/*this.props.data.networkStatus === 4 && (
-					<View style={{height: 30}}>
-						<ActivityIndicator />
-					</View>	
-				)*/}
-				<FloatingButtonArea navigation={this.props.navigation} data={this.state.data} />
+				<SearchResults {...this.props} />
+				<FloatingButtonArea navigation={this.props.navigation} />
 			</View>		
 		);
 	}
@@ -193,24 +144,6 @@ let mapStateTopProps = ({ filter }) => {
 }
 
 export default connect( mapStateTopProps, actions )(ExploreScreen);
-/*let ScreenWithData = graphql(FETCH_SHOPS, {
-  options: (props) => {
-  	console.log(props.searchText)
-  	let variables = { string: props.searchText };
-  	return { variables } 
-  }
-})(ExploreScreen);
-
-let mapStateTopProps = ({ filter }) => {
-	return {
-		searchText: filter.searchText
-	}
-}*/
-
-// EXPORT
-// ====================================
-// export default connect( mapStateTopProps, actions )(ScreenWithData);
-
 
 
 

@@ -10,7 +10,10 @@ import { stylesConfig, colorConfig, SCREEN_WIDTH, DEFAULT_SHOP_IMAGE } from '../
 import LoadingScreen from '../../components/LoadingScreen';
 import ShopCard from '../../components/ShopCard';
 import ShopListHorizontal from '../../components/ShopListHorizontal';
-
+// REDUX
+import { connect } from 'react-redux';
+import * as actions from '../../actions';
+import { graphql } from 'react-apollo';
 // APOLLO
 import client from '../../ApolloClient';
 import { FETCH_SHOPS, SEARCH_SHOPS } from '../../apollo/queries';
@@ -20,6 +23,29 @@ import { FETCH_SHOPS, SEARCH_SHOPS } from '../../apollo/queries';
 const { boldFont, semiboldFont, regularFont, titleStyle, basicHeaderStyle } = stylesConfig;
 
 
+const FloatingButtonArea = (props) => {
+
+	const getButton = (route, icon, label) => (
+		<Button
+			buttonStyle={{borderRadius: 50, width: 70}}
+			backgroundColor={'#fff'}
+			title={label}
+			color={'#000'}
+			iconRight
+			textStyle={{fontSize: 12}}
+			icon={{ name: icon, color: '#000'}}
+			onPress={()=>props.navigation.navigate(route, { data: []})}
+		/>
+	);
+
+	return (
+		<View style={styles.buttonContainer}>
+			<View style={styles.buttonInsideContainer}>
+				{getButton('filters', 'filter-list', "FILTER")}
+			</View>
+		</View>
+	);
+}
 
 
 // CONSTANTS & DESTRUCTURING
@@ -48,31 +74,24 @@ class MapScreen extends React.Component {
 	}
 	async componentDidMount() {
 
-	  	let firstLocation = this.props.navigation.state.params.data[0];
-	    let region = {
+		if (!this.props.data.loading && this.props.data.shops.length > 0) {
+			let firstLocation = this.props.data.shops[0];
+		    let region = {
 	    		longitude: parseFloat(firstLocation.location.lng),
-      			latitude: parseFloat(firstLocation.location.lat),
+	  			latitude: parseFloat(firstLocation.location.lat),
 		      	latitudeDelta: 0.09,
-      			longitudeDelta: 0.09,
+	  			longitudeDelta: 0.09,
 		    }
 		    
-	    return this.setState({region, selectedRegion: firstLocation._id, loading: false});
-	}
-	renderCurrentLocation(){
-		const { coords } = this.props.screenProps.currentLocation;
-		return (
-			<MapView.Marker
-				title={'Your Current Location'}
-				pinColor='#000'
-				coordinate={{ latitude: parseFloat(coords.latitude), longitude: parseFloat(coords.longitude) }}
-			/>
-		);
+	    	return this.setState({region, selectedRegion: firstLocation._id, loading: false});
+		}
+	  	
 	}
 	render(){
 
-		const { navigation } = this.props;
+		const { navigation, data } = this.props;
 
-		if (this.state.loading) {
+		if (data.loading) {
 			return <LoadingScreen loadingMessage='Loading...' />;
 		}
 			return (
@@ -87,9 +106,7 @@ class MapScreen extends React.Component {
 			       {/*<View style={styles.backButtonContainer}>
 			        	<Icon size={33} color='#666' name='close' onPress={()=>navigation.goBack()} />
 					</View>*/}
-			        	{navigation.state.params.data 
-			        		&& navigation.state.params.data.length > 0 
-			        		&& navigation.state.params.data.map( item => {
+			        	{data.shops && data.shops.length > 0 && data.shops.map( item => {
 			        		return (
 			        			<MapView.Marker
 			        				key={item._id}
@@ -103,6 +120,7 @@ class MapScreen extends React.Component {
 					        	</MapView.Marker>
 			        		);
 			        	})}
+			        	<FloatingButtonArea navigation={navigation} />
 			        </MapView>
 			        <View style={{flex: 2, backgroundColor: colorConfig.screenBackground, padding: 10}}>
 			        	<ShopListHorizontal {...this.props} />
@@ -121,8 +139,59 @@ const styles = StyleSheet.create({
 	    position: 'absolute',
 	    top: 22,
 	    left: 10
-	}
+	},
+	buttonInsideContainer: {
+		shadowColor: '#888',
+	    shadowOffset: {
+	      width: 0,
+	      height: 1
+	    },
+	    shadowRadius: 4,
+	    shadowOpacity: .5,
+		borderRadius: 50, 
+		backgroundColor: '#fff', 
+		flexDirection: 'row', 
+		display: 'flex', 
+		width: 195, 
+		alignItems: 'stretch', 
+		justifyContent: 'center'
+	},
+	buttonContainer: {
+	    position: 'absolute',
+	    display: 'flex',
+	    alignItems: 'center',
+	    justifyContent: 'center',
+	    bottom: 20,
+	    left: 0,
+	    right: 0
+	  }
 });
 
 
-export default MapScreen
+
+const ComponentWithData = graphql(FETCH_SHOPS, {
+  options: (props) => {
+  	
+  	let variables = { 
+  		string: props.searchText,
+  		categories: props.selectedCategories,
+  		//nearMe: props.nearMe,
+  		//nearMeLocation: props.nearMeLocation
+  	};
+  	console.log(variables)
+  	return { variables } 
+  }
+})(MapScreen);
+
+let mapStateTopProps = ({ filter }) => {
+	return {
+		searchText: filter.searchText,
+		selectedCategories: filter.selectedCategories,
+		nearMe: filter.nearMe,
+		nearMeLocation: filter.nearMeLocation
+	}
+}
+
+// EXPORT
+// ====================================
+export default connect( mapStateTopProps, actions )(ComponentWithData);

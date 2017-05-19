@@ -8,7 +8,7 @@ import { stylesConfig, colorConfig, SCREEN_WIDTH } from '../modules/config';
 // APOLLO
 import { userId } from 'meteor-apollo-accounts'
 import { FETCH_SHOPS, SEARCH_SHOPS } from '../apollo/queries';
-import { graphql, withApollo } from 'react-apollo';
+import { graphql } from 'react-apollo';
 import client from '../ApolloClient';
 // REDUX
 import { connect } from 'react-redux';
