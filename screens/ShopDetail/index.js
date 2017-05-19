@@ -103,9 +103,11 @@ class ShopDetail extends React.Component {
 				<ShopDetailInfoArea 
 					shopById={data.shopById} 
 				/>
-				<Text style={[textSubHeader, {textAlign: 'left', fontSize: 18, marginBottom: 15}]}>
-					Location info
-				</Text>
+				<View style={{padding: 10}}>
+					<Text style={[textSubHeader, {textAlign: 'left', fontSize: 18, marginBottom: 15}]}>
+						Location info
+					</Text>
+				</View>
 				<MapArea 
 					region={{
 			    		longitude: parseFloat(data.shopById.location.lng) || -122,

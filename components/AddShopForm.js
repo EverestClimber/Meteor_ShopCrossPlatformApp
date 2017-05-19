@@ -12,11 +12,12 @@ import { colorConfig,  } from '../modules/config';
 import { handleFileUpload, CATEGORY_OPTIONS,  } from '../modules/helpers';
 // APOLLO
 import { graphql, withApollo } from 'react-apollo';
-import { FETCH_SHOPS, SEARCH_SHOPS_BY_OWNER } from '../apollo/queries'
+import { FETCH_EXISTING_SHOPS, SEARCH_SHOPS_BY_OWNER } from '../apollo/queries'
 import { CREATE_SHOP } from '../apollo/mutations'
 import client from '../ApolloClient';
-
-
+// REDUX
+import { connect } from 'react-redux'
+import * as actions from '../actions';
 
 const RadioItem = Radio.RadioItem;
 
@@ -166,6 +167,27 @@ class AddShopForm extends React.Component {
     
     _this.setState({ imageLoading: false }); 
   }
+  renderPossibleDuplicates(){
+
+    const { shopExists, loading } = this.props.data;
+
+    if (loading) {
+       return <ActivityIndicator />;
+    }
+
+    return (
+      <List renderHeader={() => 'Possible duplicate?'}>
+        {shopExists.map( item => {
+          return (
+            <Text key={item._id} style={{fontSize: 15, color: 'red'}}>
+              {item.title}
+            </Text>
+          )
+        })}
+      </List>
+    );
+    
+  }
   render(){
 
 
@@ -176,8 +198,11 @@ class AddShopForm extends React.Component {
     /*if (this.props.data.loading) {
        return <LoadingScreen loadingMessage={'Loading Form...'} />;
     }*/
+    if (!this.props.data.loading && this.props.data.shopExists) {
+      console.log(this.props.data.shopExists)
+    }
 
-
+    
     return (
       <View style={{width: 300}} behavior="padding">
         <ImageArea 
@@ -196,9 +221,13 @@ class AddShopForm extends React.Component {
           <InputItem
               clear
               placeholder="Type your message here..."
-              onChange={(val)=>this.setState({title: val})}
+              onChange={(val)=>{
+                this.props.onTitleChange(val)
+                this.setState({ title: val })
+              }}
           />
         </List>
+        {!this.props.data.loading && this.props.data.shopExists.length > 0 && this.renderPossibleDuplicates()}
         <List renderHeader={() => 'Description'}>
           <TextareaItem
               clear
@@ -307,9 +336,31 @@ const styles = StyleSheet.create({
 
 let options = { 
   refetchQueries: [ 
-    { query: FETCH_SHOPS },
+    { query: FETCH_EXISTING_SHOPS },
     { query: SEARCH_SHOPS_BY_OWNER },  
   ]
 }
 
-export default graphql(CREATE_SHOP, options)(AddShopForm);
+
+const ComponentWithData = graphql(FETCH_EXISTING_SHOPS, {
+  options: (props) => {
+    let variables = { 
+      string: props.title && props.title.length > 4 ? props.title : null, //if user has not typed in at least 4 characters yet, then do not search for duplicates
+    };
+    return { variables } 
+  }
+})( graphql(CREATE_SHOP)(AddShopForm) );
+
+let mapStateTopProps = ({ addShopForm }) => {
+  return {
+    title: addShopForm.title
+  }
+}
+
+// EXPORT
+// ====================================
+export default connect( mapStateTopProps, actions )(ComponentWithData);
+
+
+//export default graphql(CREATE_SHOP, options)(AddShopForm);
+

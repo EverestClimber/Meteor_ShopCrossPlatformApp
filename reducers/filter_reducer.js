@@ -40,8 +40,11 @@ export default function(state=INITIAL_STATE, action){
 		case CLEAR_SELECTED_CATEGORIES:
 	      	return {...state, selectedCategories: [] };
 	    case TOGGLE_NEARME_FILTER:
-	    	let newState = !state.nearMe
-	      	return {...state, nearMe: newState };
+	    	if (state.nearMe) {
+	    		return {...state, nearMe: false,  nearMeLocation: null};
+	    	} else {
+	    		return {...state, nearMe: true };
+	    	}
 	    case ADD_NEARME_LOCATION:
 	    	let newLocation = action.payload;
 	      	return {...state, nearMeLocation: newLocation };

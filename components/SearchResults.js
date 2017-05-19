@@ -87,8 +87,9 @@ const ComponentWithData = graphql(FETCH_SHOPS, {
   	let variables = { 
   		string: props.searchText,
   		categories: props.selectedCategories,
-  		//nearMe: props.nearMe,
-  		//nearMeLocation: props.nearMeLocation
+  		nearMe: props.nearMe,
+  		latitude: props.nearMeLocation && props.nearMeLocation.coords.latitude,
+  		longitude: props.nearMeLocation && props.nearMeLocation.coords.longitude,
   	};
   	console.log(variables)
   	return { variables } 

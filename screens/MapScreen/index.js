@@ -47,6 +47,24 @@ const FloatingButtonArea = (props) => {
 	);
 }
 
+const SearchAreaButton = (props) => {
+
+	return (
+		<View style={styles.searchAreaContainer}>
+			<View style={styles.buttonInsideContainer}>
+				<Button
+					buttonStyle={{borderRadius: 50, width: 200}}
+					backgroundColor={colorConfig.business}
+					title={'Redo search in this area'}
+					color={'#fff'}
+					textStyle={{fontSize: 11}}
+					onPress={()=>console.log('rerun query with new location')}
+				/>
+			</View>
+		</View>
+	);
+}
+
 
 
 // CONSTANTS & DESTRUCTURING
@@ -62,7 +80,8 @@ class MapScreen extends React.Component {
 			data: [],
 			searching: true,
 			selectedRegion: null,
-			region: null
+			region: null,
+			showRedoSearch: false
 		}
 	}
 	async componentDidMount() {
@@ -88,16 +107,19 @@ class MapScreen extends React.Component {
 			return <LoadingScreen loadingMessage='Loading...' />;
 		}
 
-		if (!data.shops && !data.shops.length < 0) {
+		if (!data.shops || !data.shops.length === 0) {
 			return <View><Text>NO SHOPS</Text></View>;
 		}
+		
 			return (
 				<View style={styles.container}>
+					
 					<MapView
 						region={this.state.region}
 						style={{ flex: 5 }}
 						showsUserLocation
 						showsMyLocationButton
+						showsPointsOfInterest
 						ref={ref => { this.map = ref; }}
 					>
 						{data.shops && data.shops.length > 0 && data.shops.map( item => {
@@ -121,6 +143,7 @@ class MapScreen extends React.Component {
 					<View style={{flex: 2, backgroundColor: colorConfig.screenBackground, padding: 10}}>
 						<ShopListHorizontal {...this.props} />
 					</View>
+					{this.state.showRedoSearch && <SearchAreaButton {...this.props} />}
 					<FloatingButtonArea navigation={navigation} />
 				</View>
 			);
@@ -153,6 +176,15 @@ const styles = StyleSheet.create({
 		alignItems: 'stretch', 
 		justifyContent: 'center'
 	},
+	searchAreaContainer: {
+		position: 'absolute',
+		display: 'flex',
+	    alignItems: 'center',
+	    justifyContent: 'center',
+	    top: 30,
+	    left: 0,
+	    right: 0
+	},
 	buttonContainer: {
 	    position: 'absolute',
 	    display: 'flex',
@@ -161,7 +193,7 @@ const styles = StyleSheet.create({
 	    bottom: 200,
 	    left: 0,
 	    right: 0
-	  }
+	}
 });
 
 
@@ -171,10 +203,13 @@ const styles = StyleSheet.create({
 // query when those variables change (e.g. when somebody opens the FilterScreen and makes a change
 // that change will propogate to the shops show on the map screen )
 let options = (props) => {
+	console.log(props.nearMeLocation)
 	let variables = { 
   		string: props.searchText,
   		categories: props.selectedCategories,
-  		//nearMe: props.nearMe,
+  		nearMe: props.nearMe,
+  		latitude: props.nearMeLocation && props.nearMeLocation.coords.latitude,
+  		longitude: props.nearMeLocation && props.nearMeLocation.coords.longitude,
   		//nearMeLocation: props.nearMeLocation
   	};
   	return { variables } 

@@ -66,6 +66,30 @@ export const FETCH_SHOPS = gql`
   ${shopFragment}
 `;
 
+export const FETCH_EXISTING_SHOPS = gql`
+  query ShopExists(
+    $offset: Int, 
+    $string: String
+    $categories: [String]
+    $nearMe: Boolean
+    $longitude: String
+    $latitude: String
+  ) {
+    shopExists(
+      offset: $offset
+      string: $string
+      categories: $categories
+      nearMe: $nearMe
+      longitude: $longitude
+      latitude: $latitude
+    ) {
+      _id
+      title
+      category
+    } 
+  }
+`;
+
 
 
 export const SEARCH_SHOPS_BY_OWNER = gql`
