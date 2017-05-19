@@ -4,14 +4,18 @@ import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'rea
 import { Icon, Card } from 'react-native-elements';
 // MODULES
 import { stylesConfig, colorConfig, DEFAULT_SHOP_IMAGE } from '../modules/config';
+// COMPONENTS
+import EmptyState from './EmptyState'
+
 
 
 // CONSTANTS & DESTRUCTURING
 // ========================================
-const { boldFont, semiboldFont,textHeader, basicHeaderStyle, textBody } = stylesConfig;
+const { boldFont, semiboldFont,textHeader, basicHeaderStyle, textBody, emptyStateIcon } = stylesConfig;
 
 
-
+// INTERNAL COMPONENTS
+// ========================================
 const ShopListCard = ({ item, navigation }) => {
 	const onCardPress = () => {
 		//if location exists, go to map, if not, do not go to map
@@ -33,18 +37,22 @@ const ShopListCard = ({ item, navigation }) => {
 }
 
 
+// EXPORTED COMPONENT
+// ========================================
 const ShopListHorizontal = ({ data, navigation }) => {
+
+	if (!data || !data.shops || data.shops.length < 0) {
+		return <View style={{flex: 1}} />;
+	}
+
 	return (
     	<ScrollView horizontal style={{flex: 1}}>
-    		{data && data.shops.length && data.shops.map( item => {
-    			return (
-    				<ShopListCard key={item._id} item={item} navigation={navigation} />
-    			);
-    		})}
+    		{ data.shops.map( item => <ShopListCard key={item._id} item={item} navigation={navigation} /> ) }
     	</ScrollView>
 	);
 }
 
 
-
+// EXPORT
+// ========================================
 export default ShopListHorizontal;

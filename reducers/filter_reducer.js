@@ -1,11 +1,28 @@
 import { 
-	ADD_CATEGORY_TO_FILTER,
+	TOGGLE_CATEGORY_TO_FILTER,
 	CLEAR_SELECTED_CATEGORIES,
 	TOGGLE_NEARME_FILTER,
 	ADD_NEARME_LOCATION,
 	SEARCH_TEXT
 } from '../actions/types';
 import _ from 'lodash';
+
+
+// REDUCER HELPERS
+// =======================================================
+const getNewCategorySelections = (state, action) => {
+	
+	// if elements exists in array, remove the action.payload value
+	if (state.selectedCategories.includes(action.payload)) {
+		return state.selectedCategories.filter(element => element !== action.payload)
+	} 
+	// if element does not exists, return a new array that includes the action.payload value
+	else {
+		return state.selectedCategories.concat(action.payload)
+	}
+
+}
+
 
 
 const INITIAL_STATE = {
@@ -28,10 +45,11 @@ export default function(state=INITIAL_STATE, action){
 	    case ADD_NEARME_LOCATION:
 	    	let newLocation = action.payload;
 	      	return {...state, nearMeLocation: newLocation };
-	    case ADD_CATEGORY_TO_FILTER:
+	    case TOGGLE_CATEGORY_TO_FILTER:
+	    	let newSelectedCategories = getNewCategorySelections(state, action); 
 	    	return { 
 		        ...state,
-		        selectedCategories: state.selectedCategories.concat(action.payload)
+		        selectedCategories: newSelectedCategories
 		    }
 		default:
 			return state;

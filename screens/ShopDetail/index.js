@@ -1,10 +1,10 @@
 // TOP LEVEL IMPORTS
 import React from 'react';
 import { View, ScrollView, Text, Platform, Image, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
-import { Icon, Button, Card } from 'react-native-elements';
-import { Tabs, WhiteSpace,  } from 'antd-mobile';
+import { Icon, Button, Card, Badge, Divider } from 'react-native-elements';
 //MODULES
 import { stylesConfig, colorConfig, DEFAULT_SHOP_IMAGE, SCREEN_WIDTH } from '../../modules/config';
+import { getCategoryTag } from '../../modules/helpers';
 // APOLLO
 import { graphql } from 'react-apollo';
 import { FETCH_SHOP } from '../../apollo/queries';
@@ -14,11 +14,21 @@ import ShopCard from '../../components/ShopCard';
 import BackButton from '../../components/BackButton';
 import EmptyState from '../../components/EmptyState';
 import MapArea from '../../components/MapArea';
+import ShopDetailInfoArea from '../../components/ShopDetailInfoArea';
+//
+import Carousel from 'react-native-looped-carousel';
+
+// TODO
+// add carousel like airbnb to show multiple images
+// potential package options:
+// https://github.com/appintheair/react-native-looped-carousel
+// https://github.com/archriss/react-native-snap-carousel
+// https://github.com/machadogj/react-native-carousel-control
+// https://github.com/jacklam718/react-native-carousel-component
 
 
 // CONSTANTS & DESTRUCTURING
 // ========================================
-const TabPane = Tabs.TabPane;
 const { 
 	basicHeaderStyle, 
 	titleStyle, 
@@ -30,40 +40,36 @@ const {
 
 
 
-// INTERNAL COMPONENTS
-// ========================================
-const GeneralInfo = ({ shopById }) => {
 
-	return (
-		<View>
-			<Text style={[textHeader, {textAlign: 'left', fontSize: 30}]}>
-				{shopById.title || ''}
-			</Text>
-			<View style={{marginTop: 10}}>
-				<Text style={[textSubHeader, {textAlign: 'left'}]}>
-					About this shop
-				</Text>
-				<Text style={[textBody, {textAlign: 'left', fontSize: 13}]}>
-					{shopById.description || ''}
-				</Text>
+
+class CarouselExample extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      size: { width: SCREEN_WIDTH, height: 250 },
+    };
+  }
+  render() {
+    return (
+      <View style={{ flex: 1 }}>
+        <Carousel
+          delay={3000}
+          style={this.state.size}
+          autoplay
+        >
+        	<Image source={{uri: 'https://infotion.com/wp-content/uploads/2016/12/Denpasar-Bali.jpg'}} style={this.state.size} />
+        	<Image source={{uri: 'https://static.asiawebdirect.com/m/bangkok/portals/bali-indonesia-com/homepage/magazine/the-seminyak-village/allParagraphs/BucketComponent/ListingContainer/03/BucketList/0/image1/the-seminyak-village-bali.jpg'}} style={this.state.size} />
+        	<Image source={{uri: 'https://static.asiawebdirect.com/m/bangkok/portals/bali-indonesia-com/homepage/kuta-beach/mal-bali-galeria/allParagraphs/BucketComponent/ListingContainer/02/image/mal-bali-galeria-tenant.jpg'}} style={this.state.size} />
+        </Carousel>
+        	<View style={styles.backButtonContainer}>
+		          <Icon size={35} color='#fff' name='chevron-left' onPress={()=>this.props.navigation.goBack()} />
 			</View>
-			<Text style={[textBody, {textAlign: 'center'}]}>
-				{shopById.category || ''}
-			</Text>
-			<Text style={[textBody, {textAlign: 'center'}]}>
-				{shopById.phone || ''}
-			</Text>
-			<Text style={[textBody, {textAlign: 'center'}]}>
-				{shopById.email || ''}
-			</Text>
-			<Text style={[textBody, {textAlign: 'center'}]}>
-				{shopById.website || ''}
-			</Text>
-		</View>
-	);
+      </View>
+    );
+  }
 }
-
-
    
 // EXPORTED COMPONENT
 // ========================================
@@ -88,14 +94,18 @@ class ShopDetail extends React.Component {
 
 		return (
 			<ScrollView style={styles.container} contentContainerStyle={styles.contentContainerStyle}>
-				<Image source={{uri: data.shopById.image || DEFAULT_SHOP_IMAGE}} style={{width: SCREEN_WIDTH, height: 250}}>
+				{/*<Image source={{uri: data.shopById.image || DEFAULT_SHOP_IMAGE}} style={{width: SCREEN_WIDTH, height: 250}}>
 					<View style={styles.backButtonContainer}>
 				          <Icon size={35} color='#fff' name='chevron-left' onPress={()=>this.props.navigation.goBack()} />
 					</View>
-				</Image>
-				<View style={{padding: 10, minHeight: 300}}>
-					<GeneralInfo shopById={data.shopById} />
-				</View>
+				</Image>*/}
+				<CarouselExample {...this.props} />
+				<ShopDetailInfoArea 
+					shopById={data.shopById} 
+				/>
+				<Text style={[textSubHeader, {textAlign: 'left', fontSize: 18, marginBottom: 15}]}>
+					Location info
+				</Text>
 				<MapArea 
 					region={{
 			    		longitude: parseFloat(data.shopById.location.lng) || -122,
@@ -126,6 +136,12 @@ const styles = StyleSheet.create({
 	},
 	settingFormItem: {
 		flex: 1, justifyContent: 'center', alignItems: 'center'
+	},
+	dividerStyle: {
+		height: 1, 
+		backgroundColor: "#e1e8ee",
+		marginTop: 20,
+		marginBottom: 20
 	},
 	backButtonContainer: {
 	    position: 'absolute',
