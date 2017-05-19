@@ -10,10 +10,15 @@ import { userId } from 'meteor-apollo-accounts'
 import { FETCH_SHOPS, SEARCH_SHOPS } from '../../apollo/queries';
 import { graphql, withApollo } from 'react-apollo';
 import client from '../../ApolloClient';
+// REDUX
+import { connect } from 'react-redux';
+import * as actions from '../../actions';
 // COMPONENTS
 import LoadingScreen from '../../components/LoadingScreen';
 import EmptyState from '../../components/EmptyState';
 import ShopCard from '../../components/ShopCard';
+import SearchResults from '../../components/SearchResults';
+
 
 
 // CONSTANTS & DESTRUCTURING
@@ -81,28 +86,7 @@ class ExploreScreen extends React.Component {
 	}
 	onSearchChange = (value) => {
 		//this.setState({searching: true, data: []});
-		client.query({
-	      query: SEARCH_SHOPS,
-	      variables: { string: value }
-	    }).then(({ data }) => {
-	    	this.setState({data: data.shops, searching: false});
-	    }); 
-	}
-	componentWillMount(){
-		client.query({
-	      query: FETCH_SHOPS,
-	    }).then(({ data }) => {
-	    	console.log(data.shops)
-	    	this.setState({data: data.shops, searching: false})
-	    });
-	}
-	onRefresh = () => {
-		this.setState({refreshing: true})
-		client.query({
-	      query: FETCH_SHOPS,
-	    }).then(({ data }) => {
-	    	this.setState({data: data.shopsByOwner, refreshing: false})
-	    });
+		this.props.onSearchTextChange(value)
 	}
 	onEndReached(){
 		if (this.props.data.shops.length < 10) { 
@@ -136,21 +120,6 @@ class ExploreScreen extends React.Component {
 			return <LoadingScreen loadingMessage='loading shops...' />
 		}*/
 
-		if (this.state.searching) {
-			return <LoadingScreen loadingMessage='loading shops...' />
-		}
-
-		/*if (!this.props.data.shops || this.props.data.shops.length === 0) {
-			return (
-				<EmptyState 
-					imageComponent={
-						<Image source={require('../../assets/marketing.png')} style={emptyStateIcon}/>
-					}
-					pageText='NO SHOPS YET...' 
-				/>
-			);
-		}*/
-		//onEndReached={this.onEndReached}
 		return (
 			<View style={{ paddingBottom: 2, flex: 1, backgroundColor: colorConfig.screenBackground }}>
 				<SearchBar
@@ -160,14 +129,15 @@ class ExploreScreen extends React.Component {
 				  	inputStyle={{ backgroundColor: '#fff' }}
 					containerStyle={{ width: SCREEN_WIDTH }}
 				/>
-				<FlatList
-				  data={this.state.data}
+				<SearchResults />
+				{/*<FlatList
+				  data={this.props.data.shops}
 				  keyExtractor={this.keyExtractor}
 				  refreshing={this.state.refreshing}
 				  onRefresh={this.onRefresh}
 				  removeClippedSubviews={false}
 				  renderItem={({item}) => <ShopCard item={item} navigation={this.props.navigation} />}
-				/>
+				/>*/}
 				{/*this.props.data.networkStatus === 4 && (
 					<View style={{height: 30}}>
 						<ActivityIndicator />
@@ -214,14 +184,33 @@ const styles = StyleSheet.create({
 });
 
 
+
+
+let mapStateTopProps = ({ filter }) => {
+	return {
+		searchText: filter.searchText
+	}
+}
+
+export default connect( mapStateTopProps, actions )(ExploreScreen);
+/*let ScreenWithData = graphql(FETCH_SHOPS, {
+  options: (props) => {
+  	console.log(props.searchText)
+  	let variables = { string: props.searchText };
+  	return { variables } 
+  }
+})(ExploreScreen);
+
+let mapStateTopProps = ({ filter }) => {
+	return {
+		searchText: filter.searchText
+	}
+}*/
+
 // EXPORT
 // ====================================
-export default ExploreScreen;
-/*export default graphql(FETCH_SHOPS, {
-	options: {
-		//notifyOnNetworkStatusChange: true,
-	}
-})(ExploreScreen);*/
+// export default connect( mapStateTopProps, actions )(ScreenWithData);
+
 
 
 
