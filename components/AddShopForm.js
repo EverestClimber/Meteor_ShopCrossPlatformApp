@@ -1,5 +1,6 @@
 import React from 'react';
 import { ImagePicker, Permissions } from 'expo';
+import { List, Radio, InputItem, SegmentedControl, TextareaItem, WhiteSpace } from 'antd-mobile';
 import { View, Text, TextInput, ScrollView, Alert, TouchableOpacity, StyleSheet, Platform, Image, ActivityIndicator } from 'react-native';
 //REDUX
 import _ from 'lodash';
@@ -7,13 +8,15 @@ import _ from 'lodash';
 import LoadingScreen from './LoadingScreen'
 import { Button, Icon } from 'react-native-elements'
 //MODULES
-import { colorConfig, CATEGORY_OPTIONS } from '../modules/config';
+import { colorConfig,  } from '../modules/config';
+import { handleFileUpload, CATEGORY_OPTIONS,  } from '../modules/helpers';
+// APOLLO
 import { graphql, withApollo } from 'react-apollo';
 import { FETCH_SHOPS, SEARCH_SHOPS_BY_OWNER } from '../apollo/queries'
 import { CREATE_SHOP } from '../apollo/mutations'
-import { List, Radio, InputItem, SegmentedControl, TextareaItem, WhiteSpace } from 'antd-mobile';
 import client from '../ApolloClient';
-import { handleFileUpload } from '../modules/helpers';
+
+
 
 const RadioItem = Radio.RadioItem;
 

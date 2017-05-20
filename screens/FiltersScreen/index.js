@@ -29,12 +29,17 @@ class FiltersScreen extends React.Component {
 	});
 	constructor(props){
 		super(props);
-		this.state = {
-			selectedCategories: []
-		}
+		this.onToggleNearMe = this.onToggleNearMe.bind(this);
 	}
 	onCategoryChange(value){
 		this.props.addCategoryToFilter(value)
+	}
+	onToggleNearMe(value){
+		if (this.props.nearMe) {
+			return this.props.toggleNearMeToFilter()
+		}
+		this.props.toggleNearMeToFilter()
+		this.props.addNearMeLocation(this.props.screenProps.currentLocation)		
 	}
 	render(){
 		const { nearMe, navigation, selectedCategories, clearCategoriesFilter, toggleNearMeToFilter } = this.props;
@@ -64,7 +69,7 @@ class FiltersScreen extends React.Component {
 					</View>
 					
 					<View style={{height: 50, width: 300, marginTop: 20}}>
-						<CheckboxItem checked={nearMe} onChange={() => toggleNearMeToFilter()}>
+						<CheckboxItem checked={nearMe} onChange={this.onToggleNearMe}>
 							RESULTS NEAR ME
 						</CheckboxItem>
 					</View>

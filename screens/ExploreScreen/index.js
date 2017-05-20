@@ -10,10 +10,15 @@ import { userId } from 'meteor-apollo-accounts'
 import { FETCH_SHOPS, SEARCH_SHOPS } from '../../apollo/queries';
 import { graphql, withApollo } from 'react-apollo';
 import client from '../../ApolloClient';
+// REDUX
+import { connect } from 'react-redux';
+import * as actions from '../../actions';
 // COMPONENTS
 import LoadingScreen from '../../components/LoadingScreen';
 import EmptyState from '../../components/EmptyState';
 import ShopCard from '../../components/ShopCard';
+import SearchResults from '../../components/SearchResults';
+
 
 
 // CONSTANTS & DESTRUCTURING
@@ -46,7 +51,7 @@ const FloatingButtonArea = (props) => {
 			iconRight
 			textStyle={{fontSize: 12}}
 			icon={{ name: icon, color: '#000'}}
-			onPress={()=>props.navigation.navigate(route, { data: props.data})}
+			onPress={()=>props.navigation.navigate(route, { data: []})}
 		/>
 	);
 
@@ -68,89 +73,17 @@ class ExploreScreen extends React.Component {
 
 	constructor(props){
 		super(props);
-		this.onEndReached = this.onEndReached.bind(this);
 		this.state = { 
 			refreshing: false,
 			data: [],
 			searching: true
 		}
 	}
-	
-	keyExtractor(item, index){
-		return item._id;
-	}
 	onSearchChange = (value) => {
-		//this.setState({searching: true, data: []});
-		client.query({
-	      query: SEARCH_SHOPS,
-	      variables: { string: value }
-	    }).then(({ data }) => {
-	    	this.setState({data: data.shops, searching: false});
-	    }); 
-	}
-	componentWillMount(){
-		client.query({
-	      query: FETCH_SHOPS,
-	    }).then(({ data }) => {
-	    	console.log(data.shops)
-	    	this.setState({data: data.shops, searching: false})
-	    });
-	}
-	onRefresh = () => {
-		this.setState({refreshing: true})
-		client.query({
-	      query: FETCH_SHOPS,
-	    }).then(({ data }) => {
-	    	this.setState({data: data.shopsByOwner, refreshing: false})
-	    });
-	}
-	onEndReached(){
-		if (this.props.data.shops.length < 10) { 
-			//if there are less than 10 resuls on the screen, 
-			// there are no more results in the DB (as it sends 10 at a time)
-			return console.log('more more results'); 
-		}
-		this.props.data.fetchMore({
-			variables: { offset: this.props.data.shops.length },
-			updateQuery: (previousResult, { fetchMoreResult }) => {
-					// Don't do anything if there weren't any new items
-					if (!fetchMoreResult || fetchMoreResult.shops.length === 0) {
-						return previousResult;
-					}
-
-					return {
-					// Append the new feed results to the old one
-					shops: previousResult.shops.concat(fetchMoreResult.shops),
-					};
-			},
-		}).catch(err => {
-			console.log('error ran')
-			const errors = err && err.graphQLErrors && err.graphQLErrors.map( err => err.message );
-			console.log(errors)
-			this.setState({ errors: errors });
-		});
+		this.props.onSearchTextChange(value)
 	}
 	render(){
 
-		/*if (this.props.data.loading) {
-			return <LoadingScreen loadingMessage='loading shops...' />
-		}*/
-
-		if (this.state.searching) {
-			return <LoadingScreen loadingMessage='loading shops...' />
-		}
-
-		/*if (!this.props.data.shops || this.props.data.shops.length === 0) {
-			return (
-				<EmptyState 
-					imageComponent={
-						<Image source={require('../../assets/marketing.png')} style={emptyStateIcon}/>
-					}
-					pageText='NO SHOPS YET...' 
-				/>
-			);
-		}*/
-		//onEndReached={this.onEndReached}
 		return (
 			<View style={{ paddingBottom: 2, flex: 1, backgroundColor: colorConfig.screenBackground }}>
 				<SearchBar
@@ -160,20 +93,8 @@ class ExploreScreen extends React.Component {
 				  	inputStyle={{ backgroundColor: '#fff' }}
 					containerStyle={{ width: SCREEN_WIDTH }}
 				/>
-				<FlatList
-				  data={this.state.data}
-				  keyExtractor={this.keyExtractor}
-				  refreshing={this.state.refreshing}
-				  onRefresh={this.onRefresh}
-				  removeClippedSubviews={false}
-				  renderItem={({item}) => <ShopCard item={item} navigation={this.props.navigation} />}
-				/>
-				{/*this.props.data.networkStatus === 4 && (
-					<View style={{height: 30}}>
-						<ActivityIndicator />
-					</View>	
-				)*/}
-				<FloatingButtonArea navigation={this.props.navigation} data={this.state.data} />
+				<SearchResults {...this.props} />
+				<FloatingButtonArea navigation={this.props.navigation} />
 			</View>		
 		);
 	}
@@ -214,14 +135,15 @@ const styles = StyleSheet.create({
 });
 
 
-// EXPORT
-// ====================================
-export default ExploreScreen;
-/*export default graphql(FETCH_SHOPS, {
-	options: {
-		//notifyOnNetworkStatusChange: true,
+
+
+let mapStateTopProps = ({ filter }) => {
+	return {
+		searchText: filter.searchText
 	}
-})(ExploreScreen);*/
+}
+
+export default connect( mapStateTopProps, actions )(ExploreScreen);
 
 
 

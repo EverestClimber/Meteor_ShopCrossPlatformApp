@@ -33,12 +33,12 @@ const ShopListCard = ({ item, navigation }) => {
 }
 
 
-const ShopListHorizontal = (props) => {
+const ShopListHorizontal = ({ data, navigation }) => {
 	return (
     	<ScrollView horizontal style={{flex: 1}}>
-    		{props.navigation.state.params.data.map( item => {
+    		{data && data.shops.length && data.shops.map( item => {
     			return (
-    				<ShopListCard key={item._id} item={item} {...props} />
+    				<ShopListCard key={item._id} item={item} navigation={navigation} />
     			);
     		})}
     	</ScrollView>

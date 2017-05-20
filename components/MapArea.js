@@ -23,16 +23,6 @@ class MapArea extends React.Component {
 	constructor(props){
 		super(props);
 	}
-	renderCurrentLocation(){
-		const { coords } = this.props.screenProps.currentLocation;
-		return (
-			<MapView.Marker
-				title={'Your Current Location'}
-				pinColor='#000'
-				coordinate={{ latitude: parseFloat(coords.latitude), longitude: parseFloat(coords.longitude) }}
-			/>
-		);
-	}
 	render(){
 		const { data, navigation, region } = this.props;
 			return (
@@ -41,6 +31,7 @@ class MapArea extends React.Component {
 			          region={region}
 			          style={{ height: 350 }}
 			          loadingEnabled
+			          showsUserLocation
 			          onRegionChangeComplete={this.onRegionChangeComplete}
 			        >
 				        <MapView.Marker
@@ -53,7 +44,6 @@ class MapArea extends React.Component {
 				        		<ShopCard item={data.shopById} navigation={navigation} />
 				        	</MapView.Callout>
 			        	</MapView.Marker>
-			        	{this.renderCurrentLocation()}
 			        </MapView>
 				</View>
 			);
