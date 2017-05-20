@@ -1,7 +1,7 @@
 // TOP LEVEL IMPORTS
 import Expo from 'expo';
 import React from 'react';
-import AppRoutes from './routes'
+import AppRoutes from './routes';
 // APOLLO
 import { ApolloProvider } from 'react-apollo';
 import client from './ApolloClient';
@@ -21,6 +21,10 @@ import { SENTRY_DSN } from './modules/config'
 Sentry.config(SENTRY_DSN).install();
 
 
+
+  // code
+
+  
 // ROOT COMPONENT TO ENTIRE RN APP
 // ===================================================
 class App extends React.Component {

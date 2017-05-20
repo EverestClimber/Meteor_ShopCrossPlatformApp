@@ -1,5 +1,5 @@
 import { 
-	ADD_CATEGORY_TO_FILTER,
+	TOGGLE_CATEGORY_TO_FILTER,
 	CLEAR_SELECTED_CATEGORIES,
 	TOGGLE_NEARME_FILTER,
 	ADD_NEARME_LOCATION,
@@ -8,7 +8,7 @@ import {
 
 export const addCategoryToFilter = (category) => async dispatch => {
 	dispatch({ 
-		type: ADD_CATEGORY_TO_FILTER,
+		type: TOGGLE_CATEGORY_TO_FILTER,
 		payload: category
 	});
 };

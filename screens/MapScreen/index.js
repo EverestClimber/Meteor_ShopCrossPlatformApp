@@ -47,29 +47,41 @@ const FloatingButtonArea = (props) => {
 	);
 }
 
+const SearchAreaButton = (props) => {
+
+	return (
+		<View style={styles.searchAreaContainer}>
+			<View style={styles.buttonInsideContainer}>
+				<Button
+					buttonStyle={{borderRadius: 50, width: 200}}
+					backgroundColor={colorConfig.business}
+					title={'Redo search in this area'}
+					color={'#fff'}
+					textStyle={{fontSize: 11}}
+					onPress={()=>console.log('rerun query with new location')}
+				/>
+			</View>
+		</View>
+	);
+}
+
+
 
 // CONSTANTS & DESTRUCTURING
 // ========================================
 class MapScreen extends React.Component {
 	static navigationOptions = ({ navigation, screenProps }) => ({
-	  	//header: null,
-	  	tabBarVisible: false
+	  	tabBarVisible: false,
 	});
 	constructor(props){
 		super(props);
 		this.state = {
-			//loadingLocation: false,
 			loading: true,
 			data: [],
 			searching: true,
 			selectedRegion: null,
-			region: null
-			/*region: {
-	    		longitude: -122,
-      			latitude: 37,
-		      	longitudeDelta: 0.04,
-		      	latitudeDelta: 0.09
-		    }*/
+			region: null,
+			showRedoSearch: false
 		}
 	}
 	async componentDidMount() {
@@ -94,38 +106,46 @@ class MapScreen extends React.Component {
 		if (data.loading) {
 			return <LoadingScreen loadingMessage='Loading...' />;
 		}
+
+		if (!data.shops || !data.shops.length === 0) {
+			return <View><Text>NO SHOPS</Text></View>;
+		}
+		
 			return (
 				<View style={styles.container}>
-				<MapView
-			          region={this.state.region}
-			          style={{ flex: 5 }}
-			          showsUserLocation
-			          showsMyLocationButton
-			          ref={ref => { this.map = ref; }}
-			    >
-			       {/*<View style={styles.backButtonContainer}>
-			        	<Icon size={33} color='#666' name='close' onPress={()=>navigation.goBack()} />
-					</View>*/}
-			        	{data.shops && data.shops.length > 0 && data.shops.map( item => {
-			        		return (
-			        			<MapView.Marker
-			        				key={item._id}
-			        				title={item.title}
-			        				description={item.description}
-			        				coordinate={{ latitude: parseFloat(item.location.lat), longitude: parseFloat(item.location.lng) }}
-			        			>
-				        			<MapView.Callout tooltip>
-						        		<ShopCard item={item} navigation={navigation} />
-						        	</MapView.Callout>
-					        	</MapView.Marker>
-			        		);
-			        	})}
-			        	<FloatingButtonArea navigation={navigation} />
-			        </MapView>
-			        <View style={{flex: 2, backgroundColor: colorConfig.screenBackground, padding: 10}}>
-			        	<ShopListHorizontal {...this.props} />
-			        </View>
-			    </View>
+					
+					<MapView
+						region={this.state.region}
+						style={{ flex: 5 }}
+						showsUserLocation
+						showsMyLocationButton
+						showsPointsOfInterest
+						ref={ref => { this.map = ref; }}
+					>
+						{data.shops && data.shops.length > 0 && data.shops.map( item => {
+							return (
+								<MapView.Marker
+									key={item._id}
+									title={item.title}
+									description={item.description}
+									coordinate={{ 
+										latitude: parseFloat(item.location.lat), 
+										longitude: parseFloat(item.location.lng) 
+									}}
+								>
+									<MapView.Callout tooltip>
+										<ShopCard item={item} navigation={navigation} />
+									</MapView.Callout>
+								</MapView.Marker>
+							);
+						})}
+					</MapView>
+					<View style={{flex: 2, backgroundColor: colorConfig.screenBackground, padding: 10}}>
+						<ShopListHorizontal {...this.props} />
+					</View>
+					{this.state.showRedoSearch && <SearchAreaButton {...this.props} />}
+					<FloatingButtonArea navigation={navigation} />
+				</View>
 			);
 	}
 }
@@ -156,33 +176,49 @@ const styles = StyleSheet.create({
 		alignItems: 'stretch', 
 		justifyContent: 'center'
 	},
+	searchAreaContainer: {
+		position: 'absolute',
+		display: 'flex',
+	    alignItems: 'center',
+	    justifyContent: 'center',
+	    top: 30,
+	    left: 0,
+	    right: 0
+	},
 	buttonContainer: {
 	    position: 'absolute',
 	    display: 'flex',
 	    alignItems: 'center',
 	    justifyContent: 'center',
-	    bottom: 20,
+	    bottom: 200,
 	    left: 0,
 	    right: 0
-	  }
+	}
 });
 
 
-
-const ComponentWithData = graphql(FETCH_SHOPS, {
-  options: (props) => {
-  	
-  	let variables = { 
+// Wrap the map component in graphql HOC so it makes a query
+// Before exporting this ComponentWithData component, we also wrap it in redux connect
+// this will give us access to variables inside of the redux store, and will rerun the 
+// query when those variables change (e.g. when somebody opens the FilterScreen and makes a change
+// that change will propogate to the shops show on the map screen )
+let options = (props) => {
+	console.log(props.nearMeLocation)
+	let variables = { 
   		string: props.searchText,
   		categories: props.selectedCategories,
-  		//nearMe: props.nearMe,
+  		nearMe: props.nearMe,
+  		latitude: props.nearMeLocation && props.nearMeLocation.coords.latitude,
+  		longitude: props.nearMeLocation && props.nearMeLocation.coords.longitude,
   		//nearMeLocation: props.nearMeLocation
   	};
-  	console.log(variables)
   	return { variables } 
-  }
-})(MapScreen);
+}
 
+const ComponentWithData = graphql(FETCH_SHOPS, { options })(MapScreen);
+
+
+// map redux state to props, which are then used in the above ComponentWithData in the graphql query
 let mapStateTopProps = ({ filter }) => {
 	return {
 		searchText: filter.searchText,
@@ -194,4 +230,6 @@ let mapStateTopProps = ({ filter }) => {
 
 // EXPORT
 // ====================================
+// exports component that is wrapped in redux first, and then wrapped in graphql second
+// this gives us redux variables to use in our graphql query.
 export default connect( mapStateTopProps, actions )(ComponentWithData);
