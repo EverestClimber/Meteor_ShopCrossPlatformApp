@@ -1,10 +1,6 @@
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform, Image, ActivityIndicator } from 'react-native';
 import { Button, Icon } from 'react-native-elements'
-//REDUX
-import { connect } from 'react-redux';
-import * as actions from '../actions';
-import { reduxForm, Field } from 'redux-form'
 //COMPONENTS
 import LoadingScreen from './LoadingScreen';
 import AuthLink from './AuthLink';
