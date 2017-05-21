@@ -10,6 +10,7 @@ import { stylesConfig, colorConfig, SCREEN_WIDTH, DEFAULT_SHOP_IMAGE } from '../
 import LoadingScreen from '../../components/LoadingScreen';
 import ShopCard from '../../components/ShopCard';
 import ShopListHorizontal from '../../components/ShopListHorizontal';
+import BackButton from '../../components/BackButton';
 // REDUX
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
@@ -66,13 +67,20 @@ const SearchAreaButton = (props) => {
 }
 
 
-
+const navigationOptions = ({ navigation, screenProps }) => ({
+		title: 'Shop Map',
+		tabBarIcon: ({ tintColor }) => <Icon name="search" size={30} color={tintColor} />,
+	  	headerTitleStyle: titleStyle,
+	  	headerVisible: Platform.OS !== 'android',
+	  	tabBarLabel: 'Explore',
+	  	headerStyle: basicHeaderStyle,
+	  	tabBarVisible: false,
+	  	headerLeft: <BackButton goBack={navigation.goBack} label='' />,
+	});
 // CONSTANTS & DESTRUCTURING
 // ========================================
 class MapScreen extends React.Component {
-	static navigationOptions = ({ navigation, screenProps }) => ({
-	  	tabBarVisible: false,
-	});
+	static navigationOptions = navigationOptions;
 	constructor(props){
 		super(props);
 		this.state = {

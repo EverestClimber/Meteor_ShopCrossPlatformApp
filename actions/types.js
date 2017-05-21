@@ -14,3 +14,5 @@ export const SEARCH_TEXT = 'search_text';
 // ADD SHOP ACTIONS
 export const ON_TITLE_CHANGE = 'on_title_change';
 
+// MAP ACTIONS
+export const ON_CURRENT_SHOP_CHANGE = 'on_current_shop_change';

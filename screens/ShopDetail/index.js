@@ -15,8 +15,8 @@ import BackButton from '../../components/BackButton';
 import EmptyState from '../../components/EmptyState';
 import MapArea from '../../components/MapArea';
 import ShopDetailInfoArea from '../../components/ShopDetailInfoArea';
-//
 import Carousel from 'react-native-looped-carousel';
+
 
 // TODO
 // add carousel like airbnb to show multiple images
