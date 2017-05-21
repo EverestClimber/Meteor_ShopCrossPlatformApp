@@ -11,6 +11,8 @@ import Carousel from 'react-native-snap-carousel';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
 
+
+
 // CONSTANTS & DESTRUCTURING
 // ========================================
 const { boldFont, semiboldFont,textHeader, basicHeaderStyle, textBody, emptyStateIcon } = stylesConfig;
@@ -27,6 +29,8 @@ const itemHorizontalMargin = wp(2);
 
 const sliderWidth = viewportWidth;
 const itemWidth = slideWidth + itemHorizontalMargin * 2;
+
+
 
 // INTERNAL COMPONENTS
 // ========================================
@@ -95,7 +99,8 @@ class ShopListHorizontal extends React.Component {
 	}
 }
 
-
+// REDUX
+// ========================================
 let mapStateTopProps = ({ mapScreen }) => {
 	return {
 		currentShopId: mapScreen.currentShopId

@@ -13,6 +13,7 @@ const shopFragment = gql`
         category
         image
         owner {
+          _id
           profile {
             firstName
             lastName
@@ -66,6 +67,9 @@ export const FETCH_SHOPS = gql`
   ${shopFragment}
 `;
 
+
+// FETCH_EXISTING_SHOPS is the query used to check for duplicates 
+// while a user is filling out the AddShop form
 export const FETCH_EXISTING_SHOPS = gql`
   query ShopExists(
     $offset: Int, 
@@ -91,7 +95,8 @@ export const FETCH_EXISTING_SHOPS = gql`
 `;
 
 
-
+// SEARCH_SHOPS_BY_OWNER is the query used to let users search the shops THEY CREATED
+// currently used on the My Listings screen
 export const SEARCH_SHOPS_BY_OWNER = gql`
   query searchShopsByOwner($string: String) {
     shopsByOwner (string: $string) {
@@ -101,6 +106,8 @@ export const SEARCH_SHOPS_BY_OWNER = gql`
   ${shopFragment}
 `;
 
+// FETCH_SHOPS_BY_OWNER is the query to show a user the shops THEY CREATED
+// currently used on the My Listings screen
 export const FETCH_SHOPS_BY_OWNER = gql`
   {
     shopsByOwner {

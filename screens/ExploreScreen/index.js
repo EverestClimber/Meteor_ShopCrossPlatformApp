@@ -90,6 +90,7 @@ class ExploreScreen extends React.Component {
 				  	onChangeText={this.onSearchChange}
 				  	placeholder='Search shops...'
 				  	lightTheme
+				  	defaultValue={this.props.searchText || ''}
 				  	inputStyle={{ backgroundColor: '#fff' }}
 					containerStyle={{ width: SCREEN_WIDTH }}
 				/>

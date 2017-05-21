@@ -1,8 +1,16 @@
 import React from 'react';
 import { View, Button, Text, ScrollView, Dimensions, Image } from 'react-native';
 
+
+
+// CONSTANTS & DESTRUCTURING
+// ====================================
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
+
+
+// EXPORTED COMPONENT
+// ====================================
 class Slides extends React.Component {
 	renderLastSlide(index){
 
@@ -40,6 +48,9 @@ class Slides extends React.Component {
 	}
 }
 
+
+// STYLES
+// ====================================
 const styles = {
 	slideStyle: {
 		flex: 1,
@@ -61,4 +72,7 @@ const styles = {
 	}
 }
 
+
+// EXPORT
+// ====================================
 export default Slides;

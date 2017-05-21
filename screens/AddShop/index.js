@@ -1,8 +1,8 @@
 //TOP LEVEL IMPORTS
 import React from 'react';
-import { Permissions, Location } from 'expo';
-import { View, ScrollView, KeyboardAvoidingView, Text, Platform, StyleSheet, Alert } from 'react-native';
-import { Icon, Button } from 'react-native-elements';
+import { Permissions } from 'expo';
+import { View, ScrollView, Platform, StyleSheet, KeyboardAvoidingView } from 'react-native';
+import { Icon } from 'react-native-elements';
 // MODULES
 import { stylesConfig, colorConfig } from '../../modules/config';
 // COMPONENTS
@@ -12,7 +12,7 @@ import AddShopForm from '../../components/AddShopForm';
 
 // CONSTANTS & DESTRUCTURING
 // ========================================
-const { boldFont, semiboldFont, regularFont, titleStyle, basicHeaderStyle } = stylesConfig;
+const { titleStyle, basicHeaderStyle } = stylesConfig;
 
 
 // NAVIGATION OPTIONS
@@ -38,14 +38,7 @@ class AddShop extends React.Component {
 
 	async componentDidMount() {
 
-		const cameraResponse = await Permissions.askAsync(Permissions.CAMERA);
-		/*const locationResponse = await Permissions.askAsync(Permissions.LOCATION);
-
-		if (locationResponse.status === 'granted') {
-			this.setState({locationPermissions: true})
-			let location = await Location.getCurrentPositionAsync({enableHighAccuracy: true});
-			this.setState({location})
-		} else { throw new Error('Location permission not granted'); }*/
+		await Permissions.askAsync(Permissions.CAMERA);
 
 	}
 	render(){
@@ -76,25 +69,6 @@ const styles = StyleSheet.create({
 		backgroundColor: colorConfig.screenBackground,
 		padding: 15,
 	},
-  linkText: {
-  	color: colorConfig.business,
-	fontSize: 15,
-	fontFamily: boldFont,
-  },
-	headerStyle: {
-		marginBottom: 6, 
-		color: '#000',
-		fontSize: 20,
-		fontFamily: semiboldFont
-	},
-	subHeaderStyle: {
-		fontFamily: regularFont,
-		textAlign: 'center', 
-		color: '#888'
-	},
-	contactButton: {
-		backgroundColor: '#fff',
-	}
 });
 
 // EXPORT

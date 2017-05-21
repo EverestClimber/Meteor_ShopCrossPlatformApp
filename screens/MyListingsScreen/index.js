@@ -109,7 +109,7 @@ class MyListingsScreen extends React.Component {
 			<View style={{ paddingBottom: 2, flex: 1, backgroundColor: colorConfig.screenBackground }}>
 				<SearchBar
 				  	onChangeText={this.onSearchChange}
-				  	placeholder='Search shops...'
+				  	placeholder='Search my listings...'
 				  	lightTheme
 				  	inputStyle={{ backgroundColor: '#fff' }}
 					containerStyle={{ width: SCREEN_WIDTH }}
@@ -124,7 +124,6 @@ class MyListingsScreen extends React.Component {
 				  onRefresh={this.onRefresh}
 				  onEndReached={this.onEndReached}
 				  renderItem={({item}) => {
-				  	//return <View><Text>{item.title}</Text></View>
 				  	return <ShopCard item={item} navigation={this.props.navigation} />
 				  }}
 				/>

@@ -6,7 +6,8 @@ import { connect } from 'react-redux';
 import * as actions from '../actions';
 import { reduxForm, Field } from 'redux-form'
 //COMPONENTS
-import LoadingScreen from './LoadingScreen'
+import LoadingScreen from './LoadingScreen';
+import AuthLink from './AuthLink';
 //MODULES
 import { colorConfig, stylesConfig } from '../modules/config';
 import apollo from '../ApolloClient.js';
@@ -49,7 +50,7 @@ class ForgotPasswordForm extends React.Component {
 
   }
   render(){
-    const { handleSubmit, navigation } = this.props;
+    const { handleSubmit, navigation, toggleForm } = this.props;
 
     if(this.state.loading) {
        return (
@@ -84,12 +85,10 @@ class ForgotPasswordForm extends React.Component {
               return <Text key={item} style={{color: '#e74c3c'}}>{item}</Text>
             })}
           </View>
-          <TouchableOpacity onPress={() => this.props.toggleForm('login')}>
-          <Text style={{marginTop: 25, color: '#fff', textAlign: 'center'}}>
-            Or Login
-          </Text>
-        </TouchableOpacity>
-          
+          <AuthLink  
+            label='Or login' 
+            toggleForm={() => toggleForm('login')} 
+          />
         </View>
       </View>
     )

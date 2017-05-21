@@ -11,6 +11,7 @@ import { colorConfig, stylesConfig } from '../../modules/config';
 // COMPONENTS
 import LoginForm from '../../components/LoginForm'
 import LoadingScreen from '../../components/LoadingScreen'
+import SignupForm from '../../components/SignupForm'
 import ForgotPasswordForm from '../../components/ForgotPasswordForm'
 
 
@@ -95,6 +96,7 @@ class LoginScreen extends React.Component {
 			<View style={{ flex: 1}}>
 				<Image style={{ width: null, height: null, flex: 1, }} source={require('../../assets/background.jpg')} />
 				<BlurView tint="default" intensity={95} style={StyleSheet.absoluteFill}>
+					{this.state.formToShow === 'signup' && <SignupForm {...this.props} toggleForm={(formToShow)=>this.setState({ formToShow })} />}
 		          	{this.state.formToShow === 'login' && <LoginForm {...this.props} toggleForm={(formToShow)=>this.setState({ formToShow })} />}
 		          	{this.state.formToShow === 'forgot'  && <ForgotPasswordForm {...this.props} toggleForm={(formToShow)=>this.setState({ formToShow })} />}
 		        </BlurView>
