@@ -52,19 +52,21 @@ export const CREATE_SHOP = gql`
   mutation CreateShop(
     $title: String!
     $description: String!
-    $category: String!
+    $categories: [String]
     $image: String
     $longitude:String
     $latitude: String
     $phone: String
     $website: String
     $email: String
+    $mailId: String
   ){
     createShop(
       title: $title
       description: $description
-      category: $category
+      categories: $categories
       image: $image
+      mailId: $mailId
       longitude: $longitude
       latitude: $latitude
       phone: $phone

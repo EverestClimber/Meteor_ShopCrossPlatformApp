@@ -1,6 +1,6 @@
 import React from 'react';
 import { ImagePicker, Permissions } from 'expo';
-import { List, Radio, InputItem, SegmentedControl, TextareaItem, WhiteSpace } from 'antd-mobile';
+import { List, Radio, InputItem, SegmentedControl, TextareaItem, Checkbox } from 'antd-mobile';
 import { View, Text, TextInput, ScrollView, Alert, TouchableOpacity, StyleSheet, Platform, Image, ActivityIndicator } from 'react-native';
 //REDUX
 import _ from 'lodash';
@@ -12,7 +12,7 @@ import { colorConfig,  } from '../modules/config';
 import { handleFileUpload, CATEGORY_OPTIONS,  } from '../modules/helpers';
 // APOLLO
 import { graphql, withApollo } from 'react-apollo';
-import { FETCH_EXISTING_SHOPS, SEARCH_SHOPS_BY_OWNER } from '../apollo/queries'
+import { FETCH_EXISTING_SHOPS, SEARCH_SHOPS_BY_OWNER, FETCH_MALLS } from '../apollo/queries'
 import { CREATE_SHOP } from '../apollo/mutations'
 import client from '../ApolloClient';
 // REDUX
@@ -20,7 +20,7 @@ import { connect } from 'react-redux'
 import * as actions from '../actions';
 
 const RadioItem = Radio.RadioItem;
-
+const CheckboxItem = Checkbox.CheckboxItem;
 
 
 
@@ -73,11 +73,13 @@ class AddShopForm extends React.Component {
       imageLoading: false,
       watchgroupIds: [],
       messageValue: null,
-      image: null, 
+      image: null,
+      categories: [],
       value: 0,
       priorityLevel: null,
       reportType: null,
-      errors: []
+      errors: [],
+      mallId: null
   }
     this.onImageClick = this.onImageClick.bind(this);
     this.onImageCameraClick = this.onImageCameraClick.bind(this);
@@ -85,30 +87,24 @@ class AddShopForm extends React.Component {
   }
   
   onSubmit = () => {
-    const { title, description, category, image, phone, email, website } = this.state;
+    const { title, description, categories, image, phone, email, mallId, website } = this.state;
     const { mutate, navigation, location, data } = this.props;
     let errors = [];
     this.setState({loading: true})
 
     let variables = {
-      title, description, category, image, phone, email, website, longitude: location.coords.longitude, latitude: location.coords.latitude,
+      title, description, categories, image, phone, email, mallId, website, longitude: location.coords.longitude, latitude: location.coords.latitude,
     };
 
-    if (!title) {
-      errors.push('title is required')
+    if (!title || !description || !categories) {
+      if (!title) { errors.push('title is required') }
+      if (!description) { errors.push('description is required') }
+      if (!categories) { errors.push('categories is required') }
       return this.setState({loading: false, errors: errors});
     }
-    if (!description) {
-      errors.push('description is required')
-      return this.setState({loading: false, errors: errors});
-    }
-    if (!category) {
-      errors.push('category is required')
-      return this.setState({loading: false, errors: errors});
-    }
+
     //, refetchQueries: [ 'shops', 'shopsByOwner']
-    mutate({ variables}).then(() => {
-        console.log(client)
+    mutate({ variables }).then(() => {
         client.resetStore();
         navigation.goBack();
         return this.setState({ loading: false });
@@ -142,6 +138,19 @@ class AddShopForm extends React.Component {
     }
     
     _this.setState({ imageLoading: false }); 
+
+  }
+  onCheckboxToggle = (value) => {
+
+    let newCategories;
+
+    if (this.state.categories.includes(value)) {
+      newCategories = this.state.categories.filter(element => element !== value)
+    }  else {
+      newCategories = this.state.categories.concat(value)
+    }
+
+    this.setState({ categories: newCategories })
 
   }
   async onImageCameraClick(){
@@ -200,9 +209,27 @@ class AddShopForm extends React.Component {
       />
     );
   }
+  renderMalls = () => {
+    const { loading, malls } = this.props.malls;
+    
+    if (!loading && malls && malls.length > 0) {
+
+      return malls.map( item => {
+        return (
+          <RadioItem 
+            key={item._id} 
+            checked={this.state.mallId === item._id} 
+            onChange={() => this.setState({mallId: item._id})}
+          >
+            {item.title}
+          </RadioItem>
+        );
+      })
+    }
+
+  }
   render(){
 
-    
     return (
       <View style={{width: 300}} behavior="padding">
         <ImageArea 
@@ -239,14 +266,19 @@ class AddShopForm extends React.Component {
         <List renderHeader={() => 'Category'}>
           <ScrollView style={{height: 200}}>
             {CATEGORY_OPTIONS.map(i => (
-              <RadioItem 
+              <CheckboxItem 
                 key={i.value} 
-                checked={this.state.category === i.value} 
-                onChange={() => this.setState({category: i.value})}
+                checked={this.state.categories.includes(i.value)} 
+                onChange={() => this.onCheckboxToggle(i.value)}
               >
                 {i.label}
-              </RadioItem>
+              </CheckboxItem>
             ))}
+          </ScrollView>
+        </List>
+        <List renderHeader={() => 'Mall'}>
+          <ScrollView style={{height: 200}}>
+            {this.renderMalls()}
           </ScrollView>
         </List>
         <List renderHeader={() => 'Contact Details'}>
@@ -362,7 +394,10 @@ const ComponentWithData = graphql(FETCH_EXISTING_SHOPS, {
     };
     return { variables } 
   }
-})( graphql(CREATE_SHOP)(AddShopForm) );
+})(graphql(CREATE_SHOP)(
+    graphql(FETCH_MALLS, { name: 'malls' })(AddShopForm)
+  )
+);
 
 let mapStateTopProps = ({ addShopForm }) => {
   return {

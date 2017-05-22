@@ -71,9 +71,14 @@ const CardBottom = ({item}) => {
 	return (
 		<View style={{flexDirection:'row', flexWrap:'wrap', alignItems: 'flex-end', justifyContent: 'flex-start'}}>
 			<Icon name='label-outline' iconStyle={{ fontSize: 13, marginRight: 5, color: '#bdc3c7' }} />
-			<Text style={{ fontSize: 13, color: '#bdc3c7' }}>
-				{item.category && getCategoryTag(item.category) || ''}
-			</Text>
+			{item.categories && item.categories.map(category => {
+				return  (
+					<Text key={category} style={{ fontSize: 13, color: '#bdc3c7' }}>
+						{getCategoryTag(category)  || ''}
+					</Text>
+				)
+			})}
+			
 		</View>
 	);
 }
