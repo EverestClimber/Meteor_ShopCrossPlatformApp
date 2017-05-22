@@ -13,8 +13,9 @@ import { SAVE_USER_EXPO_PUSH_ID } from './apollo/mutations'
 import AccountScreen from './screens/AccountScreen';
 import AddShop from './screens/AddShop';
 import FiltersScreen from './screens/FiltersScreen';
-import HelpScreen from './screens/HelpScreen';
 import ExploreScreen from './screens/ExploreScreen';
+import EditShop from './screens/EditShop';
+import HelpScreen from './screens/HelpScreen';
 import LoginScreen from './screens/LoginScreen';
 import PrivacyPolicyScreen from './screens/PrivacyPolicyScreen';
 import MapScreen from './screens/MapScreen';
@@ -32,9 +33,10 @@ import registerForNotifications from './services/push_notifications';
 // ListingsNavigator
 // =================================
 const ListingsNavigator = StackNavigator({
-  listings: { screen: MyListingsScreen },
-  addShop: {  screen: AddShop },
+  listings:   {  screen: MyListingsScreen },
+  addShop:    {  screen: AddShop },
   shopDetail: {  screen: ShopDetail },
+  editShop:   {  screen: EditShop },
 },{
   tabBarLabel: 'Location',
 });

@@ -7,14 +7,15 @@ import _ from 'lodash';
 //COMPONENTS
 import LoadingScreen from './LoadingScreen';
 import ImageArea from './ImageArea';
+
 import { Button, Icon } from 'react-native-elements'
 //MODULES
 import { colorConfig,  } from '../modules/config';
 import { handleFileUpload, CATEGORY_OPTIONS,  } from '../modules/helpers';
 // APOLLO
-import { graphql, withApollo } from 'react-apollo';
+import { graphql } from 'react-apollo';
 import { FETCH_EXISTING_SHOPS, SEARCH_SHOPS_BY_OWNER, FETCH_MALLS } from '../apollo/queries'
-import { CREATE_SHOP } from '../apollo/mutations'
+import { CREATE_SHOP, SAVE_SHOP } from '../apollo/mutations'
 import client from '../ApolloClient';
 // REDUX
 import { connect } from 'react-redux'
@@ -27,17 +28,22 @@ const CheckboxItem = Checkbox.CheckboxItem;
 
 
 
-class AddShopForm extends React.Component {
+
+
+class EditShopForm extends React.Component {
   constructor(props){
     super(props)
-    this.state = { 
+    const { title, description, image, categories, mallId } = this.props.shop;
+    this.state = {
+      title: title || null,
+      description: description || null,
       loading: false,
       imageLoading: false,
-      image: null,
-      categories: [],
+      image: image || null,
+      categories: categories || [],
       value: 0,
       errors: [],
-      mallId: null
+      mallId: mallId || null,
   }
     this.onImageClick = this.onImageClick.bind(this);
     this.onImageCameraClick = this.onImageCameraClick.bind(this);
@@ -205,6 +211,7 @@ class AddShopForm extends React.Component {
         <List renderHeader={() => 'Title'}>
           <InputItem
               clear
+              defaultValue={this.state.title}
               placeholder="Type your message here..."
               onChange={(val)=>{
                 this.props.onTitleChange(val)
@@ -216,6 +223,7 @@ class AddShopForm extends React.Component {
         <List renderHeader={() => 'Description'}>
           <TextareaItem
               clear
+              defaultValue={this.state.description}
               placeholder="Type your message here..."
               rows={4}
               onChange={(val)=>this.setState({description: val})}
@@ -352,8 +360,8 @@ const ComponentWithData = graphql(FETCH_EXISTING_SHOPS, {
     };
     return { variables } 
   }
-})(graphql(CREATE_SHOP)(
-    graphql(FETCH_MALLS, { name: 'malls' })(AddShopForm)
+})(graphql(SAVE_SHOP)(
+    graphql(FETCH_MALLS, { name: 'malls' })(EditShopForm)
   )
 );
 

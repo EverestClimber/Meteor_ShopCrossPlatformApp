@@ -12,6 +12,7 @@ const shopFragment = gql`
         description
         categories
         image
+        mallId
         owner {
           _id
           profile {
