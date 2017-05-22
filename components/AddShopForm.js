@@ -188,19 +188,19 @@ class AddShopForm extends React.Component {
     );
     
   }
-  render(){
-
-
+  renderButton(){
     if (this.state.loading) {
-       return <LoadingScreen loadingMessage={'Adding shop...'} />;
+       return <ActivityIndicator />; // show spinner if form is currently submitting
     }
-    
-    /*if (this.props.data.loading) {
-       return <LoadingScreen loadingMessage={'Loading Form...'} />;
-    }*/
-    if (!this.props.data.loading && this.props.data.shopExists) {
-      console.log(this.props.data.shopExists)
-    }
+    return (
+      <Button 
+        title='ADD SHOP'
+        backgroundColor={colorConfig.business} 
+        onPress={this.onSubmit}
+      />
+    );
+  }
+  render(){
 
     
     return (
@@ -249,25 +249,39 @@ class AddShopForm extends React.Component {
             ))}
           </ScrollView>
         </List>
-        <List renderHeader={() => 'Phone'}>
+        <List renderHeader={() => 'Contact Details'}>
           <InputItem
               clear
               placeholder="Shop phone number..."
+              type='phone'
               onChange={(val)=>this.setState({phone: val})}
           />
-        </List>
-        <List renderHeader={() => 'Website'}>
           <InputItem
               clear
-              placeholder="website..."
+              placeholder="Shop website..."
               onChange={(val)=>this.setState({website: val})}
           />
-        </List>
-        <List renderHeader={() => 'Email'}>
           <InputItem
               clear
               placeholder="Shop email..."
               onChange={(val)=>this.setState({email: val})}
+          />
+        </List>
+        <List renderHeader={() => 'Social Meda'}>
+          <InputItem
+              clear
+              placeholder="Facebook..."
+              onChange={(val)=>this.setState({facebook: val})}
+          />
+          <InputItem
+              clear
+              placeholder="Instagram..."
+              onChange={(val)=>this.setState({instagram: val})}
+          />
+          <InputItem
+              clear
+              placeholder="Twitter..."
+              onChange={(val)=>this.setState({twitter: val})}
           />
         </List>
         <View style={{marginTop: 8, marginBottom: 8, alignItems: 'center',  justifyContent: 'center',}}>
@@ -275,13 +289,12 @@ class AddShopForm extends React.Component {
             return <Text key={item} style={{color: '#e74c3c'}}>{item}</Text>
           })}
         </View>
-        <View style={{marginTop: 20}}>
-          <Button 
-            title='ADD SHOP'
-            backgroundColor={colorConfig.business} 
-            onPress={this.onSubmit}
-          />
+
+
+          <View style={{height: 45, marginTop: 20}}>
+          {this.renderButton()}
         </View>
+
       </View>
     )
   }
@@ -344,7 +357,7 @@ let options = {
 
 const ComponentWithData = graphql(FETCH_EXISTING_SHOPS, {
   options: (props) => {
-    let variables = { 
+    let variables = {
       string: props.title && props.title.length > 4 ? props.title : null, //if user has not typed in at least 4 characters yet, then do not search for duplicates
     };
     return { variables } 

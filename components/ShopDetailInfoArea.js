@@ -5,17 +5,7 @@ import { Icon, Button, Card, Badge, Divider } from 'react-native-elements';
 //MODULES
 import { stylesConfig, colorConfig, DEFAULT_SHOP_IMAGE, SCREEN_WIDTH } from '../modules/config';
 import { getCategoryTag } from '../modules/helpers';
-// APOLLO
 
-// COMPONENTS
-
-// TODO
-// add carousel like airbnb to show multiple images
-// potential package options:
-// https://github.com/appintheair/react-native-looped-carousel
-// https://github.com/archriss/react-native-snap-carousel
-// https://github.com/machadogj/react-native-carousel-control
-// https://github.com/jacklam718/react-native-carousel-component
 
 
 // CONSTANTS & DESTRUCTURING

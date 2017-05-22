@@ -6,7 +6,8 @@ import { connect } from 'react-redux';
 import * as actions from '../actions';
 import { reduxForm, Field } from 'redux-form'
 //COMPONENTS
-import LoadingScreen from './LoadingScreen'
+import LoadingScreen from './LoadingScreen';
+import AuthLink from './AuthLink'
 //MODULES
 import { colorConfig, stylesConfig } from '../modules/config';
 import apollo from '../ApolloClient.js';
@@ -14,15 +15,6 @@ import { loginWithPassword, userId } from 'meteor-apollo-accounts'
 
 const { basicHeaderStyle, titleStyle } = stylesConfig;
 
-const renderTextInput = ({ input, ...inputProps }) => {
-  return (
-    <TextInput
-      style={styles.input} 
-      onChangeText={input.onChange}
-      {...inputProps}
-    />
-  );
-}
 
 const ErrorsArea = (errors) => {
   return (
@@ -34,62 +26,62 @@ const ErrorsArea = (errors) => {
 
 
 class LoginForm extends React.Component {
+  
   state = { loading: false, errors: [] }
- 
-  onSubmit = async () => {
-    this.setState({loading: true, errors: []});
 
-    if (!this.state.email) {
-      let errors = this.state.errors;
-      errors.push('please enter an email')
-      return this.setState({errors: errors, loading: false});
-    }
-
-    if (!this.state.password) {
-      let errors = this.state.errors;
-      errors.push('please enter a password')
-      return this.setState({errors: errors, loading: false});
-    }
-      
-     try {
-        const id = await loginWithPassword({ 
-          email: this.state.email.trim().toLowerCase(), 
-          password: this.state.password.trim().toLowerCase() 
-        }, apollo)
+ onSuccessfulLogin = () => {
         apollo.resetStore();
         this.setState({loading: false});
         return this.props.navigation.navigate('main');
+  }
+  onSubmit = async () => {
+    const { email, password, errors } = this.state;
+    this.setState({loading: true, errors: []});
+
+    if (!email || !password) {
+      if (!password)  { errors.push('please enter an email') }
+      if (!email)     { errors.push('please enter an password') }
+      return this.setState({ errors: errors, loading: false });
+    }
+
+    email.trim().toLowerCase(); // trim and lowercase the email email
+    password.trim(); // trim password
+
+     try {
+        const id = await loginWithPassword({ email, password }, apollo)
+        return this.onSuccessfulLogin();
     } catch (err) {
-        //
+
         if (Platform.OS === 'android') {
-          if(await userId()){
-            apollo.resetStore();
-            this.setState({loading: false});
-            return this.props.navigation.navigate('main');
-          }
-          
+          // and if they are on andoird, then check to see if their userId exists (await userId()),
+          // then we can assume the user was signed up correctly, theyre just having the aforementioend android problem
+          if (await userId()){ return this.onSuccessfulLogin(); }
         }
+
         let errors = err && err.graphQLErrors && err.graphQLErrors.length > 0 && err.graphQLErrors.map( err => err.message );
-        this.setState({loading: false, errors: errors});
-        return console.log('error ran')
+        return this.setState({loading: false, errors: errors});
     }
 
 
   }
-  render(){
-    const { handleSubmit, navigation } = this.props;
-
+  renderButton() {
     if(this.state.loading) {
-       return (
-          <LoadingScreen loadingMessage={'Logging in...'} />
-      );
+       return <ActivityIndicator style={{marginTop: 10}}  />;
     }
+    return (
+      <Button 
+        title='LOGIN'
+        backgroundColor={colorConfig.business} 
+        onPress={this.onSubmit} 
+        style={{marginTop: 10}} 
+      />
+    );
+  }
+  render(){
+    const { handleSubmit, navigation, toggleForm } = this.props;
 
     return (
       <View style={styles.container}>
-        {/*<Image style={{ width: 215, height: 45, marginBottom: 50}} 
-            source={require('../assets/logo.png')} 
-          />*/}
         <View style={{width: 250}}>
         <TextInput
           style={styles.input} 
@@ -102,12 +94,10 @@ class LoginForm extends React.Component {
           secureTextEntry
           placeholder={'Password'}
         />
-        <Button 
-          title='LOGIN'
-          backgroundColor={colorConfig.business} 
-          onPress={this.onSubmit} 
-          style={{marginTop: 10}} 
-        />
+
+        <View style={{height: 45}}>
+          {this.renderButton()}
+        </View>
 
         <View style={{marginTop: 8, marginBottom: 8, alignItems: 'center',  justifyContent: 'center',}}>
           {this.state.errors.length > 0 && this.state.errors.map(item => {
@@ -115,16 +105,14 @@ class LoginForm extends React.Component {
           })}
         </View>
 
-        <TouchableOpacity onPress={() => navigation.navigate('signup')}>
-          <Text style={{marginTop: 25, color: '#fff', textAlign: 'center'}}>
-            Or signup
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => this.props.toggleForm('forgot')}>
-          <Text style={{marginTop: 25, color: '#fff', textAlign: 'center'}}>
-            Forgot your password?
-          </Text>
-        </TouchableOpacity>
+        <AuthLink  
+          label='Or signup' 
+          toggleForm={() => toggleForm('signup')} 
+        />
+        <AuthLink 
+          label='Forgot your password?' 
+          toggleForm={() => toggleForm('forgot')} 
+        />
 
       </View>
       </View>

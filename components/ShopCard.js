@@ -44,12 +44,9 @@ const styles = StyleSheet.create({
 // ==========================================
 const CardDescription = ({ item, navigation }) => {
 	return (
-		<Flex align='start' style={{marginBottom: 20}}>
-			
-			<Flex.Item style={{flex: 3}}>
-					
+		<View style={{marginBottom: 20}}>
+			<View style={{flex: 3}}>
 					<Text style={styles.cardHeader}>{item.title}</Text>
-					{/*<Text style={styles.cardSubHeader}>{getPriorityLevel(item.priorityLevel)}</Text>*/}
 					<View style={{marginTop: 20}}>
 						<Text
 							ellipsizeMode='tail'
@@ -59,15 +56,14 @@ const CardDescription = ({ item, navigation }) => {
 							{item.description}
 						</Text>
 					</View>
-			</Flex.Item>
-			
-			<Flex.Item>
+			</View>
+			<View>
 				<Text style={{color: '#888', fontSize: 10}}>
 					{item.owner.profile && item.owner.profile.firstName || ''} 
 					{item.owner.profile && item.owner.profile.lastName || ''}
 				</Text>
-			</Flex.Item>
-		</Flex>
+			</View>
+		</View>
 	);
 }
 

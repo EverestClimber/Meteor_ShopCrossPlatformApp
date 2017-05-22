@@ -4,6 +4,7 @@ import { View, Text, Platform, StyleSheet, Animated, Image, ScrollView, Touchabl
 import { Button, Icon, SearchBar, Card } from 'react-native-elements';
 import { Header } from 'react-navigation';
 import { Permissions, Location, MapView, DangerZone } from 'expo';
+import _ from 'lodash'
 // MODULES
 import { stylesConfig, colorConfig, SCREEN_WIDTH, DEFAULT_SHOP_IMAGE } from '../../modules/config';
 // COMPONENTS
@@ -92,24 +93,47 @@ class MapScreen extends React.Component {
 			showRedoSearch: false
 		}
 	}
+	animateToCoordinate = (currentShopId) => {
+		const { shops } = this.props.data;
+		let selectedShop = _.find(shops, {'_id': currentShopId });
+		if (!selectedShop) { return; }
+		if (!selectedShop.location) { return; }
+		// check if lat/lng exist, 
+		// then check this.map ref to make sure the component exists
+		if (selectedShop.location.lng && selectedShop.location.lat && this.map) { 
+			let selectedRegion = {
+	    		longitude: parseFloat(selectedShop.location.lng).toFixed(4),
+	  			latitude: parseFloat(selectedShop.location.lat).toFixed(4),
+		    }
+		    console.log(selectedRegion)
+			this.map.animateToCoordinate(selectedRegion, 230)
+		}
+	}
+	componentWillUpdate = (nextProps, nextState) => {
+		const { currentShopId } = this.props;
+		if (nextProps.currentShopId) {
+			this.animateToCoordinate(nextProps.currentShopId || currentShopId)
+		}
+		
+	}
 	async componentDidMount() {
-
-		if (!this.props.data.loading && this.props.data.shops.length > 0) {
-			let firstLocation = this.props.data.shops[0];
-		    let region = {
-	    		longitude: parseFloat(firstLocation.location.lng),
-	  			latitude: parseFloat(firstLocation.location.lat),
+		const { data, currentShopId } = this.props;
+		if (!data.loading && data.shops.length > 0) {
+			this.animateToCoordinate(currentShopId);
+/*		    let region = {
+	    		longitude: parseFloat(data.shops[0].location.lng),
+	  			latitude: parseFloat(data.shops[0].location.lat),
 		      	latitudeDelta: 0.09,
 	  			longitudeDelta: 0.09,
 		    }
-		    
-	    	return this.setState({region, selectedRegion: firstLocation._id, loading: false});
+		    */
+	    	return this.setState({loading: false});
 		}
 	  	
 	}
 	render(){
 
-		const { navigation, data } = this.props;
+		const { navigation, data, currentShopId } = this.props;
 
 		if (data.loading) {
 			return <LoadingScreen loadingMessage='Loading...' />;
@@ -118,24 +142,28 @@ class MapScreen extends React.Component {
 		if (!data.shops || !data.shops.length === 0) {
 			return <View><Text>NO SHOPS</Text></View>;
 		}
-		
-			return (
+
+			return (	
 				<View style={styles.container}>
 					
-					<MapView
-						region={this.state.region}
+					<MapView		
 						style={{ flex: 5 }}
 						showsUserLocation
 						showsMyLocationButton
 						showsPointsOfInterest
+						loadingEnabled
 						ref={ref => { this.map = ref; }}
 					>
 						{data.shops && data.shops.length > 0 && data.shops.map( item => {
+							if (!item.location || !item.location.lng || !item.location.lat) {
+								return null
+							}
 							return (
 								<MapView.Marker
 									key={item._id}
 									title={item.title}
 									description={item.description}
+									pinColor={item._id === currentShopId ? colorConfig.business: 'red'}
 									coordinate={{ 
 										latitude: parseFloat(item.location.lat), 
 										longitude: parseFloat(item.location.lng) 
@@ -211,7 +239,6 @@ const styles = StyleSheet.create({
 // query when those variables change (e.g. when somebody opens the FilterScreen and makes a change
 // that change will propogate to the shops show on the map screen )
 let options = (props) => {
-	console.log(props.nearMeLocation)
 	let variables = { 
   		string: props.searchText,
   		categories: props.selectedCategories,
@@ -227,12 +254,13 @@ const ComponentWithData = graphql(FETCH_SHOPS, { options })(MapScreen);
 
 
 // map redux state to props, which are then used in the above ComponentWithData in the graphql query
-let mapStateTopProps = ({ filter }) => {
+let mapStateTopProps = ({ filter, mapScreen }) => {
 	return {
 		searchText: filter.searchText,
 		selectedCategories: filter.selectedCategories,
 		nearMe: filter.nearMe,
-		nearMeLocation: filter.nearMeLocation
+		nearMeLocation: filter.nearMeLocation,
+		currentShopId: mapScreen.currentShopId
 	}
 }
 

@@ -39,6 +39,15 @@ export const SAVE_USERPROFILE = gql`
 `;
 
 
+export const DELETE_SHOP = gql`
+  mutation DeleteShop ($shopId:ID!) {
+    deleteShop(shopId:$shopId) {
+      _id
+    }
+  }
+`
+
+
 export const CREATE_SHOP = gql`
   mutation CreateShop(
     $title: String!

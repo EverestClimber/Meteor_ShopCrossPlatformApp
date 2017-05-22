@@ -8,6 +8,7 @@ import { getCategoryTag } from '../../modules/helpers';
 // APOLLO
 import { graphql } from 'react-apollo';
 import { FETCH_SHOP } from '../../apollo/queries';
+import { DELETE_SHOP } from '../../apollo/mutations';
 // COMPONENTS
 import LoadingScreen from '../../components/LoadingScreen';
 import ShopCard from '../../components/ShopCard';
@@ -52,6 +53,9 @@ class CarouselExample extends React.Component {
     };
   }
   render() {
+
+  	const { data, navigation } = this.props;
+
     return (
       <View style={{ flex: 1 }}>
         <Carousel
@@ -59,6 +63,7 @@ class CarouselExample extends React.Component {
           style={this.state.size}
           autoplay
         >
+        	{/*<Image source={{uri: data.shopById.image || DEFAULT_SHOP_IMAGE}} style={this.state.size} />*/}
         	<Image source={{uri: 'https://infotion.com/wp-content/uploads/2016/12/Denpasar-Bali.jpg'}} style={this.state.size} />
         	<Image source={{uri: 'https://static.asiawebdirect.com/m/bangkok/portals/bali-indonesia-com/homepage/magazine/the-seminyak-village/allParagraphs/BucketComponent/ListingContainer/03/BucketList/0/image1/the-seminyak-village-bali.jpg'}} style={this.state.size} />
         	<Image source={{uri: 'https://static.asiawebdirect.com/m/bangkok/portals/bali-indonesia-com/homepage/kuta-beach/mal-bali-galeria/allParagraphs/BucketComponent/ListingContainer/02/image/mal-bali-galeria-tenant.jpg'}} style={this.state.size} />
@@ -83,7 +88,29 @@ class ShopDetail extends React.Component {
 	  	tabBarVisible: false,
 	  	headerLeft: <BackButton goBack={navigation.goBack} label='' />,
 	});
-
+	onDeleteShop = () => {
+		const { data, navigation, mutate } = this.props;
+		let variables = { shopId: data.shopById._id }
+		mutate({ variables }).then(res => navigation.goBack())
+	}
+	renderIfOwner(){
+		const { data, navigation, screenProps } = this.props;
+		// if the user is the owner of this document, show them the options to the delete the record
+		if (!data.loading && data.shopById.owner._id === screenProps.data.user._id) {
+			return (
+				<View style={{padding: 10}}>
+					<Button 
+						onPress={this.onDeleteShop}
+						backgroundColor={'red'} 
+						icon={{name: 'delete', color: '#fff'}}
+						iconRight
+						title='DELETE SHOP'
+					/>
+				</View>
+			);
+		}
+		return null
+	}
 	render(){
 
 		const { data, navigation } = this.props;
@@ -94,11 +121,6 @@ class ShopDetail extends React.Component {
 
 		return (
 			<ScrollView style={styles.container} contentContainerStyle={styles.contentContainerStyle}>
-				{/*<Image source={{uri: data.shopById.image || DEFAULT_SHOP_IMAGE}} style={{width: SCREEN_WIDTH, height: 250}}>
-					<View style={styles.backButtonContainer}>
-				          <Icon size={35} color='#fff' name='chevron-left' onPress={()=>this.props.navigation.goBack()} />
-					</View>
-				</Image>*/}
 				<CarouselExample {...this.props} />
 				<ShopDetailInfoArea 
 					shopById={data.shopById} 
@@ -119,6 +141,7 @@ class ShopDetail extends React.Component {
 			    	navigation={navigation}
 			    	{...this.props}
 			    />
+			    {this.renderIfOwner()}
 			</ScrollView>
 		);
 	}
@@ -160,4 +183,8 @@ export default graphql(FETCH_SHOP, {
   	let variables = { _id: props.navigation.state.params._id };
   	return { variables } 
   }
-})(ShopDetail);
+})(
+	graphql(DELETE_SHOP)(ShopDetail)
+);
+
+

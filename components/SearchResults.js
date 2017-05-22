@@ -15,7 +15,7 @@ import * as actions from '../actions';
 import LoadingScreen from './LoadingScreen';
 import EmptyState from './EmptyState';
 import ShopCard from './ShopCard';
-//
+
 
 
 // CONSTANTS & DESTRUCTURING
@@ -80,18 +80,21 @@ const styles = StyleSheet.create({
 
 
 
-
+// component is wrapped in redux connect()() before exporting this file,
+// so we have access to redux variables in our FETCH_SHOPS
+// so we first wrap SearchResults in graphql and name it ComponentWithData
+// then below this we wrap and export the component with redux connect()()
 const ComponentWithData = graphql(FETCH_SHOPS, {
   options: (props) => {
   	
   	let variables = { 
   		string: props.searchText,
-  		categories: props.selectedCategories,
+  		categories: props.selectedCategories, 
   		nearMe: props.nearMe,
   		latitude: props.nearMeLocation && props.nearMeLocation.coords.latitude,
   		longitude: props.nearMeLocation && props.nearMeLocation.coords.longitude,
   	};
-  	console.log(variables)
+
   	return { variables } 
   }
 })(SearchResults);
