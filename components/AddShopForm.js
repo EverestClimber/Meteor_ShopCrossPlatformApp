@@ -7,6 +7,8 @@ import _ from 'lodash';
 //COMPONENTS
 import LoadingScreen from './LoadingScreen';
 import ImageArea from './ImageArea';
+import PossibleDuplicates from './PossibleDuplicates';
+import AttachmentsArea from './AttachmentsArea';
 import { Button, Icon } from 'react-native-elements'
 //MODULES
 import { colorConfig,  } from '../modules/config';
@@ -14,7 +16,7 @@ import { handleFileUpload, CATEGORY_OPTIONS,  } from '../modules/helpers';
 // APOLLO
 import { graphql, withApollo } from 'react-apollo';
 import { FETCH_EXISTING_SHOPS, SEARCH_SHOPS_BY_OWNER, FETCH_MALLS } from '../apollo/queries'
-import { CREATE_SHOP } from '../apollo/mutations'
+import { CREATE_SHOP, ADD_ATTACHMENTS } from '../apollo/mutations'
 import client from '../ApolloClient';
 // REDUX
 import { connect } from 'react-redux'
@@ -22,7 +24,6 @@ import * as actions from '../actions';
 
 const RadioItem = Radio.RadioItem;
 const CheckboxItem = Checkbox.CheckboxItem;
-
 
 
 
@@ -36,18 +37,74 @@ class AddShopForm extends React.Component {
       categories: [],
       value: 0,
       errors: [],
-      mallId: null
+      mallId: null,
+      attachments: []
     }
   }
-  
+  onRemoveAttachment = (attachment) => {
+    let attachments = this.state.attachments.filter(element => element !== attachment);
+    this.setState({ attachments });
+  }
+  onAttachmentChange = (attachment) => {
+    let attachments = this.state.attachments;
+    attachments.push(attachment);
+    this.setState({ attachments });
+  }
+  onSuccessfulSubmit = (res) => {
+    // if no attachments were added, then just return from this function and complete submission
+    if (!this.state.attachments || this.state.attachments.length === 0) {
+      this.props.data.refetch();
+      this.props.navigation.goBack();
+      return this.setState({ loading: false, errors: [] });
+    }
+
+    // massage array of attachment URLs into an array of graphql custom input type [ImageObject] 
+    // which is defined on server in imports/api/schema.js
+    // store this [ImageObject] array in images
+    let images = this.state.attachments.map( item => {
+      let image = { url: item, name: item };
+      return image
+    });
+    // build variables object to pass to the addAttachments mutation
+    // shopId, userId, and an [ImageObject] array (see above code/notes)
+    let variables = {
+      shopId: res.data.createShop._id,
+      userId: res.data.createShop.owner._id,
+      images: images
+    }
+    // run addAttachments mutation, then refetch queries, then go back to last page
+    this.props.addAttachments({ variables })
+      .then(()=>{
+        //this.props.data.refetch();
+        this.props.navigation.goBack();
+        return this.setState({ loading: false, errors: [] });
+      })
+      .catch(err => {
+        console.log(err)
+        //let newErrors = errors.concat(err && err.graphQLErrors && err.graphQLErrors.length > 0 && err.graphQLErrors.map( err => err.message ));
+        return this.setState({loading: false, errors: []});
+      });
+  }
   onSubmit = () => {
-    const { title, description, categories, image, phone, email, mallId, website } = this.state;
+    const { title, description, categories, image, phone, email, mallId, website, facebook, twitter, instagram } = this.state;
     const { mutate, navigation, location, data } = this.props;
     let errors = [];
     this.setState({loading: true})
 
     let params = {
-      title, description, categories, image, phone, email, mallId, website, longitude: location.coords.longitude, latitude: location.coords.latitude,
+      title, 
+      description, 
+      categories, 
+      image, 
+      phone, 
+      email, 
+      mallId, 
+      website,
+      facebook,
+      twitter,
+      instagram,
+      longitude: location.coords.longitude, 
+      latitude: location.coords.latitude,
     };
 
     if (!title || !description || !categories || !image) {
@@ -59,11 +116,9 @@ class AddShopForm extends React.Component {
     }
 
     //, refetchQueries: [ 'shops', 'shopsByOwner']
-    mutate({ variables: { params } }).then(() => {
-        client.resetStore();
-        navigation.goBack();
-        return this.setState({ loading: false });
-    }).catch(err => {
+    mutate({ variables: { params } })
+    .then(res => this.onSuccessfulSubmit(res))
+    .catch(err => {
       console.log(err)
       //let newErrors = errors.concat(err && err.graphQLErrors && err.graphQLErrors.length > 0 && err.graphQLErrors.map( err => err.message ));
       return this.setState({loading: false, errors});
@@ -82,33 +137,6 @@ class AddShopForm extends React.Component {
 
     this.setState({ categories: newCategories })
 
-  }
-  renderPossibleDuplicates(){
-
-    const { shopExists, loading } = this.props.data;
-
-
-    if (loading) {
-      return null
-      //return <ActivityIndicator />;
-    }
-
-    if (this.props.data.loading || this.props.data.shopExists.length === 0) {
-      return null
-    }
-
-    return (
-      <List renderHeader={() => 'Possible duplicate?'}>
-        {shopExists.map( item => {
-          return (
-            <Text key={item._id} style={{fontSize: 15, color: 'red'}}>
-              {item.title}
-            </Text>
-          )
-        })}
-      </List>
-    );
-    
   }
   renderButton(){
     if (this.state.loading) {
@@ -169,7 +197,9 @@ class AddShopForm extends React.Component {
               }}
           />
         </List>
-        {this.renderPossibleDuplicates()}
+        
+        <PossibleDuplicates title={this.props.title} {...this.props} />
+
         <List renderHeader={() => 'Description'}>
           <TextareaItem
               clear
@@ -231,6 +261,11 @@ class AddShopForm extends React.Component {
               onChange={(val)=>this.setState({twitter: val})}
           />
         </List>
+        <AttachmentsArea 
+          onRemoveAttachment={this.onRemoveAttachment}
+          onAttachmentChange={this.onAttachmentChange}
+          attachments={this.state.attachments}
+        />
         <View style={{marginTop: 8, marginBottom: 8, alignItems: 'center',  justifyContent: 'center',}}>
           {this.state.errors.length > 0 && this.state.errors.map(item => {
             return <Text key={item} style={{color: '#e74c3c'}}>{item}</Text>
@@ -302,15 +337,10 @@ let options = {
 }
 
 
-const ComponentWithData = graphql(FETCH_EXISTING_SHOPS, {
-  options: (props) => {
-    let variables = {
-      string: props.title && props.title.length > 4 ? props.title : null, //if user has not typed in at least 4 characters yet, then do not search for duplicates
-    };
-    return { variables } 
-  }
-})(graphql(CREATE_SHOP)(
-    graphql(FETCH_MALLS, { name: 'malls' })(AddShopForm)
+
+const ComponentWithData = graphql(CREATE_SHOP)(
+  graphql(FETCH_MALLS, { name: 'malls' })(
+    graphql(ADD_ATTACHMENTS, { name: 'addAttachments' })(AddShopForm)
   )
 );
 

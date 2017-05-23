@@ -7,7 +7,7 @@ import _ from 'lodash';
 //COMPONENTS
 import LoadingScreen from './LoadingScreen';
 import ImageArea from './ImageArea';
-
+import PossibleDuplicates from './PossibleDuplicates';
 import { Button, Icon } from 'react-native-elements'
 //MODULES
 import { colorConfig,  } from '../modules/config';
@@ -15,7 +15,7 @@ import { handleFileUpload, CATEGORY_OPTIONS,  } from '../modules/helpers';
 // APOLLO
 import { graphql } from 'react-apollo';
 import { FETCH_EXISTING_SHOPS, SEARCH_SHOPS_BY_OWNER, FETCH_MALLS } from '../apollo/queries'
-import { CREATE_SHOP, SAVE_SHOP } from '../apollo/mutations'
+import { SAVE_SHOP, ADD_ATTACHMENTS } from '../apollo/mutations'
 import client from '../ApolloClient';
 // REDUX
 import { connect } from 'react-redux'
@@ -89,27 +89,6 @@ class EditShopForm extends React.Component {
     this.setState({ categories: newCategories })
 
   }
-  renderPossibleDuplicates(){
-
-    const { shopExists, loading } = this.props.data;
-
-    if (loading) {
-       return <ActivityIndicator />;
-    }
-
-    return (
-      <List renderHeader={() => 'Possible duplicate?'}>
-        {shopExists.map( item => {
-          return (
-            <Text key={item._id} style={{fontSize: 15, color: 'red'}}>
-              {item.title}
-            </Text>
-          )
-        })}
-      </List>
-    );
-    
-  }
   renderButton(){
     if (this.state.loading) {
        return <ActivityIndicator />; // show spinner if form is currently submitting
@@ -166,7 +145,12 @@ class EditShopForm extends React.Component {
               }}
           />
         </List>
-        {!this.props.data.loading && this.props.data.shopExists.length > 0 && this.renderPossibleDuplicates()}
+        
+        {/*
+          // NOTE: Probably dont need to show possible duplicates on edit screen?
+          <PossibleDuplicates {...this.props} />
+        */}
+
         <List renderHeader={() => 'Description'}>
           <TextareaItem
               clear
@@ -299,8 +283,13 @@ let options = {
   ]
 }
 
+const ComponentWithData = graphql(SAVE_SHOP)(
+  graphql(FETCH_MALLS, { name: 'malls' })(
+    graphql(ADD_ATTACHMENTS, { name: 'addAttachments' })(EditShopForm)
+  )
+);
 
-const ComponentWithData = graphql(FETCH_EXISTING_SHOPS, {
+/*const ComponentWithData = graphql(FETCH_EXISTING_SHOPS, {
   options: (props) => {
     let variables = {
       string: props.title && props.title.length > 4 ? props.title : null, //if user has not typed in at least 4 characters yet, then do not search for duplicates
@@ -310,7 +299,7 @@ const ComponentWithData = graphql(FETCH_EXISTING_SHOPS, {
 })(graphql(SAVE_SHOP)(
     graphql(FETCH_MALLS, { name: 'malls' })(EditShopForm)
   )
-);
+);*/
 
 let mapStateTopProps = ({ addShopForm }) => {
   return {
