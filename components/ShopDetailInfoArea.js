@@ -34,11 +34,15 @@ const AboutInfo = ({ shopById }) => {
 				<Text style={[textBody, {textAlign: 'left', fontSize: 15, marginBottom: 25}]}>
 					{shopById.description || ''}
 				</Text>
-				<Badge 
-					value={shopById.category && getCategoryTag(shopById.category) || ''} 
-					containerStyle={{ backgroundColor: 'violet'}} 
-					textStyle={{ color: '#fff' }}
-				/>
+				{shopById.categories && shopById.categories.map(item => (
+					<Badge 
+						value={item && getCategoryTag(item) || ''}
+						key={item} 
+						containerStyle={{ backgroundColor: 'violet'}} 
+						textStyle={{ color: '#fff' }}
+					/>
+				))}
+				
 			</View>
 	);
 }

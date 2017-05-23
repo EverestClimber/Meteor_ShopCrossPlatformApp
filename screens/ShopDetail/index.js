@@ -68,9 +68,9 @@ class CarouselExample extends React.Component {
         	<Image source={{uri: 'https://static.asiawebdirect.com/m/bangkok/portals/bali-indonesia-com/homepage/magazine/the-seminyak-village/allParagraphs/BucketComponent/ListingContainer/03/BucketList/0/image1/the-seminyak-village-bali.jpg'}} style={this.state.size} />
         	<Image source={{uri: 'https://static.asiawebdirect.com/m/bangkok/portals/bali-indonesia-com/homepage/kuta-beach/mal-bali-galeria/allParagraphs/BucketComponent/ListingContainer/02/image/mal-bali-galeria-tenant.jpg'}} style={this.state.size} />
         </Carousel>
-        	<View style={styles.backButtonContainer}>
+        	{/*<View style={styles.backButtonContainer}>
 		          <Icon size={35} color='#fff' name='chevron-left' onPress={()=>this.props.navigation.goBack()} />
-			</View>
+			</View>*/}
       </View>
     );
   }
@@ -93,7 +93,7 @@ class ShopDetail extends React.Component {
 		let variables = { shopId: data.shopById._id }
 		mutate({ variables }).then(res => navigation.goBack())
 	}
-	renderIfOwner(){
+	renderDeleteIfOwner(){
 		const { data, navigation, screenProps } = this.props;
 		// if the user is the owner of this document, show them the options to the delete the record
 		if (!data.loading && data.shopById.owner._id === screenProps.data.user._id) {
@@ -105,6 +105,24 @@ class ShopDetail extends React.Component {
 						icon={{name: 'delete', color: '#fff'}}
 						iconRight
 						title='DELETE SHOP'
+					/>
+				</View>
+			);
+		}
+		return null
+	}
+	renderEditIfOwner(){
+		const { data, navigation, screenProps } = this.props;
+		// if the user is the owner of this document, show them the options to the delete the record
+		if (!data.loading && data.shopById.owner._id === screenProps.data.user._id) {
+			return (
+				<View style={{padding: 10}}>
+					<Button 
+						onPress={()=> navigation.navigate('editShop', { _id: data.shopById._id })}
+						backgroundColor={'grey'} 
+						icon={{name: 'border-color', color: '#fff'}}
+						iconRight
+						title='EDIT SHOP'
 					/>
 				</View>
 			);
@@ -141,7 +159,8 @@ class ShopDetail extends React.Component {
 			    	navigation={navigation}
 			    	{...this.props}
 			    />
-			    {this.renderIfOwner()}
+			    {this.renderDeleteIfOwner()}
+			    {this.renderEditIfOwner()}
 			</ScrollView>
 		);
 	}

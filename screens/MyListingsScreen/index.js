@@ -19,19 +19,17 @@ import ShopCard from '../../components/ShopCard';
 const { basicHeaderStyle, titleStyle, regularFont, emptyStateIcon } = stylesConfig;
 
 
-
-
-// EXPORTED COMPONENT
-// ====================================
-class MyListingsScreen extends React.Component {
-	static navigationOptions = ({ navigation, screenProps }) => ({
+const navigationOptions = ({ 
+		navigation, 
+		screenProps: { data } 
+	}) => ({
 		title: 'My Listings',
 		tabBarIcon: ({ tintColor }) => <Icon name="home" size={30} color={tintColor} />,
 	  	headerTitleStyle: titleStyle,
 	  	headerVisible: Platform.OS !== 'android',
 	  	tabBarLabel: 'My Listings',
 	  	headerStyle: basicHeaderStyle,
-	  	headerRight: (
+	  	headerRight: data.user && data.user.roles.includes('manager') ? (
 	  		<Button
 	  			backgroundColor={colorConfig.business}
 	  			fontFamily={regularFont}
@@ -39,8 +37,15 @@ class MyListingsScreen extends React.Component {
 	  			color={'#fff'} 
 	  			onPress={()=>navigation.navigate('addShop')} 
 	  		/>
-	  	),
+	  	) : null,
 	});
+
+// EXPORTED COMPONENT
+// ====================================
+class MyListingsScreen extends React.Component {
+	
+	static navigationOptions = navigationOptions;
+
 	constructor(props){
 		super(props);
 		this.onEndReached = this.onEndReached.bind(this);

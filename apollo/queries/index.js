@@ -10,8 +10,9 @@ const shopFragment = gql`
         _id
         title
         description
-        category
+        categories
         image
+        mallId
         owner {
           _id
           profile {
@@ -41,6 +42,21 @@ const userFragment = gql`
     }
 `;
 
+// FETCH_MALLS
+// ============================
+export const FETCH_MALLS = gql`
+  query FetchMalls {
+    malls {
+      _id
+      title
+      description
+      location {
+        lat
+        lng
+      }
+    } 
+  }
+`;
 
 // FETCH_SHOPS
 // ============================
@@ -89,7 +105,7 @@ export const FETCH_EXISTING_SHOPS = gql`
     ) {
       _id
       title
-      category
+      categories
     } 
   }
 `;
