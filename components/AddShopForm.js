@@ -32,16 +32,12 @@ class AddShopForm extends React.Component {
     super(props)
     this.state = { 
       loading: false,
-      imageLoading: false,
       image: null,
       categories: [],
       value: 0,
       errors: [],
       mallId: null
-  }
-    this.onImageClick = this.onImageClick.bind(this);
-    this.onImageCameraClick = this.onImageCameraClick.bind(this);
-    
+    }
   }
   
   onSubmit = () => {
@@ -50,19 +46,20 @@ class AddShopForm extends React.Component {
     let errors = [];
     this.setState({loading: true})
 
-    let variables = {
+    let params = {
       title, description, categories, image, phone, email, mallId, website, longitude: location.coords.longitude, latitude: location.coords.latitude,
     };
 
-    if (!title || !description || !categories) {
+    if (!title || !description || !categories || !image) {
       if (!title) { errors.push('title is required') }
       if (!description) { errors.push('description is required') }
       if (!categories) { errors.push('categories is required') }
+      if (!image) { errors.push('a main image is required!') }
       return this.setState({loading: false, errors: errors});
     }
 
     //, refetchQueries: [ 'shops', 'shopsByOwner']
-    mutate({ variables }).then(() => {
+    mutate({ variables: { params } }).then(() => {
         client.resetStore();
         navigation.goBack();
         return this.setState({ loading: false });
@@ -71,31 +68,6 @@ class AddShopForm extends React.Component {
       //let newErrors = errors.concat(err && err.graphQLErrors && err.graphQLErrors.length > 0 && err.graphQLErrors.map( err => err.message ));
       return this.setState({loading: false, errors});
     });
-
-  }
-
-  async onImageClick(){
-    let result;
-    let _this = this;
-    _this.setState({ imageLoading: true });
-
-    try {
-      result = await ImagePicker.launchImageLibraryAsync({ allowsEditing: true, aspect: [4, 3] }); 
-    }
-
-    catch(e) {
-      _this.setState({ imageLoading: false }); 
-      return console.log(e);
-    }
-
-    if (!result.cancelled) {
-      handleFileUpload(result, (error, response) => {
-        if (error) { return console.log(error); }
-        _this.setState({ image: response, imageLoading: false }); 
-      });
-    }
-    
-    _this.setState({ imageLoading: false }); 
 
   }
   onCheckboxToggle = (value) => {
@@ -111,35 +83,18 @@ class AddShopForm extends React.Component {
     this.setState({ categories: newCategories })
 
   }
-  async onImageCameraClick(){
-    let result;
-    let _this = this;
-    _this.setState({ imageLoading: true });
-
-    try {
-      result = await ImagePicker.launchCameraAsync({ allowsEditing: true, aspect: [4, 3] }); 
-    }
-
-    catch(e) {
-      _this.setState({ imageLoading: false }); 
-      return console.log(e);
-    }
-
-    if (!result.cancelled) {
-      handleFileUpload(result, (error, response) => {
-        if (error) { return console.log(error); }
-        _this.setState({ image: response, imageLoading: false }); 
-      });
-    }
-    
-    _this.setState({ imageLoading: false }); 
-  }
   renderPossibleDuplicates(){
 
     const { shopExists, loading } = this.props.data;
 
+
     if (loading) {
-       return <ActivityIndicator />;
+      return null
+      //return <ActivityIndicator />;
+    }
+
+    if (this.props.data.loading || this.props.data.shopExists.length === 0) {
+      return null
     }
 
     return (
@@ -186,21 +141,23 @@ class AddShopForm extends React.Component {
     }
 
   }
+  renderErrors(){
+    const { errors } = this.state;
+    return errors && errors.length > 0 && errors.map(item => {
+            return <Text key={item} style={{color: '#e74c3c'}}>{item}</Text>
+          })
+  }
   render(){
 
     return (
       <View style={{width: 300}} behavior="padding">
         <ImageArea 
-          image={this.state.image}  
-          imageLoading={this.state.imageLoading}  
-          onImageClick={this.onImageClick} 
-          onImageCameraClick={this.onImageCameraClick}
+          image={this.state.image}
           onRemoveImage={()=>this.setState({image: null})}
+          onImageChange={(image)=>this.setState({image})}
         />
         <View style={{marginTop: 8, marginBottom: 8, alignItems: 'center',  justifyContent: 'center',}}>
-          {this.state.errors.length > 0 && this.state.errors.map(item => {
-            return <Text key={item} style={{color: '#e74c3c'}}>{item}</Text>
-          })}
+          {this.renderErrors()}
         </View>
         <List renderHeader={() => 'Title'}>
           <InputItem
@@ -212,7 +169,7 @@ class AddShopForm extends React.Component {
               }}
           />
         </List>
-        {!this.props.data.loading && this.props.data.shopExists.length > 0 && this.renderPossibleDuplicates()}
+        {this.renderPossibleDuplicates()}
         <List renderHeader={() => 'Description'}>
           <TextareaItem
               clear
@@ -366,7 +323,4 @@ let mapStateTopProps = ({ addShopForm }) => {
 // EXPORT
 // ====================================
 export default connect( mapStateTopProps, actions )(ComponentWithData);
-
-
-//export default graphql(CREATE_SHOP, options)(AddShopForm);
 

@@ -38,16 +38,13 @@ class EditShopForm extends React.Component {
       title: title || null,
       description: description || null,
       loading: false,
-      imageLoading: false,
       image: image || null,
       categories: categories || [],
       value: 0,
       errors: [],
       mallId: mallId || null,
-  }
-    this.onImageClick = this.onImageClick.bind(this);
-    this.onImageCameraClick = this.onImageCameraClick.bind(this);
-    
+    }
+
   }
   
   onSubmit = () => {
@@ -56,9 +53,8 @@ class EditShopForm extends React.Component {
     let errors = [];
     this.setState({loading: true})
 
-    let variables = {
-      _id: shop._id, title, description, categories, image, phone, email, mallId, website
-    };
+    let params = { title, description, categories, image, phone, email, mallId, website };
+    let variables = { _id: shop._id, params }
 
     if (!title || !description || !categories) {
       if (!title) { errors.push('title is required') }
@@ -80,30 +76,6 @@ class EditShopForm extends React.Component {
 
   }
 
-  async onImageClick(){
-    let result;
-    let _this = this;
-    _this.setState({ imageLoading: true });
-
-    try {
-      result = await ImagePicker.launchImageLibraryAsync({ allowsEditing: true, aspect: [4, 3] }); 
-    }
-
-    catch(e) {
-      _this.setState({ imageLoading: false }); 
-      return console.log(e);
-    }
-
-    if (!result.cancelled) {
-      handleFileUpload(result, (error, response) => {
-        if (error) { return console.log(error); }
-        _this.setState({ image: response, imageLoading: false }); 
-      });
-    }
-    
-    _this.setState({ imageLoading: false }); 
-
-  }
   onCheckboxToggle = (value) => {
 
     let newCategories;
@@ -116,29 +88,6 @@ class EditShopForm extends React.Component {
 
     this.setState({ categories: newCategories })
 
-  }
-  async onImageCameraClick(){
-    let result;
-    let _this = this;
-    _this.setState({ imageLoading: true });
-
-    try {
-      result = await ImagePicker.launchCameraAsync({ allowsEditing: true, aspect: [4, 3] }); 
-    }
-
-    catch(e) {
-      _this.setState({ imageLoading: false }); 
-      return console.log(e);
-    }
-
-    if (!result.cancelled) {
-      handleFileUpload(result, (error, response) => {
-        if (error) { return console.log(error); }
-        _this.setState({ image: response, imageLoading: false }); 
-      });
-    }
-    
-    _this.setState({ imageLoading: false }); 
   }
   renderPossibleDuplicates(){
 
@@ -197,11 +146,9 @@ class EditShopForm extends React.Component {
     return (
       <View style={{width: 300}} behavior="padding">
         <ImageArea 
-          image={this.state.image}  
-          imageLoading={this.state.imageLoading}  
-          onImageClick={this.onImageClick} 
-          onImageCameraClick={this.onImageCameraClick}
+          image={this.state.image}
           onRemoveImage={()=>this.setState({image: null})}
+          onImageChange={(image)=>this.setState({image})}
         />
         <View style={{marginTop: 8, marginBottom: 8, alignItems: 'center',  justifyContent: 'center',}}>
           {this.state.errors.length > 0 && this.state.errors.map(item => {
