@@ -52,12 +52,12 @@ class EditShopForm extends React.Component {
   
   onSubmit = () => {
     const { title, description, categories, image, phone, email, mallId, website } = this.state;
-    const { mutate, navigation, location, data } = this.props;
+    const { mutate, navigation, location, data, shop } = this.props;
     let errors = [];
     this.setState({loading: true})
 
     let variables = {
-      title, description, categories, image, phone, email, mallId, website, longitude: location.coords.longitude, latitude: location.coords.latitude,
+      _id: shop._id, title, description, categories, image, phone, email, mallId, website
     };
 
     if (!title || !description || !categories) {
@@ -167,7 +167,7 @@ class EditShopForm extends React.Component {
     }
     return (
       <Button 
-        title='ADD SHOP'
+        title='SAVE SHOP'
         backgroundColor={colorConfig.business} 
         onPress={this.onSubmit}
       />
