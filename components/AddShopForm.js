@@ -1,5 +1,6 @@
 import React from 'react';
 import { ImagePicker, Permissions } from 'expo';
+import uuidV4 from 'uuid/v4'
 import { List, Radio, InputItem, SegmentedControl, TextareaItem, Checkbox } from 'antd-mobile';
 import { View, Text, TextInput, ScrollView, Alert, TouchableOpacity, StyleSheet, Platform, Image, ActivityIndicator } from 'react-native';
 //REDUX
@@ -41,13 +42,14 @@ class AddShopForm extends React.Component {
       attachments: []
     }
   }
-  onRemoveAttachment = (attachment) => {
-    let attachments = this.state.attachments.filter(element => element !== attachment);
+  onRemoveAttachment = (attachmentId) => {
+    let attachments = this.state.attachments;
+    _.remove(attachments, {_id: attachmentId});
     this.setState({ attachments });
   }
-  onAttachmentChange = (attachment) => {
-    let attachments = this.state.attachments;
-    attachments.push(attachment);
+  onAttachmentChange = (url) => {
+    let attachment = { _id: uuidV4(), url }; // the attachment to be pushed into the new state
+    let attachments = [attachment, ...this.state.attachments]
     this.setState({ attachments });
   }
   onSuccessfulSubmit = (res) => {
@@ -62,7 +64,7 @@ class AddShopForm extends React.Component {
     // which is defined on server in imports/api/schema.js
     // store this [ImageObject] array in images
     let images = this.state.attachments.map( item => {
-      let image = { url: item, name: item };
+      let image = { url: item.url, name: item._id };
       return image
     });
     // build variables object to pass to the addAttachments mutation

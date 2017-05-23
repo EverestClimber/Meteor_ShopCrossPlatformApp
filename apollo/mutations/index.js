@@ -12,6 +12,16 @@ export const SAVE_USER_IMAGE = gql`
     }
 `;
 
+
+
+export const REMOVE_ATTACHMENT = gql`
+  mutation RemoveAttachmentById($attachmentId: ID!){
+    removeAttachment(attachmentId: $attachmentId){
+      _id
+    }
+  }
+`;
+
 export const SAVE_USER_EXPO_PUSH_ID = gql`
     mutation SaveUserExpoPushId ( $expoPushId: String! ) {
       saveUserExpoPushId ( expoPushId: $expoPushId ){

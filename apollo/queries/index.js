@@ -13,6 +13,10 @@ const shopFragment = gql`
         categories
         image
         mallId
+        attachments {
+          _id
+          url
+        }
         owner {
           _id
           profile {

@@ -16,16 +16,8 @@ import BackButton from '../../components/BackButton';
 import EmptyState from '../../components/EmptyState';
 import MapArea from '../../components/MapArea';
 import ShopDetailInfoArea from '../../components/ShopDetailInfoArea';
-import Carousel from 'react-native-looped-carousel';
+import CarouselArea from '../../components/CarouselArea';
 
-
-// TODO
-// add carousel like airbnb to show multiple images
-// potential package options:
-// https://github.com/appintheair/react-native-looped-carousel
-// https://github.com/archriss/react-native-snap-carousel
-// https://github.com/machadogj/react-native-carousel-control
-// https://github.com/jacklam718/react-native-carousel-component
 
 
 // CONSTANTS & DESTRUCTURING
@@ -40,41 +32,6 @@ const {
 } = stylesConfig;
 
 
-
-
-
-class CarouselExample extends React.Component {
-
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      size: { width: SCREEN_WIDTH, height: 250 },
-    };
-  }
-  render() {
-
-  	const { data, navigation } = this.props;
-
-    return (
-      <View style={{ flex: 1 }}>
-        <Carousel
-          delay={3000}
-          style={this.state.size}
-          autoplay
-        >
-        	{/*<Image source={{uri: data.shopById.image || DEFAULT_SHOP_IMAGE}} style={this.state.size} />*/}
-        	<Image source={{uri: 'https://infotion.com/wp-content/uploads/2016/12/Denpasar-Bali.jpg'}} style={this.state.size} />
-        	<Image source={{uri: 'https://static.asiawebdirect.com/m/bangkok/portals/bali-indonesia-com/homepage/magazine/the-seminyak-village/allParagraphs/BucketComponent/ListingContainer/03/BucketList/0/image1/the-seminyak-village-bali.jpg'}} style={this.state.size} />
-        	<Image source={{uri: 'https://static.asiawebdirect.com/m/bangkok/portals/bali-indonesia-com/homepage/kuta-beach/mal-bali-galeria/allParagraphs/BucketComponent/ListingContainer/02/image/mal-bali-galeria-tenant.jpg'}} style={this.state.size} />
-        </Carousel>
-        	{/*<View style={styles.backButtonContainer}>
-		          <Icon size={35} color='#fff' name='chevron-left' onPress={()=>this.props.navigation.goBack()} />
-			</View>*/}
-      </View>
-    );
-  }
-}
    
 // EXPORTED COMPONENT
 // ========================================
@@ -139,7 +96,7 @@ class ShopDetail extends React.Component {
 
 		return (
 			<ScrollView style={styles.container} contentContainerStyle={styles.contentContainerStyle}>
-				<CarouselExample {...this.props} />
+				<CarouselArea {...this.props} />
 				<ShopDetailInfoArea 
 					shopById={data.shopById} 
 				/>
@@ -178,9 +135,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: colorConfig.screenBackground,
 	},
-	settingFormItem: {
-		flex: 1, justifyContent: 'center', alignItems: 'center'
-	},
 	dividerStyle: {
 		height: 1, 
 		backgroundColor: "#e1e8ee",
@@ -190,7 +144,8 @@ const styles = StyleSheet.create({
 	backButtonContainer: {
 	    position: 'absolute',
 	    top: 25,
-	    left: 5
+	    left: 5,
+	    zIndex: 1
 	  }
 });
 
@@ -199,8 +154,11 @@ const styles = StyleSheet.create({
 // ========================================
 export default graphql(FETCH_SHOP, {
   options: (props) => { 
-  	let variables = { _id: props.navigation.state.params._id };
-  	return { variables } 
+  	return { 
+  		variables: { 
+  			_id: props.navigation.state.params._id 
+  		}
+  	} 
   }
 })(
 	graphql(DELETE_SHOP)(ShopDetail)

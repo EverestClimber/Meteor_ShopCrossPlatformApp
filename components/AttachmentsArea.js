@@ -99,14 +99,14 @@ class AttachmentsArea extends React.Component {
               )}
             </View>
           </View>
-          <View style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+          <View style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 15, marginTop: 15}}>
             {attachments && attachments.length > 0 && attachments.map( item => (
-              <View style={{flex: 1}} key={item}>
-                <Image source={{ uri: item }} style={{ width: 150, height: 150 }} />
+              <View style={{flex: 1}} key={item._id}>
+                <Image source={{ uri: item.url }} style={{ width: 150, height: 150 }} />
                 <Icon
                   name='cancel'
                   color='#888'
-                  onPress={() => onRemoveAttachment(item)}
+                  onPress={ () => onRemoveAttachment(item._id) }
                 />
               </View>
             ))}
