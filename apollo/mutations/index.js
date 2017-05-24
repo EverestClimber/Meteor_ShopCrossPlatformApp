@@ -12,6 +12,16 @@ export const SAVE_USER_IMAGE = gql`
     }
 `;
 
+
+
+export const REMOVE_ATTACHMENT = gql`
+  mutation RemoveAttachmentById($attachmentId: ID!){
+    removeAttachment(attachmentId: $attachmentId){
+      _id
+    }
+  }
+`;
+
 export const SAVE_USER_EXPO_PUSH_ID = gql`
     mutation SaveUserExpoPushId ( $expoPushId: String! ) {
       saveUserExpoPushId ( expoPushId: $expoPushId ){
@@ -47,61 +57,25 @@ export const DELETE_SHOP = gql`
   }
 `
 
-
-export const CREATE_SHOP = gql`
-  mutation CreateShop(
-    $title: String!
-    $description: String!
-    $categories: [String!]
-    $image: String
-    $longitude:String
-    $latitude: String
-    $phone: String
-    $website: String
-    $email: String
-    $mallId: String
+export const ADD_ATTACHMENTS = gql`
+  mutation AddAttachments(
+      $images: [ImageObject], 
+      $shopId: ID, 
+      $userId: ID,
   ){
-    createShop(
-      title: $title
-      description: $description
-      categories: $categories
-      image: $image
-      mallId: $mallId
-      longitude: $longitude
-      latitude: $latitude
-      phone: $phone
-      website: $website
-      email: $email
+    addAttachments(
+      images: $images, 
+      shopId: $shopId, 
+      userId: $userId,
     ){
       _id
     }
   }
 `
 
-
-export const SAVE_SHOP = gql`
-  mutation SaveShop(
-    $_id: ID!
-      $title: String!
-      $description: String!
-      $categories: [String!]
-      $image: String
-      $longitude:String
-      $latitude: String
-      $mallId: String
-      $location: LocationData
-  ){
-    saveShop(
-      _id: $_id
-      title: $title
-      mallId: $mallId
-      description: $description
-      categories: $categories
-      image: $image
-      longitude: $longitude
-      latitude: $latitude
-      location: $location
-    ){
+export const CREATE_SHOP = gql`
+  mutation CreateShop( $params: ShopParams ){
+    createShop( params: $params ){
       _id
       owner {
         _id
@@ -109,4 +83,21 @@ export const SAVE_SHOP = gql`
     }
   }
 `
+export const SAVE_SHOP = gql`
+  mutation SaveShop( 
+    $_id: ID!, 
+    $params: ShopParams 
+  ){
+    saveShop( 
+      _id: $_id, 
+      params: $params 
+   ){
+      _id
+      owner {
+        _id
+      }
+    }
+  }
+`
+
 

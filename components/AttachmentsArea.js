@@ -9,7 +9,7 @@ import { handleFileUpload,  } from '../modules/helpers';
 
 
 
-class ImageArea extends React.Component {
+class AttachmentsArea extends React.Component {
   constructor(props){
     super(props)
     this.state = { 
@@ -20,6 +20,10 @@ class ImageArea extends React.Component {
     this.onImageClick = this.onImageClick.bind(this);
     this.onImageCameraClick = this.onImageCameraClick.bind(this);
     
+  }
+  onSuccessfulUpload(response){
+    this.props.onAttachmentChange(response)
+    this.setState({ imageLoading: false }); 
   }
    async onImageClick(){
     let result;
@@ -36,10 +40,9 @@ class ImageArea extends React.Component {
     }
 
     if (!result.cancelled) {
-      handleFileUpload(result, (error, response) => {
-        if (error) { return console.log(error); }
-        this.props.onImageChange(response)
-        _this.setState({ imageLoading: false }); 
+      handleFileUpload(result, (err, res) => {
+        if (err) { return console.log(err); }
+        this.onSuccessfulUpload(res)
       });
     }
     
@@ -61,10 +64,9 @@ class ImageArea extends React.Component {
     }
 
     if (!result.cancelled) {
-      handleFileUpload(result, (error, response) => {
-        if (error) { return console.log(error); }
-        this.props.onImageChange(response)
-        _this.setState({ imageLoading: false }); 
+      handleFileUpload(result, (err, res) => {
+        if (err) { return console.log(err); }
+        this.onSuccessfulUpload(res)
       });
     }
     
@@ -72,7 +74,7 @@ class ImageArea extends React.Component {
   }
    render(){
 
-      const { image, onRemoveImage } = this.props;
+      const { attachments, onRemoveAttachment } = this.props;
       const { imageLoading } = this.state;
 
       if (imageLoading) {
@@ -87,23 +89,27 @@ class ImageArea extends React.Component {
       <View style={{marginBottom: 15, marginTop: 15}}>
           <View style={{display: 'flex', flexDirection: 'row'}}>
             <View style={{flex: 1}}>
-              {!image && <Button title='Upload' icon={{ name: 'file-upload' }} onPress={this.onImageClick} />}
+              {attachments && attachments.length < 5 && (
+                <Button title='Upload' icon={{ name: 'file-upload' }} onPress={this.onImageClick} />
+              )}
             </View>
             <View style={{flex: 1}}>
-              {!image && <Button title='Camera' icon={{ name: 'camera-alt' }} onPress={this.onImageCameraClick} />}
+              {attachments && attachments.length < 5 && (
+                <Button title='Camera' icon={{ name: 'camera-alt' }} onPress={this.onImageCameraClick} />
+              )}
             </View>
           </View>
-          <View style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-            {image && (
-              <View style={{flex: 1}}>
-                <Image source={{ uri: image }} style={{ width: 150, height: 150 }} />
+          <View style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 15, marginTop: 15}}>
+            {attachments && attachments.length > 0 && attachments.map( item => (
+              <View style={{flex: 1}} key={item._id}>
+                <Image source={{ uri: item.url }} style={{ width: 150, height: 150 }} />
                 <Icon
                   name='cancel'
                   color='#888'
-                  onPress={() => onRemoveImage()}
+                  onPress={ () => onRemoveAttachment(item._id) }
                 />
               </View>
-            )}
+            ))}
           </View>
       </View>
     );
@@ -111,4 +117,4 @@ class ImageArea extends React.Component {
    }
 }
 
-export default ImageArea;
+export default AttachmentsArea;

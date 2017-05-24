@@ -1,5 +1,6 @@
 import React from 'react';
 import { ImagePicker, Permissions } from 'expo';
+import uuidV4 from 'uuid/v4'
 import { List, Radio, InputItem, SegmentedControl, TextareaItem, Checkbox } from 'antd-mobile';
 import { View, Text, TextInput, ScrollView, Alert, TouchableOpacity, StyleSheet, Platform, Image, ActivityIndicator } from 'react-native';
 //REDUX
@@ -7,7 +8,8 @@ import _ from 'lodash';
 //COMPONENTS
 import LoadingScreen from './LoadingScreen';
 import ImageArea from './ImageArea';
-
+import PossibleDuplicates from './PossibleDuplicates';
+import AttachmentsArea from './AttachmentsArea';
 import { Button, Icon } from 'react-native-elements'
 //MODULES
 import { colorConfig,  } from '../modules/config';
@@ -15,7 +17,7 @@ import { handleFileUpload, CATEGORY_OPTIONS,  } from '../modules/helpers';
 // APOLLO
 import { graphql } from 'react-apollo';
 import { FETCH_EXISTING_SHOPS, SEARCH_SHOPS_BY_OWNER, FETCH_MALLS } from '../apollo/queries'
-import { CREATE_SHOP, SAVE_SHOP } from '../apollo/mutations'
+import { SAVE_SHOP, ADD_ATTACHMENTS, REMOVE_ATTACHMENT } from '../apollo/mutations'
 import client from '../ApolloClient';
 // REDUX
 import { connect } from 'react-redux'
@@ -33,46 +35,95 @@ const CheckboxItem = Checkbox.CheckboxItem;
 class EditShopForm extends React.Component {
   constructor(props){
     super(props)
-    const { title, description, image, categories, mallId } = this.props.shop;
+
     this.state = {
-      title: title || null,
-      description: description || null,
+      title: this.props.shop.title || null,
+      description: this.props.shop.description || null,
       loading: false,
-      imageLoading: false,
-      image: image || null,
-      categories: categories || [],
+      image: this.props.shop.image || null,
+      categories: this.props.shop.categories || [],
       value: 0,
       errors: [],
-      mallId: mallId || null,
+      mallId: this.props.shop.mallId || null,
+      attachments: this.props.shop.attachments ? [...this.props.shop.attachments] : []
+    }
+
   }
-    this.onImageClick = this.onImageClick.bind(this);
-    this.onImageCameraClick = this.onImageCameraClick.bind(this);
+  onRemoveAttachment = (attachmentId) => {
+    // remove the attachment from the actual database, than update the local state
+    // this differs from the add shop form, where we are just removing the item from local state
+    // rather than using some wild if/then in the resolver on the server, just get rid of the document right now
+    // then any attachments sent on submission will be either (a) new attachments or (b) previous attachments 
+    // from when the document was added or last edited
+    this.props.removeAttachment({variables: { attachmentId}})
+    .then(res => {
+      let attachments = this.state.attachments;
+       _.remove(attachments, {_id: attachmentId});
+      this.setState({ attachments });
+    })
     
   }
-  
+  onAttachmentChange = (url) => {
+    let attachment = { _id: uuidV4(), url }; // the attachment to be pushed into the new state
+    let attachments = [attachment, ...this.state.attachments]
+    this.setState({ attachments });
+  }
+  onSuccessfulSubmit = (res) => {
+    // if no attachments were added, then just return from this function and complete submission
+    if (!this.state.attachments || this.state.attachments.length === 0) {
+      this.props.data.refetch();
+      this.props.navigation.goBack();
+      return this.setState({ loading: false, errors: [] });
+    }
+
+    // massage array of attachment URLs into an array of graphql custom input type [ImageObject] 
+    // which is defined on server in imports/api/schema.js
+    // store this [ImageObject] array in images
+    let images = this.state.attachments.map( item => {
+      let image = { url: item.url, name: item._id };
+      return image
+    });
+
+    // build variables object to pass to the addAttachments mutation
+    // shopId, userId, and an [ImageObject] array (see above code/notes)
+    let variables = {
+      shopId: res.data.saveShop._id,
+      userId: res.data.saveShop.owner._id,
+      images: images
+    }
+    // run addAttachments mutation, then refetch queries, then go back to last page
+    this.props.addAttachments({ variables })
+      .then(()=>{
+        //this.props.data.refetch();
+        this.props.navigation.goBack();
+        return this.setState({ loading: false, errors: [] });
+      })
+      .catch(err => {
+        //let newErrors = errors.concat(err && err.graphQLErrors && err.graphQLErrors.length > 0 && err.graphQLErrors.map( err => err.message ));
+        return this.setState({loading: false, errors: [] });
+      });
+  }
   onSubmit = () => {
     const { title, description, categories, image, phone, email, mallId, website } = this.state;
     const { mutate, navigation, location, data, shop } = this.props;
     let errors = [];
     this.setState({loading: true})
 
-    let variables = {
-      _id: shop._id, title, description, categories, image, phone, email, mallId, website
-    };
+    let params = { title, description, categories, image, phone, email, mallId, website };
+    let variables = { _id: shop._id, params }
 
-    if (!title || !description || !categories) {
+    if (!title || !description || !categories || !image) {
       if (!title) { errors.push('title is required') }
       if (!description) { errors.push('description is required') }
       if (!categories) { errors.push('categories is required') }
+      if (!image) { errors.push('a main image is required!') }
       return this.setState({loading: false, errors: errors});
     }
 
     //, refetchQueries: [ 'shops', 'shopsByOwner']
-    mutate({ variables }).then(() => {
-        client.resetStore();
-        navigation.goBack();
-        return this.setState({ loading: false });
-    }).catch(err => {
+    mutate({ variables })
+    .then(res => this.onSuccessfulSubmit(res))
+    .catch(err => {
       console.log(err)
       //let newErrors = errors.concat(err && err.graphQLErrors && err.graphQLErrors.length > 0 && err.graphQLErrors.map( err => err.message ));
       return this.setState({loading: false, errors});
@@ -80,30 +131,6 @@ class EditShopForm extends React.Component {
 
   }
 
-  async onImageClick(){
-    let result;
-    let _this = this;
-    _this.setState({ imageLoading: true });
-
-    try {
-      result = await ImagePicker.launchImageLibraryAsync({ allowsEditing: true, aspect: [4, 3] }); 
-    }
-
-    catch(e) {
-      _this.setState({ imageLoading: false }); 
-      return console.log(e);
-    }
-
-    if (!result.cancelled) {
-      handleFileUpload(result, (error, response) => {
-        if (error) { return console.log(error); }
-        _this.setState({ image: response, imageLoading: false }); 
-      });
-    }
-    
-    _this.setState({ imageLoading: false }); 
-
-  }
   onCheckboxToggle = (value) => {
 
     let newCategories;
@@ -116,50 +143,6 @@ class EditShopForm extends React.Component {
 
     this.setState({ categories: newCategories })
 
-  }
-  async onImageCameraClick(){
-    let result;
-    let _this = this;
-    _this.setState({ imageLoading: true });
-
-    try {
-      result = await ImagePicker.launchCameraAsync({ allowsEditing: true, aspect: [4, 3] }); 
-    }
-
-    catch(e) {
-      _this.setState({ imageLoading: false }); 
-      return console.log(e);
-    }
-
-    if (!result.cancelled) {
-      handleFileUpload(result, (error, response) => {
-        if (error) { return console.log(error); }
-        _this.setState({ image: response, imageLoading: false }); 
-      });
-    }
-    
-    _this.setState({ imageLoading: false }); 
-  }
-  renderPossibleDuplicates(){
-
-    const { shopExists, loading } = this.props.data;
-
-    if (loading) {
-       return <ActivityIndicator />;
-    }
-
-    return (
-      <List renderHeader={() => 'Possible duplicate?'}>
-        {shopExists.map( item => {
-          return (
-            <Text key={item._id} style={{fontSize: 15, color: 'red'}}>
-              {item.title}
-            </Text>
-          )
-        })}
-      </List>
-    );
-    
   }
   renderButton(){
     if (this.state.loading) {
@@ -197,11 +180,9 @@ class EditShopForm extends React.Component {
     return (
       <View style={{width: 300}} behavior="padding">
         <ImageArea 
-          image={this.state.image}  
-          imageLoading={this.state.imageLoading}  
-          onImageClick={this.onImageClick} 
-          onImageCameraClick={this.onImageCameraClick}
+          image={this.state.image}
           onRemoveImage={()=>this.setState({image: null})}
+          onImageChange={(image)=>this.setState({image})}
         />
         <View style={{marginTop: 8, marginBottom: 8, alignItems: 'center',  justifyContent: 'center',}}>
           {this.state.errors.length > 0 && this.state.errors.map(item => {
@@ -219,7 +200,12 @@ class EditShopForm extends React.Component {
               }}
           />
         </List>
-        {!this.props.data.loading && this.props.data.shopExists.length > 0 && this.renderPossibleDuplicates()}
+        
+        {/*
+          // NOTE: Probably dont need to show possible duplicates on edit screen?
+          <PossibleDuplicates {...this.props} />
+        */}
+
         <List renderHeader={() => 'Description'}>
           <TextareaItem
               clear
@@ -288,7 +274,11 @@ class EditShopForm extends React.Component {
           })}
         </View>
 
-
+        <AttachmentsArea 
+          onRemoveAttachment={this.onRemoveAttachment}
+          onAttachmentChange={this.onAttachmentChange}
+          attachments={this.state.attachments}
+        />
           <View style={{height: 45, marginTop: 20}}>
           {this.renderButton()}
         </View>
@@ -352,8 +342,15 @@ let options = {
   ]
 }
 
+const ComponentWithData = graphql(SAVE_SHOP)(
+  graphql(FETCH_MALLS, { name: 'malls' })(
+    graphql(ADD_ATTACHMENTS, { name: 'addAttachments' })(
+      graphql(REMOVE_ATTACHMENT, { name: 'removeAttachment' })(EditShopForm)
+    )
+  )
+);
 
-const ComponentWithData = graphql(FETCH_EXISTING_SHOPS, {
+/*const ComponentWithData = graphql(FETCH_EXISTING_SHOPS, {
   options: (props) => {
     let variables = {
       string: props.title && props.title.length > 4 ? props.title : null, //if user has not typed in at least 4 characters yet, then do not search for duplicates
@@ -363,7 +360,7 @@ const ComponentWithData = graphql(FETCH_EXISTING_SHOPS, {
 })(graphql(SAVE_SHOP)(
     graphql(FETCH_MALLS, { name: 'malls' })(EditShopForm)
   )
-);
+);*/
 
 let mapStateTopProps = ({ addShopForm }) => {
   return {

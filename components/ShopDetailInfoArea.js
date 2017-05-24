@@ -62,6 +62,15 @@ const ContactInfo = ({ shopById }) => {
 					{shopById.email || ''}
 				</Text>
 				<Text style={[textBody, {textAlign: 'center'}]}>
+					{shopById.facebook || ''}
+				</Text>
+				<Text style={[textBody, {textAlign: 'center'}]}>
+					{shopById.twitter || ''}
+				</Text>
+				<Text style={[textBody, {textAlign: 'center'}]}>
+					{shopById.instagram || ''}
+				</Text>
+				<Text style={[textBody, {textAlign: 'center'}]}>
 					{shopById.website || ''}
 				</Text>
 			</View>
